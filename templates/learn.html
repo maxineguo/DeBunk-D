@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}DeBunk'D - Learn{% endblock %}
+
+{% block content %}
+<div class="page-section" id="learn-content">
+    <div class="learn-tabs">
+        <button class="learn-tab-btn active" data-tab="chatbot">Chatbot</button>
+        <button class="learn-tab-btn" data-tab="articles">Articles & Quizzes</button>
+        <button class="learn-tab-btn" data-tab="about">About DeBunk'D</button>
+    </div>
+
+    <div id="chatbot-section" class="learn-tab-content active">
+        <h2>Media Literacy Chatbot</h2>
+        <div class="chat-display" id="chat-display">
+            <div class="chat-message bot-message">
+                <p>Hello! I'm DeBunk'D's media literacy chatbot. Ask me anything about identifying misinformation, critical thinking, or verifying sources!</p>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Type your message...">
+            <button id="send-chat-btn" class="btn primary-btn">Send</button>
+        </div>
+    </div>
+
+    <div id="articles-section" class="learn-tab-content" style="display: none;">
+        <h2>Media Literacy Articles & Quizzes</h2>
+        <div class="article-list">
+            <div class="learn-article-card">
+                <h3>Understanding Misinformation vs. Disinformation</h3>
+                <p>Learn the key differences between unintentional misinformation and deliberate disinformation...</p>
+                <button class="btn secondary-btn view-article-btn" data-article-id="1">Read Article & Take Quiz</button>
+            </div>
+            <div class="learn-article-card">
+                <h3>How to Spot Deepfakes</h3>
+                <p>Explore the techniques used in deepfakes and how to identify them...</p>
+                <button class="btn secondary-btn view-article-btn" data-article-id="2">Read Article & Take Quiz</button>
+            </div>
+            </div>
+    </div>
+
+    <div id="about-section" class="learn-tab-content" style="display: none;">
+        <h2>About DeBunk'D</h2>
+        <p>Welcome to DeBunk'D! In today's digital age, the spread of misinformation and disinformation poses a significant threat to informed decision-making and a healthy society. DeBunk'D is designed to be your personal assistant in navigating this complex information landscape.</p>
+        <p>Our mission is to empower users like you to critically evaluate the news, identify false narratives, and understand the various perspectives surrounding important issues. We achieve this by providing:</p>
+        <ul>
+            <li><strong>AI-Powered Fact-Checking:</strong> Summarize articles, highlight key findings, present multiple perspectives, and cite verified sources using advanced AI.</li>
+            <li><strong>Interactive Learning:</strong> A media literacy chatbot and informative articles with quizzes to enhance your critical thinking skills.</li>
+            <li><strong>Personalized Experience:</strong> Save articles for later reference and track your learning progress.</li>
+        </ul>
+        <p>We believe that by fostering media literacy, we can contribute to a more informed and resilient community. Join us in the fight against misinformation!</p>
+        </div>
+
+    <div id="learn-article-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="learn-article-body">
+                </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/learn.js') }}"></script>
+{% endblock %}

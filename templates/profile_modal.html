@@ -1,0 +1,32 @@
+<div id="profile-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button" id="profile-close-btn">&times;</span>
+        <h2>Profile Settings</h2>
+
+        <div class="profile-section">
+            <h3>Theme</h3>
+            <div class="theme-options">
+                <label>
+                    <input type="radio" name="theme" value="light" id="light-theme-radio"> Light Mode
+                </label>
+                <label>
+                    <input type="radio" name="theme" value="dark" id="dark-theme-radio"> Dark Mode
+                </label>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h3>API Key Settings</h3>
+            <label class="toggle-switch">
+                <input type="checkbox" id="use-own-api-key-toggle">
+                <span class="slider round"></span> Use your own NewsAPI Key
+            </label>
+            <div id="news-api-key-input-container" style="display: none; margin-top: 15px;">
+                <label for="news-api-key-input">NewsAPI Key:</label>
+                <input type="password" id="news-api-key-input" placeholder="Enter your NewsAPI Key">
+                <button id="save-news-api-key-btn" class="btn secondary-btn">Save Key for Session</button>
+            </div>
+            </div>
+
+        </div>
+</div>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DeBunk'D{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="light-theme"> <header class="main-header">
+        <div class="header-left">
+            <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="DeBunk'D Logo" class="app-logo">
+            <h1 class="app-title">DeBunk'D</h1>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="{{ url_for('home') }}" id="nav-home">Home</a></li>
+                <li><a href="{{ url_for('feed') }}" id="nav-feed">Feed</a></li>
+                <li><a href="{{ url_for('search') }}" id="nav-search">Search</a></li>
+                <li><a href="{{ url_for('learn') }}" id="nav-learn">Learn</a></li>
+            </ul>
+        </nav>
+        <div class="header-right">
+            <img src="{{ url_for('static', filename='img/default_profile.jpeg') }}" alt="Profile" class="profile-icon" id="profile-icon">
+        </div>
+    </header>
+
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 DeBunk'D. All rights reserved.</p>
+    </footer>
+
+    {% include 'profile_modal.html' %}
+
+    {% include 'api_key_popup.html' %}
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %} </body>
+</html>

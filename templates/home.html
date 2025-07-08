@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}DeBunk'D - Home{% endblock %}
+
+{% block content %}
+<div class="page-section" id="home-content">
+    <h2>My Saved Articles</h2>
+    <div id="saved-articles-list" class="article-grid">
+        <p>No articles saved yet. Save articles from the Feed or Search!</p>
+    </div>
+
+    <div class="learn-progress-section">
+        <h2>My Learn Progress</h2>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="learn-progress-bar" style="width: 0%;"></div>
+            <span id="learn-progress-text">Learn: 0% complete</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+{% endblock %}
