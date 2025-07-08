@@ -4,6 +4,12 @@ from typing import NamedTuple
 import json
 import os
 from dotenv import load_dotenv
+import datetime
+
+today = datetime.date.today()
+one_day = datetime.timedelta(days=1)
+yesterday = today - one_day
+day = "from=" + yesterday.strftime('%Y-%m-%d') + "&"
 
 class Article(NamedTuple):
     url: str
@@ -17,21 +23,24 @@ gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 previouschat = ""
 
 def search_debunked(query, gem_api_key, news_api_key):
-    try:
-        global response
-        response = gemini_client.models.generate_content(
-            model="gemini-2.0-flash", contents=f"Would you classify the following text/question as news, general, or not english. Write your answer as 'n' for news, 'g' for general, and 'c' for nnot a word.: {query}"
-        )
-    except Exception as e:
-        print(f"Error interpreting your search: {e}")
-    
+    global gemini_client
+    if "00000" not in gem_api_key:
+        gemini_client = genai.Client(api_key=gem_api_key)
+    if "00000" not in news_api_key:
+        NEWSAPI_API_KEY = news_api_key
+
+    global response
+    response = gemini_client.models.generate_content(
+        model="gemini-2.0-flash", contents=f"Would you classify the following text/question as news, general, or not english. Write your answer as 'n' for news, 'g' for general, and 'c' for nnot a word.: {query}"
+    )
+
     if "c" in response.text:
-        print("We were not able to interpret your search. Please try explaining more clearly.")
+        return "We were not able to interpret your search. Please try explaining more clearly."
     elif "g" in response.text:
         response = gemini_client.models.generate_content(
         model="gemini-2.0-flash", contents=f"Write a multi-paragraph, DETAILED article explaining the following topic. Do not format the text in any way. Don't include any message chattin with me(purely article) Only use multiple credible sources that support each other. Your job is to inform with credible information. If given a false claim, provide evidence as to why it is false. If given a question, simply give an answer and explain. Do not referce yourself as an AI model.: {query}"
         )
-        print(response.text)
+        return response.text
     elif "n" in response.text.lower():
         keyword_prompt = f"Create a single, concise keyword search term for news articles based on the following text. Provide only the keyword(s) without any additional formatting, punctuation, or conversational text. User query: {query}"
         try:
@@ -40,13 +49,11 @@ def search_debunked(query, gem_api_key, news_api_key):
             )
             keyword_search_term = response_gemini_keyword.text.strip()
         except Exception as e:
-            print(f"Error generating search keyword: {e}")
-        
-        print(keyword_search_term)
+            return f"Error generating search keyword: {e}"
     
         news_api_url = (f'https://newsapi.org/v2/everything?'
                         f'q={keyword_search_term}&'
-                        'from=2025-06-21&'
+                        f'{day}'
                         'sortBy=popularity&'
                         f'apiKey={NEWSAPI_API_KEY}')
     
@@ -55,11 +62,11 @@ def search_debunked(query, gem_api_key, news_api_key):
             response_newsapi.raise_for_status()
             rsp_json = response_newsapi.json()
         except requests.exceptions.RequestException as e:
-            print(f"Error fetching news articles from NewsAPI: {e}")
+            return f"Error fetching news articles from NewsAPI: {e}"
     
         articles = []
         if rsp_json['totalResults'] == 0:
-            print("Sorry, I didn't find any news articles for that search term. Please try a different query.")
+            return "Sorry, I didn't find any news articles for that search term. Please try a different query."
         else:
             for article in rsp_json['articles'][:5]:
                 articles.append(Article(url=article['url']))
@@ -81,27 +88,33 @@ def search_debunked(query, gem_api_key, news_api_key):
             )
     
         except Exception as e:
-            print(f"Error generating news story from sources: {e}")
+           return f"Error generating news story from sources: {e}"
             
-        print(response_gemini_story.text)
+        return response_gemini_story.text
         
         
 
 def news_creation(gem_api_key, news_api_key):
+    global NEWS_API_KEY
+    if "00000" not in gem_api_key:
+        gemini_client = genai.Client(api_key=gem_api_key)
+    if "00000" not in news_api_key:
+        NEWSAPI_API_KEY = news_api_key
+
     url = ('https://newsapi.org/v2/top-headlines?'
        'country=us&'
-       'apiKey=8467d17c4d75481fa7b006d4bfdf3a44')
+       f'apiKey={NEWS_API_KEY}')
 
     try:
         response_url = requests.get(url)
         response_url.raise_for_status()
         rsp_json = response_url.json()
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching news articles from NewsAPI: {e}")
+        return f"Error fetching news articles from NewsAPI: {e}"
 
     articles = []
     if rsp_json['totalResults'] == 0:
-        print("Sorry, I didn't find any news articles for that search term. Please try a different query.")
+        return "Sorry, I didn't find any news articles for that search term. Please try a different query."
     else:
         for article in rsp_json['articles'][:5]:
             articles.append(Article(url=article['url']))
@@ -207,6 +220,8 @@ def news_creation(gem_api_key, news_api_key):
 
 
 def misconception_creation (gem_api_key):
+    if "00000" not in gem_api_key:
+        gemini_client = genai.Client(api_key=gem_api_key)
     misconceptionstr = gemini_client.models.generate_content(
         model="gemini-2.0-flash", contents="What are TWELEVE misconceptions(vaccines and autism, flat earth, etc). Write only the title and do NOT write any messages talking to me. Your format is [misconception1], [misconception2], and so on. Write your answer as the truth. For example write 'Vaccines do NOT cause Autism' instead of just 'vaccines cause autism'."
     )
@@ -299,6 +314,8 @@ def misconception_creation (gem_api_key):
 
 
 def issue_creation (gem_api_key):
+    if "00000" not in gem_api_key:
+        gemini_client = genai.Client(api_key=gem_api_key)
     issuestr = gemini_client.models.generate_content(
         model="gemini-2.0-flash", contents="What are TWELEVE important issues that should get more attention. They would really impact our world. Write only the title and do NOT write any messages talking to me. Your format is [issue1], [issue2], and so on. Do not include any formatting including new lines and brackets(other than the ', '"
     )
@@ -390,6 +407,8 @@ def issue_creation (gem_api_key):
     issue12.insert(0, issues[11])
 
 def learn_chat (history, question, gem_api_key):
+    if "00000" not in gem_api_key:
+        gemini_client = genai.Client(api_key=gem_api_key)
     global previouschat
     context_for_prompt = previouschat
     if "000" in history:
