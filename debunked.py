@@ -16,7 +16,7 @@ gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 previouschat = ""
 
-def search_debunked(query):
+def search_debunked(query, gem_api_key, news_api_key):
     try:
         global response
         response = gemini_client.models.generate_content(
@@ -87,7 +87,7 @@ def search_debunked(query):
         
         
 
-def news_creation():
+def news_creation(gem_api_key, news_api_key):
     url = ('https://newsapi.org/v2/top-headlines?'
        'country=us&'
        'apiKey=8467d17c4d75481fa7b006d4bfdf3a44')
@@ -206,7 +206,7 @@ def news_creation():
     headline12.insert(0, headlines[11])
 
 
-def misconception_creation ():
+def misconception_creation (gem_api_key):
     misconceptionstr = gemini_client.models.generate_content(
         model="gemini-2.0-flash", contents="What are TWELEVE misconceptions(vaccines and autism, flat earth, etc). Write only the title and do NOT write any messages talking to me. Your format is [misconception1], [misconception2], and so on. Write your answer as the truth. For example write 'Vaccines do NOT cause Autism' instead of just 'vaccines cause autism'."
     )
@@ -298,7 +298,7 @@ def misconception_creation ():
     misconception12.insert(0, misconceptions[11])
 
 
-def issue_creation ():
+def issue_creation (gem_api_key):
     issuestr = gemini_client.models.generate_content(
         model="gemini-2.0-flash", contents="What are TWELEVE important issues that should get more attention. They would really impact our world. Write only the title and do NOT write any messages talking to me. Your format is [issue1], [issue2], and so on. Do not include any formatting including new lines and brackets(other than the ', '"
     )
@@ -389,7 +389,7 @@ def issue_creation ():
     issue12 = issue12.split("qwe,")
     issue12.insert(0, issues[11])
 
-def learn_chat (history, question):
+def learn_chat (history, question, gem_api_key):
     global previouschat
     context_for_prompt = previouschat
     if "000" in history:
