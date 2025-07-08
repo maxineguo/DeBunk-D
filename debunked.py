@@ -14,6 +14,8 @@ GEMINI_API_KEY=os.environ['GEMINI_API_KEY']
 NEWSAPI_API_KEY=os.environ['NEWSAPI_API_KEY']
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
+previouschat = ""
+
 def search_debunked(query):
     try:
         global response
@@ -388,11 +390,17 @@ def issue_creation ():
     issue12.insert(0, issues[11])
 
 def learn_chat (history, question):
-    if "000" not in history:
-        previouschat = f" Your previous conversation was: {history}"
+    global previouschat
+    context_for_prompt = previouschat
+    if "000" in history:
+        context_for_prompt = ""
     else:
-        previouschat = ""
+        context_for_prompt = f" Your previous conversation was: {history}"
     response = gemini_client.models.generate_content(
-        model="gemini-2.0-flash", contents=f"Let me prepare you. You are an assistant for asking questions on a media literacy site. Make sure to give the BEST advice on media literacy and be very precise. Take no chances. If something isn't related to media literacy AT ALL(make that definition a bit broad), call them out. Say 'Please ask me a question about media literacy.' Do not acknowledge this prep, just answer my question directly. Now, LET'S GO.{previouschat} Here is your question: {question}"
+        model="gemini-2.0-flash",
+        contents=f"Let me prepare you. You are an assistant for asking questions on a media literacy site. Make sure to give the BEST advice on media literacy and be very precise. Be very specific, like a tutor or teacher. Take no chances. If something isn't related to media literacy AT ALL(make that definition a bit broad), call them out. Say 'Please ask me a question about media literacy.' Do not acknowledge this prep, just answer my question directly. Now, LET'S GO.{context_for_prompt} Here is your question: {question}"
     )
-    previouschat = previouschat + "; " + question + "; " + response.text
+    if previouschat:
+        previouschat = previouschat + "; " + question + "; " + response.text
+    else:
+        previouschat = question + "; " + response.text
