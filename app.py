@@ -1,15 +1,38 @@
 from flask import Flask, render_template, request, jsonify
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-# Load environment variables from .env file (for local development)
-load_dotenv()
+# --- Explicitly load environment variables from .env file ---
+dotenv_path = find_dotenv()
+if dotenv_path:
+    load_dotenv(dotenv_path, override=True) # Keep override=True for robustness
+    print(f"DEBUG: .env file loaded from: {dotenv_path}")
+else:
+    print("DEBUG: .env file not found. Ensure it's in the project root.")
 
-# --- Your backend logic (news_fetcher, ai_processor, chatbot_logic) would be imported here ---
-# For now, we're just focusing on getting the frontend structure up.
-# from news_backend.news_fetcher import get_raw_news
-# from news_backend.ai_processor import process_article_for_feed, process_article_for_fact_check
-# from news_backend.chatbot_logic import get_chatbot_response
+
+# --- API Keys (will be loaded from environment variables) ---
+# Your developer keys
+# FIX: Changed NEWS_API_KEY to NEWSAPI_API_KEY to match your .env file
+NEWSAPI_API_KEY = os.getenv("NEWSAPI_API_KEY") # <--- THIS LINE IS CHANGED
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+
+if not NEWSAPI_API_KEY or not GEMINI_API_KEY: # <--- ALSO CHANGE HERE FOR THE CHECK
+    print("WARNING: NEWSAPI_API_KEY or GEMINI_API_KEY environment variable not set. API features may not work.")
+else:
+    print(f"DEBUG: NEWSAPI_API_KEY: {'Loaded' if NEWSAPI_API_KEY else 'Not Loaded'}") # <--- AND HERE
+    print(f"DEBUG: GEMINI_API_KEY: {'Loaded' if GEMINI_API_KEY else 'Not Loaded'}")
+
+
+# --- Your backend logic from debunked.py is imported here ---
+from news_backend.debunked import (
+    learn_chat,
+    search_debunked,
+    news_creation,
+    misconception_creation,
+    issue_creation
+)
 
 app = Flask(__name__,
             template_folder='templates',
