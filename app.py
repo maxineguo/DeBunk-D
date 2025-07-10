@@ -6,7 +6,6 @@ from dotenv import load_dotenv, find_dotenv
 dotenv_path = find_dotenv()
 if dotenv_path:
     load_dotenv(dotenv_path, override=True) # Keep override=True for robustness
-    print(f"DEBUG: .env file loaded from: {dotenv_path}")
 else:
     print("DEBUG: .env file not found. Ensure it's in the project root.")
 
@@ -20,10 +19,6 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 if not NEWSAPI_API_KEY or not GEMINI_API_KEY: # <--- ALSO CHANGE HERE FOR THE CHECK
     print("WARNING: NEWSAPI_API_KEY or GEMINI_API_KEY environment variable not set. API features may not work.")
-else:
-    print(f"DEBUG: NEWSAPI_API_KEY: {'Loaded' if NEWSAPI_API_KEY else 'Not Loaded'}") # <--- AND HERE
-    print(f"DEBUG: GEMINI_API_KEY: {'Loaded' if GEMINI_API_KEY else 'Not Loaded'}")
-
 
 # --- Your backend logic from debunked.py is imported here ---
 from news_backend.debunked import (
