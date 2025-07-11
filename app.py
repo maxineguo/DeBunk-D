@@ -72,19 +72,62 @@ def learn():
 def get_feed_articles_api():
     """
     Fetches and processes news articles for the Feed page.
-    (This function will eventually call your news_fetcher and ai_processor).
     """
-    # For now, just return dummy data or an empty list
-    return jsonify({"articles": []})
+    # Determine which API key to use for NewsAPI
+    user_newsapi_key_from_header = request.headers.get('X-User-News-API-Key')
+    news_api_key_to_use = user_newsapi_key_from_header if user_newsapi_key_from_header else NEWSAPI_API_KEY
 
-@app.route('/api/search_articles', methods=['POST'])
+    # Determine which API key to use for Gemini
+    user_gemini_api_key_from_header = request.headers.get('X-User-Gemini-API-Key')
+    gemini_api_key_to_use = user_gemini_api_key_from_header if user_gemini_api_key_from_header else GEMINI_API_KEY
+
+    if not news_api_key_to_use or not gemini_api_key_to_use:
+        return jsonify({"error": "API keys not provided or configured."}), 401
+
+    try:
+        # Call your functions to get data for each section
+        # Pass the determined API keys
+        latest_news_articles = news_creation(gemini_api_key_to_use, news_api_key_to_use)
+        general_misconceptions_articles = misconception_creation(gemini_api_key_to_use)
+        important_issues_articles = issue_creation(gemini_api_key_to_use)
+
+        # Return a single JSON object containing all three lists
+        return jsonify({
+            "latest_news": latest_news_articles,
+            "general_misconceptions": general_misconceptions_articles,
+            "important_issues": important_issues_articles
+        })
+    except Exception as e:
+        print(f"Error fetching feed articles: {e}")
+        return jsonify({"error": "Failed to load articles", "message": str(e)}), 500
+
+@app.route('/api/search_articles', methods=['GET'])
 def search_articles_api():
-    """
-    Handles search queries and returns processed, fact-checked articles.
-    (This function will eventually call your news_fetcher and ai_processor).
-    """
-    # For now, just return dummy data or an empty list
-    return jsonify({"results": []})
+    query = request.args.get('query')
+    if not query:
+        return jsonify({"error": "No search query provided"}), 400
+
+    user_newsapi_key_from_header = request.headers.get('X-User-News-API-Key')
+    news_api_key_to_use = user_newsapi_key_from_header if user_newsapi_key_from_header else NEWSAPI_API_KEY
+
+    user_gemini_api_key_from_header = request.headers.get('X-User-Gemini-API-Key')
+    gemini_api_key_to_use = user_gemini_api_key_from_header if user_gemini_api_key_from_header else GEMINI_API_KEY
+
+    if not news_api_key_to_use or not gemini_api_key_to_use:
+        return jsonify({"error": "API keys not provided or configured."}), 401
+
+    try:
+        detailed_article_result = search_debunked(query, gemini_api_key_to_use, news_api_key_to_use)
+
+        # --- ADD THIS DEBUG PRINT STATEMENT ---
+        print(f"DEBUG: search_debunked returned type: {type(detailed_article_result)}")
+        print(f"DEBUG: search_debunked returned value: {detailed_article_result}")
+        # --- END DEBUG PRINT ---
+
+        return jsonify({"results": [detailed_article_result]})
+    except Exception as e:
+        print(f"Error performing search in app.py: {e}") # Clarify where error is
+        return jsonify({"error": "Failed to perform search", "message": str(e)}), 500
 
 @app.route('/api/chatbot_message', methods=['POST'])
 def chatbot_message_api():

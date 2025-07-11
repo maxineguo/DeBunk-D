@@ -76,6 +76,7 @@ def parse_gemini_response_to_dict(response_text, expected_parts_order):
 
 def search_debunked(query, gem_api_key, news_api_key):
     # Ensure gemini_client is initialized with the correct key for this call
+    # This allows using the user's ephemeral key if provided by app.py
     current_gemini_client = genai.Client(api_key=gem_api_key)
     current_newsapi_key = news_api_key
 
@@ -112,7 +113,7 @@ def search_debunked(query, gem_api_key, news_api_key):
                 "Summary Detail", "Key Findings", "Multiple Perspectives",
                 "Verification Process", "Different Viewpoints", "Verified Sources"
             ])
-            
+
             # Return the structured dictionary
             return {
                 "title": f"Fact-Check: {query}",
@@ -136,29 +137,29 @@ def search_debunked(query, gem_api_key, news_api_key):
             keyword_search_term = response_gemini_keyword.text.strip()
         except Exception as e:
             raise Exception(f"Error generating search keyword: {e}")
-    
+
         news_api_url = (f'https://newsapi.org/v2/everything?'
                         f'q={keyword_search_term}&'
                         f'{day}'
                         'sortBy=popularity&'
                         f'apiKey={current_newsapi_key}')
-    
+
         try:
             response_newsapi = requests.get(news_api_url)
             response_newsapi.raise_for_status()
             rsp_json = response_newsapi.json()
         except requests.exceptions.RequestException as e:
             raise Exception(f"Error fetching news articles from NewsAPI: {e}")
-    
+
         articles_for_source = []
         if rsp_json['totalResults'] == 0:
             raise Exception("Sorry, I didn't find any news articles for that search term. Please try a different query.")
         else:
             for article in rsp_json['articles'][:5]: # Limit to top 5 articles for source material
-                articles_for_source.append(Article(url=article['url']))
-    
+                articles_for_source.append(Article(url=article['url'], title=article.get('title', 'No Title')))
+
         source_urls_for_gemini = "\n".join([article.url for article in articles_for_source])
-    
+
         # Modified prompt to get structured output for 'news' queries
         story_prompt = (
             f"Create a detailed news story based strictly on the information found at the following URLs. "
@@ -177,7 +178,7 @@ def search_debunked(query, gem_api_key, news_api_key):
             f"qwe,Verified Sources: [Numbered list of source names, e.g., '1. Source Name 1\\n2. Source Name 2']\n\n"
             f"Sources to use:\n{source_urls_for_gemini}"
         )
-    
+
         try:
             response_gemini_story = current_gemini_client.models.generate_content(
                 model="gemini-2.0-flash", contents=story_prompt
@@ -186,7 +187,7 @@ def search_debunked(query, gem_api_key, news_api_key):
                 "Story Content", "Summary", "Key Findings", "Multiple Perspectives",
                 "Verification Process", "Different Viewpoints", "Verified Sources"
             ])
-    
+
             # Return the structured dictionary
             return {
                 "title": f"News Report: {query}", # Or use the first headline if available
@@ -198,12 +199,12 @@ def search_debunked(query, gem_api_key, news_api_key):
                 "verified_sources": parsed_data.get("Verified Sources", []),
                 "query": query # Keep original query for context
             }
-    
+
         except Exception as e:
            raise Exception(f"Error generating news story from sources: {e}")
     else:
         raise Exception("Unexpected classification from AI.")
-
+    
 def news_creation(gem_api_key, news_api_key):
     # Ensure gemini_client is initialized with the correct key for this call
     current_gemini_client = genai.Client(api_key=gem_api_key)
@@ -218,16 +219,21 @@ def news_creation(gem_api_key, news_api_key):
         response_url.raise_for_status()
         rsp_json = response_url.json()
     except requests.exceptions.RequestException as e:
+        # Raise an exception instead of returning a string for error handling in Flask
         raise Exception(f"Error fetching news articles from NewsAPI: {e}")
 
     articles_raw_data = [] # To store raw article data for source URLs
     if rsp_json['totalResults'] == 0:
-        # If no articles found, return an empty list as expected output
+        # If no articles found, return an empty list as expected output for success
         return []
     else:
         # Get up to 12 articles for headlines and source material
-        for article in rsp_json['articles'][:12]:
-            articles_raw_data.append(Article(url=article['url'], title=article.get('title', 'No Title'))) # Also get title for better source matching
+        # NewsAPI sometimes returns articles with null titles or URLs, filter them out
+        for article in rsp_json['articles']:
+            if article.get('url') and article.get('title'):
+                articles_raw_data.append(Article(url=article['url'], title=article['title']))
+            if len(articles_raw_data) >= 12: # Limit to 12 valid articles
+                break
 
     source_urls_for_gemini = "\n".join([article.url for article in articles_raw_data])
 
@@ -245,25 +251,29 @@ def news_creation(gem_api_key, news_api_key):
         )
         headlines = [h.strip() for h in headlinestr_response.text.split(", ") if h.strip()]
         if len(headlines) == 0: # If no headlines generated
-            return [] # Return empty list
+            return [] # Return empty list if headline generation fails
         # Trim to 12 if Gemini provides more, or use fewer if it provides less
         headlines = headlines[:12]
     except Exception as e:
         print(f"Warning: Error generating headlines, returning empty list: {e}")
-        return [] # Return empty list if headline generation fails
+        raise Exception(f"Error generating headlines for news_creation: {e}") # Raise exception
 
     final_articles_list = []
     for i, headline in enumerate(headlines):
-        # Find the original URL for this headline if possible, or use a generic one
-        # Try to match by title, otherwise use the sequential URL
+        # Try to find the original URL for this headline from the raw data
         original_url = "N/A"
+        # A more robust way might be to pass the article object itself to Gemini
+        # or to try fuzzy matching headlines to original article titles.
+        # For now, let's try to find a match or use a sequential URL if no match.
         matched_article_data = next((art for art in articles_raw_data if headline.lower() in art.title.lower()), None)
         if matched_article_data:
             original_url = matched_article_data.url
-        elif i < len(articles_raw_data):
+        elif i < len(articles_raw_data): # Fallback to sequential if no title match
             original_url = articles_raw_data[i].url
 
         # Refined prompt for each article to get structured output
+        # NOTE: If you want 'key_findings' and 'multiple_perspectives' to be generated by Gemini,
+        # you MUST add them to this prompt in the same 'qwe,' delimited format.
         article_detail_prompt = (
             f"Using the headline '{headline}', create a multi-paragraph news article. "
             f"Then, provide a short, 1-paragraph summary. Next, provide a ONE WORD LABEL (from 'Environment', 'Politics', 'Business', 'Technology', 'Health', 'Science'). "
@@ -292,9 +302,8 @@ def news_creation(gem_api_key, news_api_key):
             # Extract and format data into the desired structure
             summary_detail = parsed_data.get("Article Content", "")
             brief_summary = parsed_data.get("Summary", "")
-            category = parsed_data.get("Label", "General") # Default category
+            category = parsed_data.get("Label", "General") # Default category if not parsed
             
-            # The parse_gemini_response_to_dict helper now handles viewpoints and sources
             different_viewpoints = parsed_data.get("Viewpoints", [])
             verified_sources = parsed_data.get("Sources", [])
             
@@ -305,8 +314,8 @@ def news_creation(gem_api_key, news_api_key):
                 "category": category,
                 "full_content": {
                     "summary_detail": summary_detail,
-                    "key_findings": [], # Add if prompt is updated to include
-                    "multiple_perspectives": [], # Add if prompt is updated to include
+                    "key_findings": [], # Currently empty, add to prompt if needed
+                    "multiple_perspectives": [], # Currently empty, add to prompt if needed
                     "verification_process": "AI-generated summary based on provided news sources.", # Default
                     "different_viewpoints": different_viewpoints,
                     "verified_sources": verified_sources
@@ -318,12 +327,12 @@ def news_creation(gem_api_key, news_api_key):
 
         except Exception as e:
             print(f"Error processing headline '{headline}': {e}")
-            # Optionally, add a placeholder article for errors to keep the list full
+            # Add a placeholder article for errors to keep the list full for UI consistency
             final_articles_list.append({
                 "title": f"Error loading: {headline}",
-                "summary": "Could not retrieve full article details.",
+                "summary": "Could not retrieve full article details for this item.",
                 "category": "Error",
-                "full_content": {},
+                "full_content": {}, # Empty full_content on error
                 "url": "#",
                 "image_url": "https://placehold.co/300x200/F44336/FFFFFF?text=Error"
             })
