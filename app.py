@@ -1,23 +1,20 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 import os
 from dotenv import load_dotenv, find_dotenv
+import uuid # For generating unique IDs for articles
 
 # --- Explicitly load environment variables from .env file ---
 dotenv_path = find_dotenv()
 if dotenv_path:
-    load_dotenv(dotenv_path, override=True) # Keep override=True for robustness
+    load_dotenv(dotenv_path, override=True)
 else:
     print("DEBUG: .env file not found. Ensure it's in the project root.")
 
-
 # --- API Keys (will be loaded from environment variables) ---
-# Your developer keys
-# FIX: Changed NEWS_API_KEY to NEWSAPI_API_KEY to match your .env file
-NEWSAPI_API_KEY = os.getenv("NEWSAPI_API_KEY") # <--- THIS LINE IS CHANGED
+NEWSAPI_API_KEY = os.getenv("NEWSAPI_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-
-if not NEWSAPI_API_KEY or not GEMINI_API_KEY: # <--- ALSO CHANGE HERE FOR THE CHECK
+if not NEWSAPI_API_KEY or not GEMINI_API_KEY:
     print("WARNING: NEWSAPI_API_KEY or GEMINI_API_KEY environment variable not set. API features may not work.")
 
 # --- Your backend logic from debunked.py is imported here ---
@@ -33,15 +30,9 @@ app = Flask(__name__,
             template_folder='templates',
             static_folder='static')
 
-# --- API Keys (will be loaded from environment variables) ---
-# Your developer keys
-NEWS_API_KEY = os.getenv("NEWS_API_KEY")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-if not NEWS_API_KEY or not GEMINI_API_KEY:
-    # In a real app, you might raise a more specific error or log a warning
-    print("WARNING: NEWS_API_KEY or GEMINI_API_KEY environment variable not set. API features may not work.")
-
+# In-memory cache for articles (simulates a database for this demo)
+# This will reset every time the server restarts
+ARTICLE_CACHE = {}
 
 # --- Main Page Routes ---
 
@@ -65,19 +56,26 @@ def learn():
     """Serves the Learn page (Chatbot, Articles, Quizzes)."""
     return render_template('learn.html')
 
-# --- API Endpoints (Placeholders for now) ---
-# You've mentioned these are done, but including placeholder routes for structure.
+# --- New Route for Full Article Display ---
+@app.route('/article/<article_id>')
+def article_detail(article_id):
+    article = ARTICLE_CACHE.get(article_id)
+    if not article:
+        # Handle case where article is not found (e.g., direct access, server restart)
+        return render_template('error.html', message="Article not found or has expired."), 404
+    return render_template('article_detail.html', article=article)
+
+
+# --- API Endpoints ---
 
 @app.route('/api/get_feed_articles', methods=['GET'])
 def get_feed_articles_api():
     """
     Fetches and processes news articles for the Feed page.
     """
-    # Determine which API key to use for NewsAPI
     user_newsapi_key_from_header = request.headers.get('X-User-News-API-Key')
     news_api_key_to_use = user_newsapi_key_from_header if user_newsapi_key_from_header else NEWSAPI_API_KEY
 
-    # Determine which API key to use for Gemini
     user_gemini_api_key_from_header = request.headers.get('X-User-Gemini-API-Key')
     gemini_api_key_to_use = user_gemini_api_key_from_header if user_gemini_api_key_from_header else GEMINI_API_KEY
 
@@ -85,13 +83,22 @@ def get_feed_articles_api():
         return jsonify({"error": "API keys not provided or configured."}), 401
 
     try:
-        # Call your functions to get data for each section
-        # Pass the determined API keys
         latest_news_articles = news_creation(gemini_api_key_to_use, news_api_key_to_use)
         general_misconceptions_articles = misconception_creation(gemini_api_key_to_use)
         important_issues_articles = issue_creation(gemini_api_key_to_use)
 
-        # Return a single JSON object containing all three lists
+        # Add unique IDs and cache articles before sending to frontend
+        for article_list in [latest_news_articles, general_misconceptions_articles, important_issues_articles]:
+            for article in article_list:
+                # Use existing URL if it's unique, otherwise generate UUID
+                if article.get('url') and not article['url'].startswith('debunkd-'):
+                    article_id = article['url'] # Use URL as ID for NewsAPI articles
+                else:
+                    article_id = str(uuid.uuid4()) # Generate UUID for AI-generated content
+
+                article['id'] = article_id
+                ARTICLE_CACHE[article_id] = article
+
         return jsonify({
             "latest_news": latest_news_articles,
             "general_misconceptions": general_misconceptions_articles,
@@ -119,39 +126,40 @@ def search_articles_api():
     try:
         detailed_article_result = search_debunked(query, gemini_api_key_to_use, news_api_key_to_use)
 
-        # --- ADD THIS DEBUG PRINT STATEMENT ---
-        print(f"DEBUG: search_debunked returned type: {type(detailed_article_result)}")
-        print(f"DEBUG: search_debunked returned value: {detailed_article_result}")
-        # --- END DEBUG PRINT ---
+        # Add unique ID and cache for search results too
+        article_id = str(uuid.uuid4()) # Always generate UUID for search results
+        detailed_article_result['id'] = article_id
+        ARTICLE_CACHE[article_id] = detailed_article_result
 
+        # Return a list of one result for consistency with feed structure
         return jsonify({"results": [detailed_article_result]})
     except Exception as e:
-        print(f"Error performing search in app.py: {e}") # Clarify where error is
+        print(f"Error performing search in app.py: {e}")
         return jsonify({"error": "Failed to perform search", "message": str(e)}), 500
 
 @app.route('/api/chatbot_message', methods=['POST'])
 def chatbot_message_api():
-    """
-    Receives user messages for the chatbot and returns AI responses.
-    (This is your next focus for the backend if not fully done).
-    """
     user_message = request.json.get('message', '')
     history = request.json.get('history', [])
-    print(f"Received chatbot message: {user_message} with history length: {len(history)}")
-    # Placeholder response
-    return jsonify({"response": f"Echo: {user_message}", "history": history + [{"role": "user", "parts": [{"text": user_message}]}]})
+
+    user_gemini_api_key_from_header = request.headers.get('X-User-Gemini-API-Key')
+    gemini_api_key_to_use = user_gemini_api_key_from_header if user_gemini_api_key_from_header else GEMINI_API_KEY
+
+    if not gemini_api_key_to_use:
+        return jsonify({"response": "Error: Gemini API key is missing.", "history": history}), 401
+
+    try:
+        model_response_text, updated_history = learn_chat(history, user_message, gemini_api_key_to_use)
+        return jsonify({"response": model_response_text, "history": updated_history})
+    except Exception as e:
+        print(f"Error in chatbot_message_api: {e}")
+        return jsonify({"response": "Sorry, I'm having trouble responding right now. Please try again.", "history": history}), 500
 
 @app.route('/api/quiz_submit', methods=['POST'])
 def quiz_submit_api():
-    """
-    Receives quiz answers from the Learn page.
-    """
     print(f"Received quiz submission: {request.json}")
     return jsonify({"status": "success", "message": "Quiz answers received."})
 
-
 # --- Run the Flask app ---
 if __name__ == '__main__':
-    # Make sure your virtual environment is active before running!
-    # To run: python app.py
-    app.run(debug=True) # debug=True allows automatic reload on code changes
+    app.run(debug=True)

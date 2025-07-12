@@ -1,63 +1,109 @@
 {% extends "base.html" %}
 
-{% block title %}DeBunk'D - Learn{% endblock %}
-
 {% block content %}
-<div class="page-section" id="learn-content">
+<div class="learn-container">
+    <div class="learn-page-header">
+        <h1>Media Literacy Learning Center</h1>
+        <p>Develop critical thinking skills to navigate today's information landscape</p>
+    </div>
+
     <div class="learn-tabs">
-        <button class="learn-tab-btn active" data-tab="chatbot">Chatbot</button>
-        <button class="learn-tab-btn" data-tab="articles">Articles & Quizzes</button>
-        <button class="learn-tab-btn" data-tab="about">About DeBunk'D</button>
+        <button id="chatbot-tab-btn" class="active">
+            <i class="fas fa-robot"></i> Media Mentor
+        </button>
+        <button id="articles-tab-btn">
+            <i class="fas fa-book"></i> Knowledge Hub
+        </button>
+        <button id="quiz-tab-btn">
+            <i class="fas fa-question-circle"></i> Quizzes
+        </button>
     </div>
 
-    <div id="chatbot-section" class="learn-tab-content active">
-        <h2>Media Literacy Chatbot</h2>
-        <div class="chat-display" id="chat-display">
-            <div class="chat-message bot-message">
-                <p>Hello! I'm DeBunk'D's media literacy chatbot. Ask me anything about identifying misinformation, critical thinking, or verifying sources!</p>
+    <!-- Chatbot Section -->
+    <section id="chatbot-section" class="chatbot-section">
+        <h2>Your AI Guide to Media Literacy</h2>
+        <div class="chat-window" id="chat-window">
+            <!-- Chat messages will be appended here by JavaScript -->
+        </div>
+        <div class="try-asking-suggestions">
+            Try asking:
+            <div class="suggestion-buttons">
+                <button class="suggestion-btn" data-suggestion="What is media literacy?">What is media literacy?</button>
+                <button class="suggestion-btn" data-suggestion="How can I spot fake news?">How can I spot fake news?</button>
+                <button class="suggestion-btn" data-suggestion="What makes a source reliable?">What makes a source reliable?</button>
+                <button class="suggestion-btn" data-suggestion="How do I fact-check information?">How do I fact-check information?</button>
             </div>
         </div>
-        <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="Type your message...">
-            <button id="send-chat-btn" class="btn primary-btn">Send</button>
+        <div class="chat-input-group">
+            <input type="text" id="chat-input" placeholder="Ask me about media literacy...">
+            <button id="send-chat-btn" class="primary-btn"><i class="fas fa-paper-plane"></i></button>
         </div>
-    </div>
+        <button id="clear-chat-btn" class="clear-chat-btn">Clear Chat</button>
+    </section>
 
-    <div id="articles-section" class="learn-tab-content" style="display: none;">
-        <h2>Media Literacy Articles & Quizzes</h2>
-        <div class="article-list">
-            <div class="learn-article-card">
-                <h3>Understanding Misinformation vs. Disinformation</h3>
-                <p>Learn the key differences between unintentional misinformation and deliberate disinformation...</p>
-                <button class="btn secondary-btn view-article-btn" data-article-id="1">Read Article & Take Quiz</button>
+    <!-- Learn Articles Section (Knowledge Hub) -->
+    <section id="learn-articles-section" class="learn-articles-section" style="display: none;">
+        <h2>Knowledge Hub: In-depth Articles</h2>
+        <div class="learn-filters">
+            <div class="filter-group">
+                <label for="category-filter">Category</label>
+                <select id="category-filter">
+                    <option value="all">All Topics</option>
+                    <option value="politics">Politics</option>
+                    <option value="health">Health</option>
+                    <option value="technology">Technology</option>
+                    <option value="environment">Environment</option>
+                    <option value="business">Business</option>
+                    <option value="science">Science</option>
+                    <option value="general">General</option>
+                </select>
             </div>
-            <div class="learn-article-card">
-                <h3>How to Spot Deepfakes</h3>
-                <p>Explore the techniques used in deepfakes and how to identify them...</p>
-                <button class="btn secondary-btn view-article-btn" data-article-id="2">Read Article & Take Quiz</button>
+            <div class="filter-group">
+                <label for="difficulty-filter">Difficulty</label>
+                <select id="difficulty-filter">
+                    <option value="all">All Levels</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
             </div>
-            </div>
-    </div>
-
-    <div id="about-section" class="learn-tab-content" style="display: none;">
-        <h2>About DeBunk'D</h2>
-        <p>Welcome to DeBunk'D! In today's digital age, the spread of misinformation and disinformation poses a significant threat to informed decision-making and a healthy society. DeBunk'D is designed to be your personal assistant in navigating this complex information landscape.</p>
-        <p>Our mission is to empower users like you to critically evaluate the news, identify false narratives, and understand the various perspectives surrounding important issues. We achieve this by providing:</p>
-        <ul>
-            <li><strong>AI-Powered Fact-Checking:</strong> Summarize articles, highlight key findings, present multiple perspectives, and cite verified sources using advanced AI.</li>
-            <li><strong>Interactive Learning:</strong> A media literacy chatbot and informative articles with quizzes to enhance your critical thinking skills.</li>
-            <li><strong>Personalized Experience:</strong> Save articles for later reference and track your learning progress.</li>
-        </ul>
-        <p>We believe that by fostering media literacy, we can contribute to a more informed and resilient community. Join us in the fight against misinformation!</p>
         </div>
+        <p id="articles-count" class="learn-articles-count">Showing 0 of 0 articles</p>
+        <div id="learn-articles-grid" class="article-grid">
+            <!-- Learn articles will be loaded here by JavaScript -->
+            <p class="info-message">Loading learning articles...</p>
+        </div>
+    </section>
 
-    <div id="learn-article-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <div id="learn-article-body">
+    <!-- Quiz Section (Placeholder for now) -->
+    <section id="quiz-section" class="quiz-section" style="display: none;">
+        <h2>Test Your Knowledge</h2>
+        <form id="quiz-form">
+            <div class="quiz-question">
+                <p>1. Which of the following is NOT a common characteristic of misinformation?</p>
+                <div class="quiz-options">
+                    <label><input type="radio" name="q1" value="a"> Emotional language</label>
+                    <label><input type="radio" name="q1" value="b"> Verified sources</label>
+                    <label><input type="radio" name="q1" value="c"> Sensational headlines</label>
+                    <label><input type="radio" name="q1" value="d"> Lack of context</label>
                 </div>
-        </div>
-    </div>
+            </div>
+
+            <div class="quiz-question">
+                <p>2. What is a "filter bubble"?</p>
+                <div class="quiz-options">
+                    <label><input type="radio" name="q2" value="a"> A protective online community</label>
+                    <label><input type="radio" name="q2" value="b"> A situation where an algorithm shows only information agreeing with past views</label>
+                    <label><input type="radio" name="q2" value="c"> A tool to filter out inappropriate content</label>
+                    <label><input type="radio" name="q2" value="d"> A type of social media trend</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn primary-btn quiz-submit-btn">Submit Quiz</button>
+        </form>
+        <div id="quiz-results"></div>
+    </section>
+
 </div>
 {% endblock %}
 

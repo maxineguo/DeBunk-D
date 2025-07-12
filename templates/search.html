@@ -1,16 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}DeBunk'D - Search{% endblock %}
-
 {% block content %}
-<div class="page-section" id="search-content">
-    <h2>Search for Articles</h2>
-    <div class="search-bar">
-        <input type="text" id="search-input" placeholder="Enter keywords to search...">
-        <button id="search-btn" class="btn primary-btn">Search</button>
+<div class="search-page">
+    <div class="search-container">
+        <h1>Search for Verified Information</h1>
+        <p>Get fact-checked information and multiple perspectives on any topic</p>
+
+        <div class="search-input-group">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="search-input" placeholder="Search for news, facts, or topics...">
+            <button id="search-button" class="secondary-btn">Search</button>
+        </div>
     </div>
+
     <div id="search-results-container">
-        <p>Your search results will appear here.</p>
+        <!-- Search results will be loaded here by JavaScript -->
+        <p class="info-message">Enter a query to find verified information.</p>
     </div>
 </div>
 {% endblock %}

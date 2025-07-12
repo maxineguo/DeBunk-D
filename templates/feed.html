@@ -1,16 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}DeBunk'D - Feed{% endblock %}
-
 {% block content %}
-<div class="page-section" id="feed-content">
-    <h2>News Feed</h2>
-    <div class="controls">
-        <button id="refresh-feed-btn" class="btn primary-btn">Refresh Stories</button>
-        <span id="feed-loading-indicator" class="loading-indicator" style="display: none;">Loading...</span>
+<div class="feed-page">
+    <h1 class="page-main-title">News Feed</h1>
+    <p class="page-main-subtitle">Stay informed with the latest fact-checked news, common misconceptions, and important global issues.</p>
+
+    <div id="articles-container">
+        <!-- Articles will be loaded here by JavaScript -->
+        <p class="info-message">Loading news articles...</p>
     </div>
-    <div id="articles-container" class="article-grid">
-        <p>Loading news articles...</p>
+
+    <div class="refresh-button-container">
+        <button id="refresh-feed-btn" class="primary-btn">
+            <span class="loading-indicator" id="feed-loading-indicator"></span>
+            Refresh Stories
+        </button>
     </div>
 </div>
 {% endblock %}

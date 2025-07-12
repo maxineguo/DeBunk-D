@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="article-detail-page">
+    <a href="javascript:history.back()" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back to Feed
+    </a>
+
+    <div class="article-content-wrapper">
+        {% if article.category %}
+        <span class="article-detail-category-tag {{ article.category | lower | replace(' ', '-') }}">
+            {{ article.category }}
+        </span>
+        {% endif %}
+
+        <h1 class="article-detail-title">{{ article.title }}</h1>
+        <p class="article-detail-summary">{{ article.full_content.summary_detail }}</p>
+
+        {% if article.full_content.key_findings %}
+        <h2 class="article-detail-section-title">Key Findings</h2>
+        <ul class="article-detail-list">
+            {% for finding in article.full_content.key_findings %}
+            <li>{{ finding }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if article.full_content.multiple_perspectives %}
+        <h2 class="article-detail-section-title">Multiple Perspectives</h2>
+        <ul class="article-detail-list">
+            {% for perspective in article.full_content.multiple_perspectives %}
+            <li>{{ perspective }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if article.full_content.verification_process %}
+        <h2 class="article-detail-section-title">Verification Process</h2>
+        <p>{{ article.full_content.verification_process }}</p>
+        {% endif %}
+
+        {% if article.full_content.different_viewpoints %}
+        <h2 class="article-detail-section-title">Different Viewpoints</h2>
+        <div class="viewpoints-container">
+            {% for viewpoint in article.full_content.different_viewpoints %}
+            <div class="article-detail-viewpoint">
+                <strong>{{ viewpoint.label }}:</strong> <p>{{ viewpoint.text }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if article.full_content.verified_sources %}
+        <h2 class="article-detail-section-title">Verified Sources</h2>
+        <div class="sources-container">
+            {% for source in article.full_content.verified_sources %}
+            <span class="article-detail-source-tag">
+                {% if source.url and source.url != '' and source.url != 'N/A' and source.url != '#' %}
+                    <a href="{{ source.url }}" target="_blank">{{ source.name }}</a>
+                {% else %}
+                    {{ source.name }}
+                {% endif %}
+            </span>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if article.url and article.url != '#' and not article.url.startswith('debunkd-') %}
+        <p class="article-detail-original-url">
+            Original Source: <a href="{{ article.url }}" target="_blank">View Original Article</a>
+        </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,21 +1,33 @@
 {% extends "base.html" %}
 
-{% block title %}DeBunk'D - Home{% endblock %}
-
 {% block content %}
-<div class="page-section" id="home-content">
-    <h2>My Saved Articles</h2>
-    <div id="saved-articles-list" class="article-grid">
-        <p>No articles saved yet. Save articles from the Feed or Search!</p>
-    </div>
+<div class="home-page">
+    <h1 class="page-main-title">Welcome Back!</h1>
+    <p class="page-main-subtitle">Your personalized dashboard to stay informed and track your learning journey.</p>
 
-    <div class="learn-progress-section">
-        <h2>My Learn Progress</h2>
-        <div class="progress-bar-container">
-            <div class="progress-bar" id="learn-progress-bar" style="width: 0%;"></div>
-            <span id="learn-progress-text">Learn: 0% complete</span>
+    <section class="home-section">
+        <div class="page-header">
+            <h1>Your Saved Articles</h1>
+            <a href="#" class="more-link">View All Saved <i class="fas fa-arrow-right"></i></a>
         </div>
-    </div>
+        <p>Continue reading your bookmarked articles and track your progress.</p>
+        <div id="saved-articles-grid" class="article-grid">
+            <!-- Saved articles will be loaded here by JavaScript -->
+            <p class="info-message">No articles saved yet. Start saving from the <a href="{{ url_for('feed') }}">Feed</a> or <a href="{{ url_for('search') }}">Search</a> pages!</p>
+        </div>
+    </section>
+
+    <section class="home-section">
+        <div class="page-header">
+            <h1>Learn Tab Reading Progress</h1>
+            <a href="{{ url_for('learn') }}" class="more-link">Go to Learn Tab <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <p>Track your progress through educational articles in the Learn tab.</p>
+        <div class="progress-container">
+            <div id="learn-progress-bar" class="progress-bar" style="width: 0%;"></div>
+        </div>
+        <div id="learn-progress-text" class="progress-text">0% Complete</div>
+    </section>
 </div>
 {% endblock %}
 
