@@ -1,28 +1,60 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('feed.js: DOMContentLoaded event fired.');
+
     const refreshFeedBtn = document.getElementById('refresh-feed-btn');
     const articlesContainer = document.getElementById('articles-container');
     const loadingIndicator = document.getElementById('feed-loading-indicator');
 
+    console.log('feed.js: refreshFeedBtn found:', !!refreshFeedBtn);
+    console.log('feed.js: articlesContainer found:', !!articlesContainer);
+    console.log('feed.js: loadingIndicator found:', !!loadingIndicator);
+
+
     const INITIAL_DISPLAY_COUNT = 4; // Number of articles to show initially per section
+    const MAX_DISPLAY_COUNT_ON_MORE = 12; // Max articles to show when "More" is clicked
+
+    // Define category tag colors for consistent styling
+    const categoryColors = {
+        'health': { bg: '#e8f5e9', text: '#2e7d32' }, // Green
+        'environment': { bg: '#e8f5e9', text: '#2e7d32' }, // Green
+        'science': { bg: '#e3f2fd', text: '#1565c0' }, // Blue
+        'technology': { bg: '#e3f2fd', text: '#1565c0' }, // Blue
+        'business': { bg: '#ede7f6', text: '#673ab7' }, // Purple
+        'politics': { bg: '#ffebee', text: '#c62828' }, // Red
+        'society': { bg: '#eeeeee', text: '#616161' }, // Grey
+        'education': { bg: '#eeeeee', text: '#616161' }, // Grey
+        'general': { bg: '#eeeeee', text: '#616161' }, // Default Grey
+        'fact-check': { bg: '#e3f2fd', text: '#1565c0' }, // Blue for Fact-Check
+        'news-report': { bg: '#e3f2fd', text: '#1565c0' }, // Blue for News Report
+        'error': { bg: '#ffebee', text: '#c62828' } // Red for Errors
+    };
 
     // Function to create an article card HTML element
     function createArticleCard(article) {
         const articleCard = document.createElement('div');
         articleCard.classList.add('article-card');
-        // Use the new `id` for the URL
         const articlePageUrl = `/article/${article.id}`;
 
-        // Determine category class for styling
-        const categoryClass = article.category ? article.category.toLowerCase().replace(' ', '-') : 'general';
+        // Determine category class and colors for styling
+        let categoryText = article.category || 'General';
+        let categoryKey = categoryText.toLowerCase().replace(' ', '-');
+        // Handle specific category names from backend if they don't directly map
+        if (categoryKey === 'news-report') categoryKey = 'news-report';
+        if (categoryKey === 'fact-check') categoryKey = 'fact-check';
+        if (categoryKey === 'error') categoryKey = 'error';
+
+        const colors = categoryColors[categoryKey] || categoryColors['general'];
+
+        // Apply inline styles for tag colors
+        const tagStyle = `background-color: ${colors.bg}; color: ${colors.text};`;
 
         articleCard.innerHTML = `
-            <span class="article-card-category-tag ${categoryClass}">${article.category || 'General'}</span>
+            <span class="article-card-category-tag ${categoryKey}" style="${tagStyle}">${categoryText}</span>
             <h3>${article.title}</h3>
             <p>${article.summary}</p>
         `;
         // Add click listener to the entire card
         articleCard.addEventListener('click', (event) => {
-            // Navigate to the full article page
             window.location.href = articlePageUrl;
         });
         return articleCard;
@@ -30,115 +62,130 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to render a section of articles
     function renderArticleSection(container, title, articles, sectionId) {
+        console.log(`feed.js: Rendering section: ${title}. Articles received:`, articles.map(a => a.id + ' | ' + a.title));
         const sectionDiv = document.createElement('div');
         sectionDiv.classList.add('feed-section');
 
         const headerHtml = `
             <div class="page-header">
                 <h1>${title}</h1>
-                ${articles.length > INITIAL_DISPLAY_COUNT ? `<a href="#" class="more-link" data-section-id="${sectionId}">More <i class="fas fa-arrow-right"></i></a>` : ''}
+                <a href="#" class="more-link" data-section-id="${sectionId}">More</a>
             </div>
         `;
         sectionDiv.innerHTML = headerHtml + `<div class="article-grid" id="${sectionId}-grid"></div>`;
         const articleGrid = sectionDiv.querySelector('.article-grid');
+        const moreLink = sectionDiv.querySelector(`.more-link[data-section-id="${sectionId}"]`);
 
         if (articles && articles.length > 0) {
-            // Display only the initial count
-            articles.slice(0, INITIAL_DISPLAY_COUNT).forEach(article => {
+            // Display only the initial count (4 articles)
+            console.log(`feed.js: Displaying initial ${INITIAL_DISPLAY_COUNT} articles for ${title}.`);
+            articles.slice(0, INITIAL_DISPLAY_COUNT).forEach((article, index) => {
+                console.log(`feed.js: Adding initial article ${index + 1}: ${article.id} - ${article.title}`);
                 articleGrid.appendChild(createArticleCard(article));
             });
 
-            // If there are more articles than initial display, add click handler to "More" link
-            if (articles.length > INITIAL_DISPLAY_COUNT) {
-                const moreLink = sectionDiv.querySelector(`.more-link[data-section-id="${sectionId}"]`);
-                if (moreLink) {
+            // "More" button functionality
+            if (moreLink) {
+                if (articles.length > INITIAL_DISPLAY_COUNT) {
+                    moreLink.style.display = 'inline-block'; // Ensure it's visible
                     moreLink.addEventListener('click', (event) => {
                         event.preventDefault(); // Prevent default link behavior
                         articleGrid.innerHTML = ''; // Clear current display
-                        articles.forEach(article => {
+
+                        // Display up to MAX_DISPLAY_COUNT_ON_MORE articles
+                        console.log(`feed.js: Displaying up to ${MAX_DISPLAY_COUNT_ON_MORE} articles for ${title} on 'More' click.`);
+                        articles.slice(0, MAX_DISPLAY_COUNT_ON_MORE).forEach((article, index) => {
+                            console.log(`feed.js: Adding 'More' article ${index + 1}: ${article.id} - ${article.title}`);
                             articleGrid.appendChild(createArticleCard(article));
                         });
-                        moreLink.style.display = 'none'; // Hide link after showing all
+                        // Hide the "More" link if all 12 are shown or if there are no more
+                        if (articles.length <= MAX_DISPLAY_COUNT_ON_MORE) {
+                            moreLink.style.display = 'none';
+                        }
                     });
+                } else {
+                    moreLink.style.display = 'none'; // Hide if there are 4 or fewer articles
                 }
             }
 
         } else {
             articleGrid.innerHTML = '<p class="info-message">No articles found for this section.</p>';
+            if (moreLink) moreLink.style.display = 'none'; // Hide "More" if no articles
         }
         container.appendChild(sectionDiv);
     }
 
-    async function fetchFeedArticles() {
-        loadingIndicator.style.display = 'inline-block';
-        refreshFeedBtn.disabled = true;
-        articlesContainer.innerHTML = '<p class="info-message">Loading news articles...</p>'; // Use info-message class
+    async function fetchFeedArticles(isRefreshClick = false) {
+        console.log('feed.js: fetchFeedArticles called. isRefreshClick:', isRefreshClick);
+        if (loadingIndicator) loadingIndicator.style.display = 'inline-block';
+        if (refreshFeedBtn) refreshFeedBtn.disabled = true;
+        if (articlesContainer) articlesContainer.innerHTML = '<p class="info-message">Loading news articles...</p>';
 
         const useOwnApiKey = localStorage.getItem('useOwnApiKey') === 'true';
         let headers = {};
+        let urlParams = '';
+
+        if (isRefreshClick) {
+            urlParams = '?refresh=true'; // Add refresh parameter for explicit button clicks
+        }
+
         if (useOwnApiKey) {
             const userNewsApiKey = sessionStorage.getItem('userNewsApiKey');
             const userGeminiApiKey = sessionStorage.getItem('userGeminiApiKey');
 
             if (!userNewsApiKey || !userGeminiApiKey) {
-                window.showApiKeyPopup();
-                loadingIndicator.style.display = 'none';
-                refreshFeedBtn.disabled = false;
-                articlesContainer.innerHTML = '<p class="error-message">Please enter both NewsAPI and Gemini API Keys to fetch articles.</p>';
+                console.warn('feed.js: API keys missing for user-provided mode. Showing popup.');
+                window.showApiKeyPopup(); // Assuming this function exists in main.js
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+                if (refreshFeedBtn) refreshFeedBtn.disabled = false;
+                if (articlesContainer) articlesContainer.innerHTML = '<p class="error-message">Please enter both NewsAPI and Gemini API Keys to fetch articles.</p>';
                 return;
             }
             headers['X-User-News-API-Key'] = userNewsApiKey;
             headers['X-User-Gemini-API-Key'] = userGeminiApiKey;
+            console.log('feed.js: Using user-provided API keys from session storage.');
+        } else {
+            console.log('feed.js: Using default API keys (from backend environment variables).');
         }
 
         try {
-            const response = await fetch('/api/get_feed_articles', { headers: headers });
+            console.log(`feed.js: Attempting to fetch /api/get_feed_articles${urlParams}...`);
+            const response = await fetch(`/api/get_feed_articles${urlParams}`, { headers: headers });
+            
+            console.log('feed.js: Response status:', response.status);
             if (!response.ok) {
                 const errorData = await response.json();
+                console.error('feed.js: API response error:', errorData);
                 if (response.status === 401) {
                     window.showApiKeyPopup();
-                    articlesContainer.innerHTML = '<p class="error-message">API keys are missing or invalid. Please enter them to fetch articles.</p>';
+                    if (articlesContainer) articlesContainer.innerHTML = '<p class="error-message">API keys are missing or invalid. Please enter them to fetch articles.</p>';
                 } else {
                     throw new Error(`HTTP error! status: ${response.status} - ${errorData.message || response.statusText}`);
                 }
             }
             const data = await response.json();
+            console.log('feed.js: API data received:', data);
 
-            articlesContainer.innerHTML = ''; // Clear "Loading..." message
+            if (articlesContainer) articlesContainer.innerHTML = ''; // Clear "Loading..." message
 
             renderArticleSection(articlesContainer, 'Latest News', data.latest_news, 'latest-news');
             renderArticleSection(articlesContainer, 'General Misconceptions', data.general_misconceptions, 'misconceptions');
             renderArticleSection(articlesContainer, 'Important Issues', data.important_issues, 'issues');
 
-            // No save buttons on feed cards in mockup, so this listener might be removed or moved to full article page
-            // For now, keeping it as a functional fallback if you still want it.
-            document.querySelectorAll('.save-article-btn').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    event.stopPropagation(); // Prevent card click from firing
-                    const articleToSave = JSON.parse(event.target.dataset.article);
-                    let savedArticles = JSON.parse(localStorage.getItem('savedArticles') || '[]');
-                    if (!savedArticles.some(a => a.id === articleToSave.id)) {
-                        savedArticles.push(articleToSave);
-                        localStorage.setItem('savedArticles', JSON.stringify(savedArticles));
-                        alert('Article saved successfully!');
-                    } else {
-                        alert('Article already saved!');
-                    }
-                });
-            });
-
         } catch (error) {
-            console.error('Error fetching feed articles:', error);
-            articlesContainer.innerHTML = `<p class="error-message">Failed to load articles: ${error.message}. Please try again.</p>`;
+            console.error('feed.js: Error fetching feed articles:', error);
+            if (articlesContainer) articlesContainer.innerHTML = `<p class="error-message">Failed to load articles: ${error.message}. Please try again.</p>`;
         } finally {
-            loadingIndicator.style.display = 'none';
-            refreshFeedBtn.disabled = false;
+            if (loadingIndicator) loadingIndicator.style.display = 'none';
+            if (refreshFeedBtn) refreshFeedBtn.disabled = false;
+            console.log('feed.js: fetchFeedArticles finished.');
         }
     }
 
     if (refreshFeedBtn) {
-        refreshFeedBtn.addEventListener('click', fetchFeedArticles);
+        refreshFeedBtn.addEventListener('click', () => fetchFeedArticles(true)); // Pass true for refresh click
     }
 
-    fetchFeedArticles();
+    // Initial load of articles when the page loads
+    fetchFeedArticles(false); // Pass false for initial load
 });

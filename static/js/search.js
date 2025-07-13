@@ -6,22 +6,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function createSearchResultCard(article) {
         const articleCard = document.createElement('div');
-        articleCard.classList.add('article-card'); // Re-using feed article card styles
+        articleCard.classList.add('article-card');
         const articlePageUrl = `/article/${article.id}`;
 
-        // Determine category class for styling
-        // For search results, category might be 'News' or 'General' (Fact-Check)
         let categoryText = article.category || 'General';
         let categoryClass = categoryText.toLowerCase().replace(' ', '-');
-        if (categoryText === 'News Report') categoryClass = 'news'; // Specific class for news search
-        if (categoryText === 'Fact-Check') categoryClass = 'fact-check'; // Specific class for general search
+        if (categoryText === 'News Report') categoryClass = 'news';
+        if (categoryText === 'Fact-Check') categoryClass = 'fact-check';
 
         articleCard.innerHTML = `
             <span class="article-card-category-tag ${categoryClass}">${categoryText}</span>
             <h3>${article.title}</h3>
             <p>${article.summary}</p>
         `;
-        // Add click listener to the entire card
         articleCard.addEventListener('click', (event) => {
             window.location.href = articlePageUrl;
         });
@@ -37,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         loadingIndicator.style.display = 'inline-block';
         searchButton.disabled = true;
-        searchResultsContainer.innerHTML = ''; // Clear previous results
+        searchResultsContainer.innerHTML = '';
 
         const useOwnApiKey = localStorage.getItem('useOwnApiKey') === 'true';
         let headers = {};
@@ -70,9 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (data.results && data.results.length > 0) {
-                const article = data.results[0]; // Expecting one main result for search
+                const article = data.results[0];
                 const searchResultSection = document.createElement('div');
-                searchResultSection.classList.add('feed-section'); // Re-using styling for sections
+                searchResultSection.classList.add('feed-section');
                 searchResultSection.innerHTML = `
                     <div class="page-header">
                         <h1>Search Result for "${query}"</h1>

@@ -9,11 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (theme === 'dark') {
             body.classList.add('dark-theme');
             body.classList.remove('light-theme');
-            darkThemeRadio.checked = true;
+            if (darkThemeRadio) darkThemeRadio.checked = true;
         } else {
             body.classList.add('light-theme');
             body.classList.remove('dark-theme');
-            lightThemeRadio.checked = true;
+            if (lightThemeRadio) lightThemeRadio.checked = true;
         }
         localStorage.setItem('theme', theme); // Save preference
     }
@@ -31,26 +31,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Profile Modal Logic ---
-    const profileIcon = document.getElementById('profile-icon');
+    const profileIcon = document.querySelector('.profile-pic-container .profile-pic'); // Select the image directly
     const profileModal = document.getElementById('profile-modal');
     const profileCloseBtn = document.getElementById('profile-close-btn');
 
     if (profileIcon) {
         profileIcon.addEventListener('click', () => {
-            profileModal.style.display = 'flex'; // Use flex to center
-            // Load current API key settings here if they were previously saved in session/local storage
-            const useOwnApiKeyToggle = document.getElementById('use-own-api-key-toggle');
-            const newsApiKeyInputContainer = document.getElementById('news-api-key-input-container');
-            const newsApiKeyInput = document.getElementById('news-api-key-input');
+            if (profileModal) {
+                profileModal.style.display = 'flex'; // Use flex to center
+                // Load current API key settings here if they were previously saved in session/local storage
+                const useOwnApiKeyToggle = document.getElementById('use-own-api-key-toggle');
+                const newsApiKeyInputContainer = document.getElementById('news-api-key-input-container');
+                const newsApiKeyInput = document.getElementById('news-api-key-input');
+                const geminiApiKeyInput = document.getElementById('gemini-api-key-input'); // Assuming you'll add this input
 
-            const useOwnKey = localStorage.getItem('useOwnApiKey') === 'true';
-            useOwnApiKeyToggle.checked = useOwnKey;
-            newsApiKeyInputContainer.style.display = useOwnKey ? 'block' : 'none';
+                const useOwnKey = localStorage.getItem('useOwnApiKey') === 'true';
+                if (useOwnApiKeyToggle) useOwnApiKeyToggle.checked = useOwnKey;
+                if (newsApiKeyInputContainer) newsApiKeyInputContainer.style.display = useOwnKey ? 'block' : 'none';
 
-            if (useOwnKey) {
-                const ephemeralApiKey = sessionStorage.getItem('userNewsApiKey');
-                if (ephemeralApiKey) {
-                    newsApiKeyInput.value = ephemeralApiKey;
+                if (useOwnKey) {
+                    const userNewsApiKey = sessionStorage.getItem('userNewsApiKey');
+                    const userGeminiApiKey = sessionStorage.getItem('userGeminiApiKey');
+                    if (newsApiKeyInput) newsApiKeyInput.value = userNewsApiKey || '';
+                    if (geminiApiKeyInput) geminiApiKeyInput.value = userGeminiApiKey || '';
                 }
             }
         });
@@ -58,18 +61,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (profileCloseBtn) {
         profileCloseBtn.addEventListener('click', () => {
-            profileModal.style.display = 'none';
+            if (profileModal) profileModal.style.display = 'none';
         });
     }
 
     // Close modal if clicking outside
     window.addEventListener('click', (event) => {
-        if (event.target === profileModal) {
+        if (profileModal && event.target === profileModal) {
             profileModal.style.display = 'none';
         }
-        // Also close API key popup if clicking outside
         const apiKeyPopup = document.getElementById('api-key-popup');
-        if (event.target === apiKeyPopup) {
+        if (apiKeyPopup && event.target === apiKeyPopup) {
              apiKeyPopup.style.display = 'none';
         }
     });
@@ -78,37 +80,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const useOwnApiKeyToggle = document.getElementById('use-own-api-key-toggle');
     const newsApiKeyInputContainer = document.getElementById('news-api-key-input-container');
     const newsApiKeyInput = document.getElementById('news-api-key-input');
-    const saveNewsApiKeyBtn = document.getElementById('save-news-api-key-btn');
+    const geminiApiKeyInput = document.getElementById('gemini-api-key-input'); // New: Gemini API key input
+    const saveApiKeysBtn = document.getElementById('save-api-keys-btn'); // Renamed from saveNewsApiKeyBtn
 
     if (useOwnApiKeyToggle) {
         useOwnApiKeyToggle.addEventListener('change', () => {
             const isChecked = useOwnApiKeyToggle.checked;
-            newsApiKeyInputContainer.style.display = isChecked ? 'block' : 'none';
+            if (newsApiKeyInputContainer) newsApiKeyInputContainer.style.display = isChecked ? 'block' : 'none';
             localStorage.setItem('useOwnApiKey', isChecked); // Persist toggle state
 
             if (!isChecked) {
                 sessionStorage.removeItem('userNewsApiKey'); // Clear ephemeral key if toggle off
-                newsApiKeyInput.value = '';
+                sessionStorage.removeItem('userGeminiApiKey'); // Clear Gemini key
+                if (newsApiKeyInput) newsApiKeyInput.value = '';
+                if (geminiApiKeyInput) geminiApiKeyInput.value = '';
             }
         });
     }
 
-    if (saveNewsApiKeyBtn) {
-        saveNewsApiKeyBtn.addEventListener('click', () => {
-            const key = newsApiKeyInput.value.trim();
-            if (key) {
-                sessionStorage.setItem('userNewsApiKey', key);
-                alert('NewsAPI Key saved for this session!');
-                profileModal.style.display = 'none'; // Close modal after saving
+    if (saveApiKeysBtn) { // Use the renamed button
+        saveApiKeysBtn.addEventListener('click', () => {
+            const newsKey = newsApiKeyInput ? newsApiKeyInput.value.trim() : '';
+            const geminiKey = geminiApiKeyInput ? geminiApiKeyInput.value.trim() : '';
+
+            if (newsKey || geminiKey) { // Allow saving even if only one is provided
+                if (newsKey) sessionStorage.setItem('userNewsApiKey', newsKey);
+                if (geminiKey) sessionStorage.setItem('userGeminiApiKey', geminiKey);
+                alert('API Key(s) saved for this session!');
+                if (profileModal) profileModal.style.display = 'none'; // Close modal after saving
             } else {
-                alert('Please enter a valid NewsAPI Key.');
+                alert('Please enter at least one API Key.');
             }
         });
     }
 
     // --- API Key Input Pop-up Logic (for when a key is required) ---
-    // This pop-up will be shown by specific page scripts (feed.js, search.js, learn.js)
-    // when an API call fails due to a missing user-provided key.
     const apiKeyPopup = document.getElementById('api-key-popup');
     const submitApiKeysBtn = document.getElementById('submit-api-keys-btn');
     const popupNewsApiKeyInput = document.getElementById('popup-news-api-key');
@@ -116,16 +122,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to show the API Key Pop-up
     window.showApiKeyPopup = function() {
-        apiKeyPopup.style.display = 'flex';
-        // Pre-fill if keys were in session storage from a previous submission
-        popupNewsApiKeyInput.value = sessionStorage.getItem('userNewsApiKey') || '';
-        popupGeminiApiKeyInput.value = sessionStorage.getItem('userGeminiApiKey') || ''; // Assuming a Gemini key option for user later
+        if (apiKeyPopup) {
+            apiKeyPopup.style.display = 'flex';
+            // Pre-fill if keys were in session storage from a previous submission
+            if (popupNewsApiKeyInput) popupNewsApiKeyInput.value = sessionStorage.getItem('userNewsApiKey') || '';
+            if (popupGeminiApiKeyInput) popupGeminiApiKeyInput.value = sessionStorage.getItem('userGeminiApiKey') || '';
+        }
     };
 
     if (submitApiKeysBtn) {
         submitApiKeysBtn.addEventListener('click', () => {
-            const newsKey = popupNewsApiKeyInput.value.trim();
-            const geminiKey = popupGeminiApiKeyInput.value.trim(); // Even if not used yet, for future proofing
+            const newsKey = popupNewsApiKeyInput ? popupNewsApiKeyInput.value.trim() : '';
+            const geminiKey = popupGeminiApiKeyInput ? popupGeminiApiKeyInput.value.trim() : '';
 
             let keysProvided = 0;
             if (newsKey) {
@@ -139,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (keysProvided > 0) {
                 alert('API Key(s) saved for this session! Please try your action again.');
-                apiKeyPopup.style.display = 'none';
+                if (apiKeyPopup) apiKeyPopup.style.display = 'none';
                 // You might want to trigger a refresh of the page/content here
                 // depending on where this popup was triggered from.
             } else {
@@ -148,26 +156,35 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Navigation Active State ---
-    const currentPath = window.location.pathname;
-    const navLinks = document.querySelectorAll('.main-nav a');
+    // --- Navigation Active State and Underline ---
+    const navLinks = document.querySelectorAll('.main-nav ul li a');
+    const navUnderline = document.querySelector('.main-nav a.active::after'); // This won't work directly in JS for pseudo-elements
 
+    function updateNavActiveState() {
+        const currentPath = window.location.pathname.replace(/\/$/, ''); // Remove trailing slash
+        navLinks.forEach(link => {
+            const linkPath = link.getAttribute('href').replace(/\/$/, ''); // Remove trailing slash
+            link.classList.remove('active'); // Remove active from all first
+
+            // Check for exact match or special home path
+            if (currentPath === linkPath || (linkPath === '/' && currentPath === '')) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // Call on load
+    updateNavActiveState();
+
+    // Add hover effects for navigation
     navLinks.forEach(link => {
-        // Remove trailing slashes for consistent comparison
-        const linkPath = link.getAttribute('href').replace(/\/$/, '');
-        const cleanedCurrentPath = currentPath.replace(/\/$/, '');
-
-        // Special handling for the root path '/' and other paths
-        if (cleanedCurrentPath === linkPath ||
-            (linkPath === '' && cleanedCurrentPath === '/') || // Match '/' to 'home'
-            (linkPath === '/feed' && cleanedCurrentPath === '/feed') || // Match /feed
-            (linkPath === '/search' && cleanedCurrentPath === '/search') || // Match /search
-            (linkPath === '/learn' && cleanedCurrentPath === '/learn') // Match /learn
-           ) {
-            link.classList.add('active');
-        } else if (linkPath === '/' && cleanedCurrentPath === '') { // Handles root path when it's just the domain
-            link.classList.add('active');
-        }
+        link.addEventListener('mouseenter', () => {
+            // No direct JS manipulation for :hover pseudo-elements
+            // CSS handles this with :not(.active):hover::after
+        });
+        link.addEventListener('mouseleave', () => {
+            // No direct JS manipulation needed
+        });
     });
 
     // Default profile image (create this image in static/img/)

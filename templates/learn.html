@@ -108,5 +108,9 @@
 {% endblock %}
 
 {% block scripts %}
+{# Define a global JS variable for the bot avatar URL, processed by Jinja2 here #}
+<script>
+    const BOT_AVATAR_URL = "{{ url_for('static', filename='img/logo.jpg') }}";
+</script>
 <script src="{{ url_for('static', filename='js/learn.js') }}"></script>
 {% endblock %}

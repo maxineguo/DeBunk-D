@@ -3,31 +3,28 @@
 {% block content %}
 <div class="home-page">
     <h1 class="page-main-title">Welcome Back!</h1>
-    <p class="page-main-subtitle">Your personalized dashboard to stay informed and track your learning journey.</p>
+    <p class="page-main-subtitle">Continue reading your bookmarked articles and track your progress.</p>
 
-    <section class="home-section">
-        <div class="page-header">
-            <h1>Your Saved Articles</h1>
-            <a href="#" class="more-link">View All Saved <i class="fas fa-arrow-right"></i></a>
-        </div>
-        <p>Continue reading your bookmarked articles and track your progress.</p>
-        <div id="saved-articles-grid" class="article-grid">
-            <!-- Saved articles will be loaded here by JavaScript -->
-            <p class="info-message">No articles saved yet. Start saving from the <a href="{{ url_for('feed') }}">Feed</a> or <a href="{{ url_for('search') }}">Search</a> pages!</p>
-        </div>
-    </section>
+    <h2 class="home-section-title">
+        <img src="{{ url_for('static', filename='img/bookmark.png') }}" alt="Bookmark Icon" class="icon">
+        Your Bookmarked Articles
+    </h2>
+    <div id="saved-articles-grid" class="article-grid">
+        <!-- Saved articles will be loaded here by JavaScript -->
+    </div>
+    <div id="no-articles-message" class="no-articles-card" style="display: none;">
+        <p>No articles saved yet. Start saving from your feed or by searching!</p>
+    </div>
+    <div class="view-all-btn-container">
+        <a href="#" id="view-all-saved-btn" class="view-all-btn" style="display: none;">View All Saved</a>
+    </div>
 
-    <section class="home-section">
-        <div class="page-header">
-            <h1>Learn Tab Reading Progress</h1>
-            <a href="{{ url_for('learn') }}" class="more-link">Go to Learn Tab <i class="fas fa-arrow-right"></i></a>
-        </div>
-        <p>Track your progress through educational articles in the Learn tab.</p>
-        <div class="progress-container">
-            <div id="learn-progress-bar" class="progress-bar" style="width: 0%;"></div>
-        </div>
-        <div id="learn-progress-text" class="progress-text">0% Complete</div>
-    </section>
+    <h2 class="home-section-title">Your Learning Progress</h2>
+    <div class="progress-bar-container">
+        <div id="learning-progress-fill" class="progress-bar-fill"></div>
+        <span id="learning-progress-percentage" class="progress-percentage">0%</span>
+    </div>
+
 </div>
 {% endblock %}
 

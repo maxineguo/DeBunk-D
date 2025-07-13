@@ -11,22 +11,28 @@
 </head>
 <body>
     <header>
-        <div class="container">
-            <a href="/" class="logo">
-                <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="DeBunk'D Logo">
+        <div class="header-top-row container"> {# New container for logo and profile #}
+            <a href="{{ url_for('home') }}" class="logo-link">
+                <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="DeBunk'D Logo" class="logo-img">
+                <span class="logo-text">DeBunk'D</span>
             </a>
-            <nav>
-                <ul>
-                    <li><a href="{{ url_for('home') }}" class="{% if request.endpoint == 'home' %}active{% endif %}">Home</a></li>
-                    <li><a href="{{ url_for('feed') }}" class="{% if request.endpoint == 'feed' %}active{% endif %}">Feed</a></li>
-                    <li><a href="{{ url_for('search') }}" class="{% if request.endpoint == 'search' %}active{% endif %}">Search</a></li>
-                    <li><a href="{{ url_for('learn') }}" class="{% if request.endpoint == 'learn' %}active{% endif %}">Learn</a></li>
-                </ul>
-            </nav>
             <div class="profile-pic-container">
-                <img src="{{ url_for('static', filename='img/default_profile.jpeg') }}" alt="Profile Picture">
+                <img src="{{ url_for('static', filename='img/default_profile.jpeg') }}" alt="Profile Picture" class="profile-pic">
             </div>
         </div>
+        <div class="header-divider"></div> {# Grey line separating top row from nav #}
+        <div class="header-nav-row container"> {# New container for navigation #}
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('home') }}">Home</a></li>
+                    <li><a href="{{ url_for('feed') }}">Feed</a></li>
+                    <li><a href="{{ url_for('search') }}">Search</a></li>
+                    <li><a href="{{ url_for('learn') }}">Learn</a></li>
+                </ul>
+                {# The nav-underline-container is no longer needed as ::after handles it #}
+            </nav>
+        </div>
+        <div class="header-divider bottom-divider"></div> {# Grey line below nav #}
     </header>
 
     <main class="container">
