@@ -182,15 +182,18 @@ main.container {
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 10px;
-    padding: 20px;
+    padding: 20px 15px; /* Increased vertical padding, kept horizontal */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
     text-align: center;
     color: #555;
     font-style: italic;
-    min-height: 150px; /* Give it a similar height to an article card */
+    min-height: 120px; /* Made taller */
+    max-width: 280px; /* Made skinnier horizontally */
+    margin: 20px 0 20px 0; /* Aligned to the left */
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 0.9em; /* Slightly smaller text */
 }
 
 .view-all-btn-container {
@@ -233,7 +236,7 @@ main.container {
 .progress-bar-fill {
     height: 100%;
     width: 0%; /* Will be set by JS */
-    background-color: #007bff; /* Blue color */
+    background-color: #4285F4; /* Lighter, bluer blue (Google Blue) for progress bar */
     border-radius: 10px;
     transition: width 0.5s ease-in-out;
 }
@@ -244,6 +247,14 @@ main.container {
     color: #333; /* Dark text for percentage */
     font-weight: bold;
     font-size: 0.9em;
+}
+
+.encouraging-message {
+    text-align: center;
+    margin-top: 15px; /* Space below progress bar */
+    font-size: 1em;
+    color: #666;
+    font-style: italic;
 }
 
 
@@ -747,16 +758,110 @@ main.container {
 
 /* Footer Styles */
 footer {
-    background-color: #333;
+    background-color: #012a46; /* Navy blue for footer background */
     color: #fff;
     text-align: center;
-    padding: 20px 0;
+    padding: 15px 0; /* Adjusted padding to make content skinnier */
     margin-top: 40px;
+    position: fixed; /* Keep it at the bottom */
+    bottom: 0; /* Align to the bottom */
+    width: 100%; /* Full width */
+    z-index: 999; /* Ensure it's above main content but below header */
 }
+
+footer p {
+    max-width: 600px; /* Limit width of the text */
+    margin: 0 auto; /* Center the text within the footer */
+    padding: 0 20px; /* Add horizontal padding to the text itself */
+}
+
+/* Search Page Specific Styles */
+.search-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items horizontally */
+    margin-top: 50px; /* Space from header */
+    padding: 0 20px; /* Add some horizontal padding for responsiveness */
+    flex-grow: 1; /* Allow search page content to take available space */
+}
+
+.search-page .page-main-title {
+    margin-bottom: 10px; /* Space between title and subtitle */
+}
+
+.search-page .page-main-subtitle {
+    margin-bottom: 40px; /* Space between subtitle and search bar */
+}
+
+.search-input-container {
+    display: flex; /* Use flexbox for input and button */
+    align-items: center; /* Vertically align items in the middle */
+    width: 100%;
+    max-width: 950px; /* Made even wider */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px; /* Changed to rounded rectangle */
+    padding: 5px 20px; /* Reduced vertical padding (shorter) */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    position: relative; /* For positioning the search icon */
+    height: 40px; /* Made even shorter */
+    margin-bottom: 40px; /* Space below search bar */
+}
+
+.search-input {
+    flex-grow: 1; /* Allow input to take up available space */
+    border: none; /* Remove default input border */
+    outline: none; /* Remove outline on focus */
+    padding: 0 10px 0 40px; /* Adjust padding for icon, then text, then button */
+    font-size: 1.1em; /* Bigger font size */
+    background-color: transparent; /* Transparent background */
+    height: 100%; /* Fill height of container */
+}
+
+/* Icon inside the search input */
+.search-input-container::before {
+    content: url('/static/img/search-icon.png');
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%) translateY(-8px); /* Moved up by 8px */
+    width: 20px; /* Adjust icon size */
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+
+.search-button {
+    background-color: #FF5722; /* Orange button */
+    color: white;
+    border: none;
+    border-radius: 6px; /* Changed to rounded rectangle */
+    padding: 6px 25px; /* Adjusted padding for shorter button */
+    font-size: 1.1em; /* Bigger font size */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0; /* Prevent button from shrinking */
+    margin-left: 10px; /* Space between input and button */
+}
+
+.search-button:hover {
+    background-color: #E64A19; /* Darker orange on hover */
+}
+
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-    .header-container { /* This might need adjustment if it's still used */
+    body {
+        padding-bottom: 60px; /* Add padding to body for fixed footer on small screens */
+    }
+
+    footer {
+        padding: 10px 0; /* Smaller padding for footer on mobile */
+    }
+
+    .header-container {
         flex-direction: column;
         text-align: center;
     }
@@ -800,5 +905,27 @@ footer {
 
     .feed-section h1 {
         font-size: 1.5em;
+    }
+
+    .search-input-container {
+        flex-direction: column; /* Stack input and button on small screens */
+        height: auto; /* Auto height for stacked elements */
+        padding: 15px;
+        border-radius: 10px; /* Less rounded for small screens */
+    }
+
+    .search-input {
+        width: 100%;
+        margin-bottom: 10px; /* Space between input and button */
+        padding: 10px; /* Adjust padding for smaller screens */
+    }
+
+    .search-input-container::before {
+        left: 10px; /* Adjust icon position */
+    }
+
+    .search-button {
+        width: 100%;
+        margin-left: 0; /* Remove left margin when stacked */
     }
 }
