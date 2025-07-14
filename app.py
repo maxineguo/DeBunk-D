@@ -523,6 +523,10 @@ def get_feed_articles_api():
             worker_state["user_requested_more"] = True
             print(f"DEBUG: get_feed_articles_api: User requested refresh. Setting user_requested_more=True.")
 
+    # IMPORTANT: Add the initial_generation_complete status to the response
+    with worker_state_lock:
+        response_data["initial_generation_complete"] = worker_state["initial_generation_complete"]
+
     print("DEBUG: Serving feed articles from cache. Background worker will handle generation.")
     return jsonify(response_data)
 

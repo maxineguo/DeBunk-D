@@ -117,6 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchFeedArticles(isRefreshClick = false) {
         console.log('feed.js: fetchFeedArticles called. isRefreshClick:', isRefreshClick);
+        
+        // Always show loading indicator and message when fetching
         if (loadingIndicator) loadingIndicator.style.display = 'inline-block';
         if (refreshFeedBtn) refreshFeedBtn.disabled = true;
         if (articlesContainer) articlesContainer.innerHTML = '<p class="info-message">Loading news articles...</p>';
@@ -166,6 +168,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             console.log('feed.js: API data received:', data);
 
+            // --- Polling Logic Added Here ---
+            if (!data.initial_generation_complete) {
+                console.log('feed.js: Initial generation not complete. Polling again in 2 seconds...');
+                // Keep loading message visible
+                setTimeout(() => fetchFeedArticles(isRefreshClick), 2000); // Poll every 2 seconds
+                return; // Exit this function call
+            }
+            // --- End Polling Logic ---
+
+            // If initial generation is complete, proceed to render
             if (articlesContainer) articlesContainer.innerHTML = ''; // Clear "Loading..." message
 
             renderArticleSection(articlesContainer, 'Latest News', data.latest_news, 'latest-news');
@@ -176,8 +188,12 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('feed.js: Error fetching feed articles:', error);
             if (articlesContainer) articlesContainer.innerHTML = `<p class="error-message">Failed to load articles: ${error.message}. Please try again.</p>`;
         } finally {
-            if (loadingIndicator) loadingIndicator.style.display = 'none';
-            if (refreshFeedBtn) refreshFeedBtn.disabled = false;
+            // Only hide loading indicator and enable button if initial generation is complete
+            // This ensures the loading state persists during polling
+            if (data && data.initial_generation_complete) {
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+                if (refreshFeedBtn) refreshFeedBtn.disabled = false;
+            }
             console.log('feed.js: fetchFeedArticles finished.');
         }
     }
