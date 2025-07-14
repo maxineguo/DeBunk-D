@@ -94,7 +94,7 @@ last_429_error_time = 0
 BACKOFF_DURATION_ON_429 = 60 # 5 minutes in seconds, can be increased if needed
 
 def background_article_generation_worker(gemini_key, news_key):
-    global last_429_error_time
+    """global last_429_error_time
     print("DEBUG: Background article generation worker started.")
     
     while not stop_background_thread.is_set():
@@ -456,7 +456,7 @@ def background_article_generation_worker(gemini_key, news_key):
                 print(f"DEBUG: Background: Encountered 429. Initiating backoff for {BACKOFF_DURATION_ON_429} seconds.")
             time.sleep(10) # Short sleep on any error
 
-    print("DEBUG: Background article generation worker stopped.")
+    print("DEBUG: Background article generation worker stopped.")"""
 
 
 # --- Main Page Routes ---

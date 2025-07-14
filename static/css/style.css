@@ -756,24 +756,27 @@ main.container {
     background-color: #218838;
 }
 
-/* Footer Styles */
+/* Footer Styles (REMOVED) */
+/* I am removing the footer CSS rules entirely as requested */
+/*
 footer {
-    background-color: #012a46; /* Navy blue for footer background */
+    background-color: #012a46;
     color: #fff;
     text-align: center;
-    padding: 15px 0; /* Adjusted padding to make content skinnier */
+    padding: 15px 0;
     margin-top: 40px;
-    position: fixed; /* Keep it at the bottom */
-    bottom: 0; /* Align to the bottom */
-    width: 100%; /* Full width */
-    z-index: 999; /* Ensure it's above main content but below header */
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 999;
 }
 
 footer p {
-    max-width: 600px; /* Limit width of the text */
-    margin: 0 auto; /* Center the text within the footer */
-    padding: 0 20px; /* Add horizontal padding to the text itself */
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
+*/
 
 /* Search Page Specific Styles */
 .search-page {
@@ -797,14 +800,14 @@ footer p {
     display: flex; /* Use flexbox for input and button */
     align-items: center; /* Vertically align items in the middle */
     width: 100%;
-    max-width: 950px; /* Made even wider */
+    max-width: 900px; /* Made even wider as requested */
     background-color: #fff;
     border: 1px solid #ddd;
-    border-radius: 8px; /* Changed to rounded rectangle */
-    padding: 5px 20px; /* Reduced vertical padding (shorter) */
+    border-radius: 8px; /* Rounded rectangle as requested */
+    padding: 4px 20px; /* Reduced vertical padding (shorter) as requested */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
     position: relative; /* For positioning the search icon */
-    height: 40px; /* Made even shorter */
+    height: 45px; /* Made even shorter as requested */
     margin-bottom: 40px; /* Space below search bar */
 }
 
@@ -824,7 +827,7 @@ footer p {
     position: absolute;
     left: 15px;
     top: 50%;
-    transform: translateY(-50%) translateY(-8px); /* Moved up by 8px */
+    transform: translateY(-50%) translateY(-5px); /* Moved up by 10px as requested */
     width: 20px; /* Adjust icon size */
     height: 20px;
     background-size: contain;
@@ -833,12 +836,12 @@ footer p {
 
 
 .search-button {
-    background-color: #FF5722; /* Orange button */
+    background-color: #fb5718; /* New orange color as requested */
     color: white;
     border: none;
-    border-radius: 6px; /* Changed to rounded rectangle */
-    padding: 6px 25px; /* Adjusted padding for shorter button */
-    font-size: 1.1em; /* Bigger font size */
+    border-radius: 6px; /* Rounded rectangle as requested */
+    padding: 6px 10px; /* Reduced horizontal padding (less wide) as requested */
+    font-size: 1.1em; /* Keep text size */
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -854,11 +857,528 @@ footer p {
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     body {
-        padding-bottom: 60px; /* Add padding to body for fixed footer on small screens */
+        /* No padding-bottom needed for mobile as footer is removed */
+        padding-bottom: 0;
     }
 
+    /* Removed footer media query styles as footer is removed globally */
+    /*
     footer {
-        padding: 10px 0; /* Smaller padding for footer on mobile */
+        padding: 10px 0;
+    }
+    */
+
+    .header-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .main-nav ul {
+        flex-direction: column;
+        margin-top: 15px;
+    }
+
+    .main-nav li {
+        margin: 5px 0;
+    }
+
+    .profile-pic-container {
+        margin-top: 15px;
+    }
+
+    .article-grid {
+        grid-template-columns: 1fr; /* Stack cards on small screens */
+    }
+
+    .article-card {
+        padding: 15px;
+    }
+
+    .article-card h3 {
+        font-size: 1.1em;
+    }
+
+    .article-card p {
+        font-size: 0.85em;
+    }
+
+    .page-main-title {
+        font-size: 2em;
+    }
+
+    .page-main-subtitle {
+        font-size: 1em;
+    }
+
+    .feed-section h1 {
+        font-size: 1.5em;
+    }
+
+    .search-input-container {
+        flex-direction: column; /* Stack input and button on small screens */
+        height: auto; /* Auto height for stacked elements */
+        padding: 15px;
+        border-radius: 10px; /* Less rounded for small screens */
+    }
+
+    .search-input {
+        width: 100%;
+        margin-bottom: 10px; /* Space between input and button */
+        padding: 10px; /* Adjust padding for smaller screens */
+    }
+
+    .search-input-container::before {
+        left: 10px; /* Adjust icon position */
+    }
+
+    .search-button {
+        width: 100%;
+        margin-left: 0; /* Remove left margin when stacked */
+    }
+}
+
+.learn-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+    padding-top: 20px; /* Padding below header */
+    padding-bottom: 40px; /* Padding above bottom of page */
+}
+
+.tab-selection-container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px; /* Adjust as needed */
+    background-color: #f0f0f0; /* MODIFIED: Lighter grey background */
+    border-radius: 10px; /* Rounded corners for the grey box */
+    overflow: hidden; /* Ensures inner white box respects rounded corners */
+    margin-top: 30px; /* Space below subtitle */
+    height: 40px; /* Short and wide */
+    padding: 2px; /* MODIFIED: Less space between edge and active tab */
+    box-sizing: border-box; /* Include padding in width/height calculation */
+}
+
+.tab-item {
+    flex: 1; /* Each tab takes half the width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.95em; /* MODIFIED: Smaller font size */
+    font-weight: normal; /* MODIFIED: Not bold */
+    color: #666; /* MODIFIED: Grey text for inactive tabs */
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 8px; /* Rounded corners for individual tab items */
+    padding: 10px 0; /* Vertical padding for content inside tab */
+}
+
+.tab-item.active {
+    background-color: #fff; /* White box for active tab */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for active tab */
+    color: #333; /* MODIFIED: Black text for active tab */
+}
+
+/* MODIFIED: Made tab icons wider */
+.tab-icon {
+    width: 45px; /* Increased width for tab icons */
+    height: 24px; /* Kept height, aspect ratio might change slightly or adjust as needed */
+    margin-right: 8px; /* Space between icon and text */
+}
+
+/* Chatbot Container (Main Big Box) */
+.chatbot-container {
+    width: 100%;
+    max-width: 1200px; /* Same width as tab container */
+    background-color: #fff; /* White interior */
+    border: 1px solid #ccc; /* Grey outline */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    margin-top: 20px; /* Space below tab selection */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Ensures inner content respects border-radius */
+}
+
+/* MODIFIED: Chatbot Header Info (Orange Bar) - Added justify-content for clear button */
+.chatbot-header-info {
+    display: flex;
+    align-items: center;
+    background-color: #FFDDC1; /* Light orange */
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd; /* Subtle line at bottom of header */
+    justify-content: space-between; /* ADDED: Distributes space between items */
+}
+
+.robot-profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Circular */
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.chatbot-header-info .header-text {
+    display: flex;
+    flex-direction: column;
+    /* ADDED: Allow header text to take available space, pushing clear button right */
+    flex-grow: 1;
+}
+
+.chatbot-header-info .bold-text {
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.chatbot-header-info .grey-text {
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* REMOVED: .chat-clear-button-container rule as it's no longer in HTML */
+/*
+.chat-clear-button-container {
+    padding: 10px 20px;
+    text-align: right;
+    background-color: #fff;
+}
+*/
+
+.clear-chat-btn {
+    background-color: #fff; /* White interior */
+    border: 1px solid #ccc; /* Grey outline */
+    color: #333; /* Black text */
+    padding: 8px 15px;
+    border-radius: 20px; /* Rounded corners */
+    cursor: pointer;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    /* ADDED: Ensure it doesn't shrink and has proper margin */
+    flex-shrink: 0;
+    margin-left: 15px; /* Space between header text and button */
+}
+
+.clear-chat-btn:hover {
+    background-color: #f0f0f0;
+    border-color: #999;
+}
+
+.clear-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+}
+
+.chat-divider {
+    height: 1px;
+    background-color: #ccc; /* Grey line */
+    width: calc(100% - 40px); /* Span most of the width with side margins */
+    margin: 0 auto; /* Center the divider */
+}
+
+/* MODIFIED: Chat Messages Area - Increased max-height for more blank space */
+.chat-messages {
+    flex-grow: 1; /* Allows chat area to expand */
+    padding: 20px;
+    overflow-y: auto; /* Enable scrolling for messages */
+    height: 275px; /* Increased height for more blank space */
+    max-height: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between messages */
+    background-color: #f9f9f9; /* Slightly off-white for chat background */
+}
+
+.message-bubble {
+    display: flex;
+    align-items: flex-start; /* Align content to top of bubble */
+    max-width: 80%; /* Limit bubble width */
+}
+
+.message-profile-pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.message-content {
+    padding: 10px 15px;
+    border-radius: 15px; /* Rounded corners for bubbles */
+    word-wrap: break-word; /* Ensure long words wrap */
+}
+
+.bot-message {
+    justify-content: flex-start; /* Align bot message to left */
+}
+
+.bot-message .message-profile-pic {
+    margin-right: 10px;
+}
+
+.bot-content {
+    background-color: #e0e0e0; /* Grey background for bot message */
+    color: #333; /* Black text */
+}
+
+.user-message {
+    justify-content: flex-end; /* Align user message to right */
+    margin-left: auto; /* Push user message to the right */
+}
+
+.user-message .message-profile-pic {
+    order: 2; /* Move profile pic to the right of the message */
+    margin-left: 10px;
+}
+
+.user-content {
+    background-color: #007bff; /* Blue background for user message */
+    color: #fff; /* White text */
+    order: 1; /* Ensure message content comes before profile pic */
+}
+
+/* Chat Input Area */
+.chat-input-area {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #fff; /* White background */
+    border-top: 1px solid #ddd; /* Subtle line above input area */
+}
+
+#chat-input {
+    flex-grow: 1; /* Takes most of the space */
+    padding: 10px 15px;
+    border: 1px solid #ddd; /* Light grey border */
+    border-radius: 20px; /* Rounded corners */
+    outline: none; /* Remove outline on focus */
+    font-size: 1em;
+    margin-right: 10px; /* Space before send button */
+}
+
+#chat-input::placeholder {
+    color: #aaa; /* Grey placeholder text */
+}
+
+.send-button {
+    background-color: #FF5722; /* Orange button */
+    border: none;
+    border-radius: 8px;
+    width: 40px; /* Square button, will become circular with border-radius */
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+/* ADDED: Ensure send icon is displayed correctly */
+.send-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.send-button:hover {
+    background-color: #E64A19; /* Darker orange on hover */
+}
+
+/* Knowledge Hub Container (Initially Hidden) */
+.knowledge-hub-container {
+    width: 100%;
+    max-width: 1200px; /* MODIFIED: Match chatbot-container max-width */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-top: 20px;
+    padding: 20px;
+    /* display: none; will be set by JS */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    /* ... (rest of your media queries remain unchanged) ... */
+    .tab-selection-container {
+        display: flex;
+        width: 100%;
+        max-width: 1200px; /* Adjust as needed */
+        background-color: #f0f0f0; /* MODIFIED: Lighter grey background */
+        border-radius: 10px; /* Rounded corners for the grey box */
+        overflow: hidden; /* Ensures inner white box respects rounded corners */
+        margin-top: 30px; /* Space below subtitle */
+        height: 40px; /* Short and wide */
+        padding: 2px; /* MODIFIED: Less space between edge and active tab */
+        box-sizing: border-box; /* Include padding in width/height calculation */
+    }
+
+    .tab-item {
+        flex: 1; /* Each tab takes half the width */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        font-size: 0.95em; /* MODIFIED: Smaller font size */
+        font-weight: normal; /* MODIFIED: Not bold */
+        color: #666; /* MODIFIED: Grey text for inactive tabs */
+        transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 8px; /* Rounded corners for individual tab items */
+        padding: 10px 0; /* Vertical padding for content inside tab */
+    }
+
+    .tab-item:first-child {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .tab-item:last-child {
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    .tab-item.active {
+        border-radius: 0; /* Active tab also loses individual rounded corners */
+        margin: 5px; /* Add margin to show grey background around active tab */
+    }
+
+    .chatbot-header-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .robot-profile-pic {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .chat-clear-button-container { /* This rule is now effectively for mobile centering of the clear button */
+        text-align: center; /* Center clear button on small screens */
+    }
+
+    .chat-messages {
+        max-height: 300px; /* Reduce chat height on small screens */
+    }
+}
+
+.message-bubble {
+    display: flex;
+    align-items: flex-start; /* Align content to top of bubble */
+    max-width: 80%; /* Limit bubble width */
+}
+
+.message-profile-pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.message-content {
+    padding: 10px 15px;
+    border-radius: 15px; /* Rounded corners for bubbles */
+    word-wrap: break-word; /* Ensure long words wrap */
+}
+
+.bot-message {
+    justify-content: flex-start; /* Align bot message to left */
+}
+
+.bot-message .message-profile-pic {
+    margin-right: 10px;
+}
+
+.bot-content {
+    background-color: #e0e0e0; /* Grey background for bot message */
+    color: #333; /* Black text */
+}
+
+.user-message {
+    justify-content: flex-end; /* Align user message to right */
+    margin-left: auto; /* Push user message to the right */
+}
+
+.user-message .message-profile-pic {
+    order: 2; /* Move profile pic to the right of the message */
+    margin-left: 10px;
+}
+
+.user-content {
+    background-color: #007bff; /* Blue background for user message */
+    color: #fff; /* White text */
+    order: 1; /* Ensure message content comes before profile pic */
+}
+
+/* Chat Input Area */
+.chat-input-area {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #fff; /* White background */
+    border-top: 1px solid #ddd; /* Subtle line above input area */
+}
+
+#chat-input {
+    flex-grow: 1; /* Takes most of the space */
+    padding: 10px 15px;
+    border: 1px solid #ddd; /* Light grey border */
+    border-radius: 20px; /* Rounded corners */
+    outline: none; /* Remove outline on focus */
+    font-size: 1em;
+    margin-right: 10px; /* Space before send button */
+}
+
+#chat-input::placeholder {
+    color: #aaa; /* Grey placeholder text */
+}
+
+.send-button {
+    background-color: #FF5722; /* Orange button */
+    border: none;
+    border-radius: 8px; /* Circular button */
+    width: 40px; /* Square button, will become circular with border-radius */
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.send-button:hover {
+    background-color: #E64A19; /* Darker orange on hover */
+}
+
+.send-icon {
+    width: 40px;
+    height: 20px;
+    filter: brightness(0) invert(1); /* Makes icon white */
+}
+
+/* Knowledge Hub Container (Initially Hidden) */
+.knowledge-hub-container {
+    width: 100%;
+    max-width: 800px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-top: 20px;
+    padding: 20px;
+    /* display: none; will be set by JS */
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    body {
+        /* No padding-bottom needed for mobile as footer is removed */
+        padding-bottom: 0;
     }
 
     .header-container {
@@ -927,5 +1447,66 @@ footer p {
     .search-button {
         width: 100%;
         margin-left: 0; /* Remove left margin when stacked */
+    }
+
+    /* Learn Page Responsive Adjustments */
+    .tab-selection-container {
+        display: flex;
+        width: 100%;
+        max-width: 1200px; /* Adjust as needed */
+        background-color: #f0f0f0; /* MODIFIED: Lighter grey background */
+        border-radius: 10px; /* Rounded corners for the grey box */
+        overflow: hidden; /* Ensures inner white box respects rounded corners */
+        margin-top: 30px; /* Space below subtitle */
+        height: 40px; /* Short and wide */
+        padding: 2px; /* MODIFIED: Less space between edge and active tab */
+        box-sizing: border-box; /* Include padding in width/height calculation */
+    }
+
+    .tab-item {
+        flex: 1; /* Each tab takes half the width */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        font-size: 0.95em; /* MODIFIED: Smaller font size */
+        font-weight: normal; /* MODIFIED: Not bold */
+        color: #666; /* MODIFIED: Grey text for inactive tabs */
+        transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 8px; /* Rounded corners for individual tab items */
+        padding: 10px 0; /* Vertical padding for content inside tab */
+    }
+
+    .tab-item:first-child {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .tab-item:last-child {
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    .tab-item.active {
+        border-radius: 0; /* Active tab also loses individual rounded corners */
+        margin: 5px; /* Add margin to show grey background around active tab */
+    }
+
+    .chatbot-header-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .robot-profile-pic {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .chat-clear-button-container {
+        text-align: center; /* Center clear button on small screens */
+    }
+
+    .chat-messages {
+        max-height: 300px; /* Reduce chat height on small screens */
     }
 }

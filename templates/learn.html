@@ -1,116 +1,98 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="learn-container">
-    <div class="learn-page-header">
-        <h1>Media Literacy Learning Center</h1>
-        <p>Develop critical thinking skills to navigate today's information landscape</p>
-    </div>
+<div class="learn-page">
+    <h1 class="page-main-title text-center">Media Literacy Learning Center</h1>
+    <p class="page-main-subtitle text-center">Develop critical thinking skills to navigate today's information landscape</p>
 
-    <div class="learn-tabs">
-        <button id="chatbot-tab-btn" class="active">
-            <i class="fas fa-robot"></i> Media Mentor
-        </button>
-        <button id="articles-tab-btn">
-            <i class="fas fa-book"></i> Knowledge Hub
-        </button>
-        <button id="quiz-tab-btn">
-            <i class="fas fa-question-circle"></i> Quizzes
-        </button>
-    </div>
-
-    <!-- Chatbot Section -->
-    <section id="chatbot-section" class="chatbot-section">
-        <h2>Your AI Guide to Media Literacy</h2>
-        <div class="chat-window" id="chat-window">
-            <!-- Chat messages will be appended here by JavaScript -->
+    <div class="tab-selection-container">
+        <div class="tab-item active" id="media-mentor-tab">
+            <img src="{{ url_for('static', filename='img/mediamentor.png') }}" alt="Media Mentor Icon" class="tab-icon">
+            <span>Media Mentor</span>
         </div>
-        <div class="try-asking-suggestions">
-            Try asking:
-            <div class="suggestion-buttons">
-                <button class="suggestion-btn" data-suggestion="What is media literacy?">What is media literacy?</button>
-                <button class="suggestion-btn" data-suggestion="How can I spot fake news?">How can I spot fake news?</button>
-                <button class="suggestion-btn" data-suggestion="What makes a source reliable?">What makes a source reliable?</button>
-                <button class="suggestion-btn" data-suggestion="How do I fact-check information?">How do I fact-check information?</button>
+        <div class="tab-item" id="knowledge-hub-tab">
+            <img src="{{ url_for('static', filename='img/knowledgehub.png') }}" alt="Knowledge Hub Icon" class="tab-icon">
+            <span>Knowledge Hub</span>
+        </div>
+    </div>
+
+    <div class="chatbot-container" id="media-mentor-section">
+        <div class="chatbot-header-info">
+            <img src="{{ url_for('static', filename='img/robot.png') }}" alt="Robot Profile" class="robot-profile-pic">
+            <div class="header-text">
+                <span class="bold-text">Media Mentor</span>
+                <span class="grey-text">Your AI guide to media literacy</span>
             </div>
+            <button class="clear-chat-btn" id="clear-chat-btn">
+                <img src="{{ url_for('static', filename='img/clear.png') }}" alt="Clear Chat Icon" class="clear-icon">
+                Clear
+            </button>
         </div>
-        <div class="chat-input-group">
-            <input type="text" id="chat-input" placeholder="Ask me about media literacy...">
-            <button id="send-chat-btn" class="primary-btn"><i class="fas fa-paper-plane"></i></button>
-        </div>
-        <button id="clear-chat-btn" class="clear-chat-btn">Clear Chat</button>
-    </section>
 
-    <!-- Learn Articles Section (Knowledge Hub) -->
-    <section id="learn-articles-section" class="learn-articles-section" style="display: none;">
-        <h2>Knowledge Hub: In-depth Articles</h2>
-        <div class="learn-filters">
+        <div class="chat-divider"></div>
+
+        <div class="chat-messages" id="chat-messages">
+            <!-- Initial bot message -->
+            <div class="message-bubble bot-message">
+                <img src="{{ url_for('static', filename='img/robot.png') }}" alt="Robot Profile" class="message-profile-pic">
+                <div class="message-content bot-content">
+                    Hi! I'm your Media Mentor. I'm here to help you learn about media literacy, fact-checking, identifying bias, and navigating information online. What would you like to know?
+                </div>
+            </div>
+            <!-- User messages will be appended here -->
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Ask me about media literacy...">
+            <button id="send-chat-btn" class="send-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20px" height="20px">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="knowledge-hub-container" id="knowledge-hub-section" style="display: none;">
+        <h2 class="knowledge-hub-title">Knowledge Hub</h2>
+        <p class="knowledge-hub-subtitle">Explore articles and lessons to deepen your media literacy skills.</p>
+
+        <div class="knowledge-hub-filters">
             <div class="filter-group">
-                <label for="category-filter">Category</label>
+                <label for="category-filter">Category:</label>
                 <select id="category-filter">
-                    <option value="all">All Topics</option>
-                    <option value="politics">Politics</option>
-                    <option value="health">Health</option>
-                    <option value="technology">Technology</option>
-                    <option value="environment">Environment</option>
-                    <option value="business">Business</option>
-                    <option value="science">Science</option>
-                    <option value="general">General</option>
+                    <option value="all">All Categories</option>
+                    <option value="fundamentals">Fundamentals</option>
+                    <option value="understanding-media">Understanding Media</option>
+                    <option value="credible-sources">Credible Sources</option>
+                    <option value="identifying-bias">Identifying Bias</option>
+                    <option value="deconstructing-messages">Deconstructing Messages</option>
+                    <option value="digital-citizenship">Digital Citizenship</option>
+                    <option value="social-media-literacy">Social Media Literacy</option>
+                    <option value="media-and-ethics">Media and Ethics</option>
+                    <option value="creating-responsible-media">Creating Responsible Media</option>
+                    <option value="media-in-global-context">Media in Global Context</option>
+                    <option value="future-of-media">Future of Media</option>
                 </select>
             </div>
             <div class="filter-group">
-                <label for="difficulty-filter">Difficulty</label>
+                <label for="difficulty-filter">Difficulty:</label>
                 <select id="difficulty-filter">
-                    <option value="all">All Levels</option>
+                    <option value="all">All Difficulties</option>
                     <option value="beginner">Beginner</option>
                     <option value="intermediate">Intermediate</option>
                     <option value="advanced">Advanced</option>
                 </select>
             </div>
+            <span id="articles-count" class="articles-count-display"></span>
         </div>
-        <p id="articles-count" class="learn-articles-count">Showing 0 of 0 articles</p>
-        <div id="learn-articles-grid" class="article-grid">
-            <!-- Learn articles will be loaded here by JavaScript -->
-            <p class="info-message">Loading learning articles...</p>
+
+        <div class="learn-articles-grid" id="learn-articles-grid">
+            <!-- Learning articles will be rendered here by JavaScript -->
         </div>
-    </section>
-
-    <!-- Quiz Section (Placeholder for now) -->
-    <section id="quiz-section" class="quiz-section" style="display: none;">
-        <h2>Test Your Knowledge</h2>
-        <form id="quiz-form">
-            <div class="quiz-question">
-                <p>1. Which of the following is NOT a common characteristic of misinformation?</p>
-                <div class="quiz-options">
-                    <label><input type="radio" name="q1" value="a"> Emotional language</label>
-                    <label><input type="radio" name="q1" value="b"> Verified sources</label>
-                    <label><input type="radio" name="q1" value="c"> Sensational headlines</label>
-                    <label><input type="radio" name="q1" value="d"> Lack of context</label>
-                </div>
-            </div>
-
-            <div class="quiz-question">
-                <p>2. What is a "filter bubble"?</p>
-                <div class="quiz-options">
-                    <label><input type="radio" name="q2" value="a"> A protective online community</label>
-                    <label><input type="radio" name="q2" value="b"> A situation where an algorithm shows only information agreeing with past views</label>
-                    <label><input type="radio" name="q2" value="c"> A tool to filter out inappropriate content</label>
-                    <label><input type="radio" name="q2" value="d"> A type of social media trend</label>
-                </div>
-            </div>
-
-            <button type="submit" class="btn primary-btn quiz-submit-btn">Submit Quiz</button>
-        </form>
-        <div id="quiz-results"></div>
-    </section>
-
+    </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-{# Define a global JS variable for the bot avatar URL, processed by Jinja2 here #}
-<script>
-    const BOT_AVATAR_URL = "{{ url_for('static', filename='img/logo.jpg') }}";
-</script>
 <script src="{{ url_for('static', filename='js/learn.js') }}"></script>
 {% endblock %}
