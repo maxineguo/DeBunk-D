@@ -260,7 +260,7 @@ main.container {
 
 /* Feed Section Styles (existing) */
 .feed-section {
-    margin-bottom: 40px;
+    margin-bottom: 60px; /* MODIFIED: Increased space below cards and above next heading */
 }
 
 .feed-section .page-header {
@@ -305,7 +305,7 @@ main.container {
     background-color: #fff; /* White interior */
     border: 1px solid #ddd; /* Grey outline */
     border-radius: 10px; /* Rounded corners */
-    padding: 20px;
+    padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
@@ -338,40 +338,61 @@ main.container {
     border-radius: 15px; /* Oval-like curved sides */
     font-size: 0.85em;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 7px;
     text-transform: uppercase;
 }
 
 /* Category Tag Colors */
-.health, .environment {
+.health {
     background-color: #e8f5e9; /* Light green */
     color: #2e7d32; /* Darker green */
 }
 
-.science, .technology, .news-report, .fact-check { /* Grouped blue categories */
+.environment {
     background-color: #e3f2fd; /* Light blue */
     color: #1565c0; /* Darker blue */
 }
 
-.business {
+.science {
+    background-color: #ffe0b2; /* Light orange */
+    color: #e65100; /* Darker orange */
+}
+
+.technology {
     background-color: #ede7f6; /* Light purple */
     color: #673ab7; /* Darker purple */
 }
 
-.politics {
+.business {
+    background-color: #fffde7; /* Light yellow */
+    color: #fbc02d; /* Darker yellow */
+}
+
+.politics { /* NEW/MODIFIED */
     background-color: #ffebee; /* Light red */
     color: #c62828; /* Darker red */
 }
 
-.society, .education, .general { /* Grey */
+.society, .education, .general {
     background-color: #eeeeee;
     color: #616161;
 }
 
-.error { /* For error cards */
+.fact-check, .news-report { /* Keep these, but news-report won't be used as a primary label */
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.error {
     background-color: #ffebee;
     color: #c62828;
     border: 1px solid #ef9a9a;
+}
+
+/* NEW: Events Category (Red) */
+.events {
+    background-color: #fde0dc; /* Lighter red */
+    color: #d32f2f; /* Deeper red */
 }
 
 
@@ -380,7 +401,7 @@ main.container {
     font-weight: bold;
     color: #000; /* Bold black */
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 7px;
     line-height: 1.3;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -393,7 +414,7 @@ main.container {
 .article-card p {
     font-size: 0.9em;
     color: #555; /* Dark grey */
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -1066,9 +1087,8 @@ footer p {
 }
 
 .clear-icon {
-    width: 18px;
+    width: 30px;
     height: 18px;
-    margin-right: 8px;
 }
 
 .chat-divider {
@@ -1372,6 +1392,7 @@ footer p {
     padding: 20px;
     /* display: none; will be set by JS */
 }
+
 
 
 /* Responsive Adjustments */

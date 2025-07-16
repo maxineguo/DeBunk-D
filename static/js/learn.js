@@ -1,18 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Chatbot functionality
-    const chatWindow = document.getElementById('chat-messages'); // Corrected ID to chat-messages
+    const chatWindow = document.getElementById('chat-messages');
     const chatInput = document.getElementById('chat-input');
     const sendChatBtn = document.getElementById('send-chat-btn');
     const clearChatBtn = document.getElementById('clear-chat-btn');
     const suggestionButtonsContainer = document.querySelector('.suggestion-buttons'); // This might be null if not present
 
     // Tab functionality
-    const chatbotTabBtn = document.getElementById('media-mentor-tab'); // Corrected ID
-    const articlesTabBtn = document.getElementById('knowledge-hub-tab'); // Corrected ID
+    const chatbotTabBtn = document.getElementById('media-mentor-tab');
+    const articlesTabBtn = document.getElementById('knowledge-hub-tab');
     const quizTabBtn = document.getElementById('quiz-tab-btn'); // This might be null if not present
 
-    const chatbotSection = document.getElementById('media-mentor-section'); // Corrected ID
-    const learnArticlesSection = document.getElementById('knowledge-hub-section'); // Corrected ID
+    const chatbotSection = document.getElementById('media-mentor-section');
+    const learnArticlesSection = document.getElementById('knowledge-hub-section');
     const quizSection = document.getElementById('quiz-section'); // This might be null if not present
 
     // Knowledge Hub Elements
@@ -122,8 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Corrected addMessageToChat to use correct element IDs and classes
-    const BOT_AVATAR_URL = "{{ url_for('static', filename='img/robot.png') }}"; // Define bot avatar URL
-    const USER_AVATAR_URL = "{{ url_for('static', filename='img/default_profile.jpeg') }}"; // Define user avatar URL
+    // BOT_AVATAR_URL and USER_AVATAR_URL are now expected to be defined globally in learn.html
+    // REMOVED: const BOT_AVATAR_URL = "{{ url_for('static', filename='img/robot.png') }}";
+    // REMOVED: const USER_AVATAR_URL = "{{ url_for('static', filename='img/default_profile.jpeg') }}";
 
     function addMessageToChat(message, sender) {
         const messageWrapper = document.createElement('div');
@@ -131,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const avatar = document.createElement('img');
         avatar.classList.add('message-profile-pic'); // Use existing class
+        // Ensure these global variables are accessible here
         avatar.src = sender === 'user' ? USER_AVATAR_URL : BOT_AVATAR_URL;
         avatar.alt = sender === 'user' ? 'User Avatar' : 'Bot Avatar';
 
@@ -167,8 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (useOwnApiKey) {
             const userGeminiApiKey = sessionStorage.getItem('userGeminiApiKey');
             if (!userGeminiApiKey) {
-                // Assuming window.showApiKeyPopup is defined elsewhere or will be
-                // For now, use a simple alert or console log if not defined
                 console.error("Gemini API key is missing. Please provide it.");
                 addMessageToChat("Error: Gemini API key is missing. Please provide it.", "bot");
                 sendChatBtn.disabled = false;
@@ -187,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 const errorData = await response.json();
                 if (response.status === 401) {
-                    // Assuming window.showApiKeyPopup is defined elsewhere
                     console.error("API keys are missing or invalid. Please enter them to use the chatbot.");
                     addMessageToChat("Error: API keys are missing or invalid. Please enter them to use the chatbot.", "bot");
                 } else {
@@ -207,10 +206,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    if (sendChatBtn) { // Added null check
+    if (sendChatBtn) {
         sendChatBtn.addEventListener('click', sendChatMessage);
     }
-    if (chatInput) { // Added null check
+    if (chatInput) {
         chatInput.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {
                 sendChatMessage();
@@ -218,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (clearChatBtn) { // Added null check
+    if (clearChatBtn) {
         clearChatBtn.addEventListener('click', () => {
             chatWindow.innerHTML = '';
             chatHistory = [];
@@ -245,7 +244,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     addMessageToChat(entry.parts[0].text, 'bot');
                 }
             });
-        } 
+        } else {
+            // Only add initial message if chat history is empty
+            addMessageToChat("Hello! I'm your Media Mentor. I'm here to help you learn about media literacy, fact-checking, identifying bias, and navigating information online. What would you like to know?", "bot");
+        }
     }
     loadChatHistory();
 

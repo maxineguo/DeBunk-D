@@ -29,25 +29,15 @@
             </button>
         </div>
 
-        <div class="chat-divider"></div>
-
         <div class="chat-messages" id="chat-messages">
-            <!-- Initial bot message -->
-            <div class="message-bubble bot-message">
-                <img src="{{ url_for('static', filename='img/robot.png') }}" alt="Robot Profile" class="message-profile-pic">
-                <div class="message-content bot-content">
-                    Hi! I'm your Media Mentor. I'm here to help you learn about media literacy, fact-checking, identifying bias, and navigating information online. What would you like to know?
-                </div>
-            </div>
-            <!-- User messages will be appended here -->
+            <!-- Initial bot message (now handled solely by JS loadChatHistory) -->
         </div>
 
         <div class="chat-input-area">
             <input type="text" id="chat-input" placeholder="Ask me about media literacy...">
             <button id="send-chat-btn" class="send-button">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20px" height="20px">
-                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                </svg>
+                <!-- CHANGED: Reverted to img tag for send.png -->
+                <img src="{{ url_for('static', filename='img/send.png') }}" alt="Send Icon" class="send-icon">
             </button>
         </div>
     </div>
@@ -94,5 +84,10 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+    // Define global JavaScript variables for avatar URLs, processed by Flask's Jinja2
+    const BOT_AVATAR_URL = "{{ url_for('static', filename='img/robot.png') }}";
+    const USER_AVATAR_URL = "{{ url_for('static', filename='img/default_profile.jpeg') }}";
+</script>
 <script src="{{ url_for('static', filename='js/learn.js') }}"></script>
 {% endblock %}

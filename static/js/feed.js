@@ -117,8 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchFeedArticles(isRefreshClick = false) {
         console.log('feed.js: fetchFeedArticles called. isRefreshClick:', isRefreshClick);
-        
-        // Always show loading indicator and message when fetching
+
+        let data = null; // Initialize data to null
+
         if (loadingIndicator) loadingIndicator.style.display = 'inline-block';
         if (refreshFeedBtn) refreshFeedBtn.disabled = true;
         if (articlesContainer) articlesContainer.innerHTML = '<p class="info-message">Loading news articles...</p>';
@@ -128,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let urlParams = '';
 
         if (isRefreshClick) {
-            urlParams = '?refresh=true'; // Add refresh parameter for explicit button clicks
+            urlParams = '?refresh=true';
         }
 
         if (useOwnApiKey) {
@@ -137,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!userNewsApiKey || !userGeminiApiKey) {
                 console.warn('feed.js: API keys missing for user-provided mode. Showing popup.');
-                window.showApiKeyPopup(); // Assuming this function exists in main.js
+                window.showApiKeyPopup();
                 if (loadingIndicator) loadingIndicator.style.display = 'none';
                 if (refreshFeedBtn) refreshFeedBtn.disabled = false;
                 if (articlesContainer) articlesContainer.innerHTML = '<p class="error-message">Please enter both NewsAPI and Gemini API Keys to fetch articles.</p>';
@@ -153,31 +154,51 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log(`feed.js: Attempting to fetch /api/get_feed_articles${urlParams}...`);
             const response = await fetch(`/api/get_feed_articles${urlParams}`, { headers: headers });
-            
+
             console.log('feed.js: Response status:', response.status);
+
             if (!response.ok) {
-                const errorData = await response.json();
-                console.error('feed.js: API response error:', errorData);
-                if (response.status === 401) {
-                    window.showApiKeyPopup();
-                    if (articlesContainer) articlesContainer.innerHTML = '<p class="error-message">API keys are missing or invalid. Please enter them to fetch articles.</p>';
-                } else {
-                    throw new Error(`HTTP error! status: ${response.status} - ${errorData.message || response.statusText}`);
+                let errorMessage = `HTTP error! status: ${response.status}`;
+                try {
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.detail || response.statusText || errorMessage;
+                        console.error('feed.js: API response error data (JSON):', errorData);
+                    } else {
+                        const responseText = await response.text();
+                        errorMessage = responseText || response.statusText || errorMessage;
+                        console.error('feed.js: API response error data (Text):', responseText);
+                    }
+
+                    if (response.status === 401) {
+                        window.showApiKeyPopup();
+                        if (articlesContainer) articlesContainer.innerHTML = '<p class="error-message">API keys are missing or invalid. Please enter them to fetch articles.</p>';
+                    } else if (response.status === 403) {
+                         if (articlesContainer) articlesContainer.innerHTML = `<p class="error-message">Access Forbidden: Your API keys might be invalid or lack necessary permissions. Please verify them in your settings.</p>`;
+                    } else {
+                        if (articlesContainer) articlesContainer.innerHTML = `<p class="error-message">Failed to load articles: ${errorMessage}. Please try again.</p>`;
+                    }
+                } catch (parseError) {
+                    console.error('feed.js: Error processing non-OK response body:', parseError);
+                    if (articlesContainer) articlesContainer.innerHTML = `<p class="error-message">Failed to load articles (Error: ${response.status} - ${response.statusText}). Please check console for details.</p>`;
                 }
+                return;
             }
-            const data = await response.json();
+
+            data = await response.json();
             console.log('feed.js: API data received:', data);
 
-            // --- Polling Logic Added Here ---
-            if (!data.initial_generation_complete) {
+            // --- Polling Logic ---
+            // If initial generation is NOT complete, set a timeout to poll again
+            if (data && !data.initial_generation_complete) {
                 console.log('feed.js: Initial generation not complete. Polling again in 2 seconds...');
-                // Keep loading message visible
-                setTimeout(() => fetchFeedArticles(isRefreshClick), 2000); // Poll every 2 seconds
-                return; // Exit this function call
+                setTimeout(() => fetchFeedArticles(isRefreshClick), 2000);
+                return; // IMPORTANT: Exit here to prevent rendering incomplete data
             }
             // --- End Polling Logic ---
 
-            // If initial generation is complete, proceed to render
+            // If initial generation IS complete, proceed to render
             if (articlesContainer) articlesContainer.innerHTML = ''; // Clear "Loading..." message
 
             renderArticleSection(articlesContainer, 'Latest News', data.latest_news, 'latest-news');
@@ -185,23 +206,22 @@ document.addEventListener('DOMContentLoaded', () => {
             renderArticleSection(articlesContainer, 'Important Issues', data.important_issues, 'issues');
 
         } catch (error) {
-            console.error('feed.js: Error fetching feed articles:', error);
+            console.error('feed.js: Error fetching feed articles (general catch):', error);
             if (articlesContainer) articlesContainer.innerHTML = `<p class="error-message">Failed to load articles: ${error.message}. Please try again.</p>`;
         } finally {
-            // Only hide loading indicator and enable button if initial generation is complete
-            // This ensures the loading state persists during polling
-            if (data && data.initial_generation_complete) {
-                if (loadingIndicator) loadingIndicator.style.display = 'none';
-                if (refreshFeedBtn) refreshFeedBtn.disabled = false;
-            }
+            // Only hide loading indicator and enable button if initial generation IS complete
+            // OR if there was an error that prevented data from being received at all.
+            // If data is null (meaning fetch failed or parsing failed), we can hide loading.
+            // If data exists, but initial_generation_complete is false, the polling timeout handles it.
+            if (loadingIndicator) loadingIndicator.style.display = 'none';
+            if (refreshFeedBtn) refreshFeedBtn.disabled = false;
             console.log('feed.js: fetchFeedArticles finished.');
         }
     }
 
     if (refreshFeedBtn) {
-        refreshFeedBtn.addEventListener('click', () => fetchFeedArticles(true)); // Pass true for refresh click
+        refreshFeedBtn.addEventListener('click', () => fetchFeedArticles(true));
     }
 
-    // Initial load of articles when the page loads
-    fetchFeedArticles(false); // Pass false for initial load
+    fetchFeedArticles(false);
 });

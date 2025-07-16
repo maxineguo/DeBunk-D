@@ -1,5 +1,4 @@
 import requests
-from google import genai
 from typing import NamedTuple
 import json
 import os
@@ -12,20 +11,12 @@ import collections # Import collections for deque
 import threading # Import threading for lock
 import uuid # Import the uuid module
 
-today = datetime.date.today()
-one_day = datetime.timedelta(days=1)
-yesterday = today - one_day
-day = "from=" + yesterday.strftime('%Y-%m-%d') + "&"
+# --- Environment Variables & API Clients ---
+# These are loaded from .env or environment variables set in the runtime
+load_dotenv() # Ensure .env is loaded
 
-class Article(NamedTuple):
-    url: str
-    title: str
-
-load_dotenv()
-
-GEMINI_API_KEY=os.environ['GEMINI_API_KEY']
-NEWSAPI_API_KEY=os.environ['NEWSAPI_API_KEY']
-gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
+NEWSAPI_API_KEY = os.environ.get('NEWSAPI_API_KEY')
 
 # Define a global delay for API calls to prevent rate limiting
 API_CALL_DELAY = 6 # seconds, increased based on previous errors
@@ -36,6 +27,24 @@ RATE_LIMIT_INTERVAL_SECONDS = 60
 api_call_timestamps = collections.deque() # Stores timestamps of recent calls
 api_call_lock = threading.Lock() # Protects api_call_timestamps
 
+# --- Allowed Categories for AI Classification ---
+# Define the allowed categories for AI classification for 'latest_news'
+ALLOWED_ARTICLE_CATEGORIES = [
+    "Events", "Environment", "Politics", "Health", "Science",
+    "Technology", "Business", "Society", "Education", "General"
+]
+
+# Define the allowed categories for misconception/issue articles (more specific)
+ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES = [
+    "Science", "Health", "Environment", "Society", "Technology", "Politics", "Economics", "Education"
+]
+
+# --- NamedTuple for NewsAPI Articles ---
+class Article(NamedTuple):
+    url: str
+    title: str
+
+# --- Rate Limiting Function ---
 def enforce_rate_limit():
     """
     Enforces a rate limit of RATE_LIMIT_MAX_CALLS_PER_MINUTE API calls per minute.
@@ -61,67 +70,90 @@ def enforce_rate_limit():
         api_call_timestamps.append(time.time())
         # print(f"DEBUG: API call made. Current calls in last minute: {len(api_call_timestamps)}")
 
-
-def parse_gemini_response_to_dict(response_text, expected_parts_order):
+# --- Helper Functions for LLM Interaction (Revised for JSON Schema) ---
+def call_gemini_api_with_json_schema(prompt_text, response_schema, gem_api_key):
     """
-    Parses a Gemini response string delimited by 'qwe,' into a dictionary.
-    expected_parts_order: A list of strings indicating the order of keys
+    Makes a call to the Gemini API with the given prompt and a JSON response schema.
+    This forces the LLM to return structured JSON output according to the schema.
     """
-    parts = re.split(r'qwe,\s*', response_text)
-    parsed_data = {}
-    
-    parts = [p.strip() for p in parts]
+    api_key = gem_api_key
+    if not api_key:
+        print("ERROR: Gemini API key is missing for LLM call.")
+        return {"error": "Gemini API key is missing."}
 
-    num_parts_to_parse = min(len(parts), len(expected_parts_order))
+    headers = {'Content-Type': 'application/json'}
+    params = {'key': api_key}
+    GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
 
-    for i in range(num_parts_to_parse):
-        key = expected_parts_order[i]
-        value = parts[i]
+    payload = {
+        "contents": [
+            {
+                "role": "user",
+                "parts": [{"text": prompt_text}]
+            }
+        ],
+        "generationConfig": {
+            "responseMimeType": "application/json",
+            "responseSchema": response_schema
+        }
+    }
 
-        if key in ["Verified Sources", "Sources"]:
-            source_list = []
-            for line in value.split('\n'):
-                line = line.strip()
-                if line and re.match(r'^\d+\.\s*', line):
-                    source_name = re.sub(r'^\d+\.\s*', '', line).strip()
-                    if source_name:
-                        source_list.append({"name": source_name, "url": ""})
-            parsed_data[key] = source_list
-        elif key in ["Key Findings", "Multiple Perspectives"]:
-            parsed_data[key] = [item.strip() for item in value.split('\n') if item.strip()]
-        elif key in ["Different Viewpoints", "Viewpoints"]:
-            viewpoints_list = []
-            raw_viewpoints = re.split(r'\.\s*(?=[A-Za-z]+\s*:\s*)|\n', value)
-            for vp_pair in raw_viewpoints:
-                vp_pair = vp_pair.strip()
-                if ':' in vp_pair:
-                    label, text = vp_pair.split(':', 1)
-                    if label.strip() and text.strip():
-                        viewpoints_list.append({"label": label.strip(), "text": text.strip()})
-            parsed_data[key] = viewpoints_list
+    enforce_rate_limit() # Enforce rate limit before Gemini call
+    try:
+        response = requests.post(GEMINI_API_URL, headers=headers, params=params, json=payload, timeout=90) # Increased timeout
+        response.raise_for_status() # Raise an HTTPError for bad responses (4xx or 5xx)
+        result = response.json()
+
+        if result.get("candidates") and result["candidates"][0].get("content") and result["candidates"][0]["content"].get("parts"):
+            # The LLM's structured output is a JSON string inside parts[0]["text"].
+            # We need to parse that inner string.
+            try:
+                return json.loads(result["candidates"][0]["content"]["parts"][0]["text"])
+            except json.JSONDecodeError as e:
+                print(f"JSON decode error for LLM structured output: {e} - Raw text: {result['candidates'][0]['content']['parts'][0]['text']}")
+                return {"error": f"LLM returned malformed JSON: {e}"}
         else:
-            parsed_data[key] = value
-            
-    return parsed_data
+            print(f"WARNING: Gemini API response missing content or candidates: {result}")
+            return {"error": "Gemini API response missing content."}
+
+    except requests.exceptions.HTTPError as http_err:
+        print(f"HTTP error occurred during Gemini API call: {http_err} - Response text: {response.text}")
+        return {"error": f"HTTP error: {http_err}. Response: {response.text}"}
+    except requests.exceptions.ConnectionError as conn_err:
+        print(f"Connection error occurred during Gemini API call: {conn_err}")
+        return {"error": f"Connection error: {conn_err}"}
+    except requests.exceptions.Timeout as timeout_err:
+        print(f"Timeout error occurred during Gemini API call: {timeout_err}")
+        return {"error": f"Timeout error: {timeout_err}"}
+    except requests.exceptions.RequestException as req_err:
+        print(f"An unexpected request error occurred during Gemini API call: {req_err}")
+        return {"error": f"Request error: {req_err}"}
+    except Exception as e:
+        print(f"An unexpected error occurred in call_gemini_api_with_json_schema: {e}")
+        return {"error": f"An unexpected error: {e}"}
 
 # --- Headline Generation Functions ---
 def get_news_headlines(gem_api_key, news_api_key, count=12):
-    current_gemini_client = genai.Client(api_key=gem_api_key)
+    """Fetches headlines from NewsAPI."""
     current_newsapi_key = news_api_key
+    if not current_newsapi_key:
+        print("ERROR: NewsAPI key is missing for headline fetching.")
+        return {"error": "NewsAPI key is missing."}
 
+    # Use 'top-headlines' for general news
     url = ('https://newsapi.org/v2/top-headlines?'
            'country=us&'
            f'apiKey={current_newsapi_key}')
 
     enforce_rate_limit() # Enforce rate limit before NewsAPI call
     try:
-        response_url = requests.get(url)
+        response_url = requests.get(url, timeout=10)
         response_url.raise_for_status()
         rsp_json = response_url.json()
     except requests.exceptions.RequestException as e:
         print(f"Error fetching raw news articles for headlines: {e}")
         traceback.print_exc()
-        return []
+        return {"error": f"Error fetching news headlines: {e}"}
 
     articles_raw_data = []
     if rsp_json['totalResults'] == 0:
@@ -145,25 +177,39 @@ def get_news_headlines(gem_api_key, news_api_key, count=12):
         f"Format: [headline1], [headline2], [headline3], ...\n\n"
         f"Sources:\n{source_urls_for_gemini}"
     )
-
+    
+    # For headline generation, we can still use the direct generate_content call
+    # as we expect a simple string response, not structured JSON.
     enforce_rate_limit() # Enforce rate limit before Gemini call
     try:
-        headlinestr_response = current_gemini_client.models.generate_content(
-            model="gemini-2.0-flash", contents=headlines_prompt
+        response_gemini_headlines = requests.post(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+            headers={'Content-Type': 'application/json'},
+            params={'key': gem_api_key},
+            json={"contents": [{"role": "user", "parts": [{"text": headlines_prompt}]}]},
+            timeout=60
         )
-        headlines = [h.strip() for h in headlinestr_response.text.split(", ") if h.strip()]
-        # Use OrderedDict to maintain order while removing duplicates
-        headlines = list(collections.OrderedDict.fromkeys(headlines))
-        headlines = headlines[:count] # Ensure we only return 'count' headlines
-        return headlines
-    except Exception as e:
+        response_gemini_headlines.raise_for_status()
+        result = response_gemini_headlines.json()
+        
+        if result.get("candidates") and result["candidates"][0].get("content") and result["candidates"][0]["content"].get("parts"):
+            headlines = [h.strip() for h in result["candidates"][0]["content"]["parts"][0]["text"].split(", ") if h.strip()]
+            headlines = list(collections.OrderedDict.fromkeys(headlines)) # Remove duplicates while preserving order
+            headlines = headlines[:count] # Ensure we only return 'count' headlines
+            return headlines
+        else:
+            print(f"WARNING: Gemini API response missing content for headlines: {result}")
+            return {"error": "Gemini API response missing content for headlines."}
+
+    except requests.exceptions.RequestException as e:
         print(f"Error generating news headlines: {e}")
         traceback.print_exc()
-        return []
+        return {"error": f"Error generating news headlines: {e}"}
+    except Exception as e:
+        print(f"An unexpected error occurred in get_news_headlines: {e}")
+        return {"error": f"An unexpected error: {e}"}
 
 def get_misconception_headlines(gem_api_key, count=12):
-    current_gemini_client = genai.Client(api_key=gem_api_key)
-
     misconception_titles_prompt = (
         f"Generate exactly {count} distinct and common misconceptions. "
         f"Each should be phrased as a factual statement debunking the misconception (e.g., 'Vaccines do NOT cause Autism', 'Flat Earth is NOT real'). "
@@ -172,21 +218,33 @@ def get_misconception_headlines(gem_api_key, count=12):
     )
     enforce_rate_limit() # Enforce rate limit before Gemini call
     try:
-        misconceptionstr_response = current_gemini_client.models.generate_content(
-            model="gemini-2.0-flash", contents=misconception_titles_prompt
+        response_gemini_misconception = requests.post(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+            headers={'Content-Type': 'application/json'},
+            params={'key': gem_api_key},
+            json={"contents": [{"role": "user", "parts": [{"text": misconception_titles_prompt}]}]},
+            timeout=60
         )
-        misconceptions_titles = [m.strip() for m in misconceptionstr_response.text.split(", ") if m.strip()]
-        misconceptions_titles = list(collections.OrderedDict.fromkeys(misconceptions_titles))
-        misconceptions_titles = misconceptions_titles[:count]
-        return misconceptions_titles
-    except Exception as e:
+        response_gemini_misconception.raise_for_status()
+        result = response_gemini_misconception.json()
+
+        if result.get("candidates") and result["candidates"][0].get("content") and result["candidates"][0]["content"].get("parts"):
+            misconceptions_titles = [m.strip() for m in result["candidates"][0]["content"]["parts"][0]["text"].split(", ") if m.strip()]
+            misconceptions_titles = list(collections.OrderedDict.fromkeys(misconceptions_titles))
+            misconceptions_titles = misconceptions_titles[:count]
+            return misconceptions_titles
+        else:
+            print(f"WARNING: Gemini API response missing content for misconception headlines: {result}")
+            return {"error": "Gemini API response missing content for misconception headlines."}
+    except requests.exceptions.RequestException as e:
         print(f"Error generating misconception headlines: {e}")
         traceback.print_exc()
-        return []
+        return {"error": f"Error generating misconception headlines: {e}"}
+    except Exception as e:
+        print(f"An unexpected error occurred in get_misconception_headlines: {e}")
+        return {"error": f"An unexpected error: {e}"}
 
 def get_issue_headlines(gem_api_key, count=12):
-    current_gemini_client = genai.Client(api_key=gem_api_key)
-
     issue_titles_prompt = (
         f"Generate exactly {count} distinct and important global issues that warrant more attention and have significant world impact. "
         f"Only provide the issue titles, separated by commas, with no other text. "
@@ -194,199 +252,249 @@ def get_issue_headlines(gem_api_key, count=12):
     )
     enforce_rate_limit() # Enforce rate limit before Gemini call
     try:
-        issuestr_response = current_gemini_client.models.generate_content(
-            model="gemini-2.0-flash", contents=issue_titles_prompt
+        response_gemini_issue = requests.post(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+            headers={'Content-Type': 'application/json'},
+            params={'key': gem_api_key},
+            json={"contents": [{"role": "user", "parts": [{"text": issue_titles_prompt}]}]},
+            timeout=60
         )
-        issue_titles = [i.strip() for i in issuestr_response.text.split(", ") if i.strip()]
-        issue_titles = list(collections.OrderedDict.fromkeys(issue_titles))
-        issue_titles = issue_titles[:count]
-        return issue_titles
-    except Exception as e:
+        response_gemini_issue.raise_for_status()
+        result = response_gemini_issue.json()
+
+        if result.get("candidates") and result["candidates"][0].get("content") and result["candidates"][0]["content"].get("parts"):
+            issue_titles = [i.strip() for i in result["candidates"][0]["content"]["parts"][0]["text"].split(", ") if i.strip()]
+            issue_titles = list(collections.OrderedDict.fromkeys(issue_titles))
+            issue_titles = issue_titles[:count]
+            return issue_titles
+        else:
+            print(f"WARNING: Gemini API response missing content for issue headlines: {result}")
+            return {"error": "Gemini API response missing content for issue headlines."}
+    except requests.exceptions.RequestException as e:
         print(f"Error generating issue headlines: {e}")
         traceback.print_exc()
-        return []
+        return {"error": f"Error generating issue headlines: {e}"}
+    except Exception as e:
+        print(f"An unexpected error occurred in get_issue_headlines: {e}")
+        return {"error": f"An unexpected error: {e}"}
 
-# --- Full Article Creation Functions (now take a single headline) ---
+# --- Full Article Creation Functions (now use JSON Schema for category) ---
 def create_full_news_article(headline, raw_articles_for_source, gem_api_key):
-    current_gemini_client = genai.Client(api_key=gem_api_key)
-
     source_urls_for_gemini = "\n".join([article.url for article in raw_articles_for_source]) if raw_articles_for_source else "No specific sources provided."
 
-    story_prompt = (
+    prompt_text = (
         f"Create a detailed news story based strictly on the information found at the following URLs, focusing on the headline '{headline}'. "
         f"If no specific sources are provided, generate a plausible news story for the headline. "
-        f"Then, provide a short, 1-paragraph summary. Next, provide key findings (list). "
-        f"Then, provide multiple perspectives (list). Then, provide a verification process explanation. "
-        f"Then, provide different viewpoints (label: text format). Finally, provide verified sources (numbered list of names). "
-        f"Use 'qwe,' as the delimiter between sections. DO NOT include any other 'qwe,' in the response. "
-        f"DO NOT format the text in any way (no markdown like *, #, `). "
+        f"Classify this news article into ONE of the following categories: {', '.join(ALLOWED_ARTICLE_CATEGORIES)}. "
         f"DO NOT refer to yourself as an AI model.\n\n"
-        f"Story Content: [Detailed news story content]\n"
-        f"qwe,Summary: [Short, 1-paragraph summary]\n"
-        f"qwe,Key Findings: [List of key findings, each on a new line, e.g., '- Finding 1\\n- Finding 2']\n"
-        f"qwe,Multiple Perspectives: [List of different perspectives, each on a new line, e.g., '- Perspective A\\n- Perspective B']\n"
-        f"qwe,Verification Process: [Explanation of verification process]\n"
-        f"qwe,Different Viewpoints: [Label: Viewpoint text. Label: Viewpoint text. (e.g., 'Analyst: Text. Public: Text.')]\n"
-        f"qwe,Verified Sources: [Numbered list of source names, e.g., '1. Source Name 1\\n2. Source Name 2']\n\n"
-        f"Sources to use:\n{source_urls_for_gemini}"
+        f"Sources to use:\n{source_urls_for_gemini}\n\n"
+        f"Provide the output in JSON format with the following structure:"
     )
 
-    enforce_rate_limit() # Enforce rate limit before Gemini call
-    try:
-        response_gemini_story = current_gemini_client.models.generate_content(
-            model="gemini-2.0-flash", contents=story_prompt
-        )
-        parsed_data = parse_gemini_response_to_dict(response_gemini_story.text, [
-            "Story Content", "Summary", "Key Findings", "Multiple Perspectives",
-            "Verification Process", "Different Viewpoints", "Verified Sources"
-        ])
+    response_schema = {
+        "type": "OBJECT",
+        "properties": {
+            "title": {"type": "STRING"},
+            "summary": {"type": "STRING"},
+            "category": {
+                "type": "STRING",
+                "enum": ALLOWED_ARTICLE_CATEGORIES # This constrains the AI's category output
+            },
+            "full_content": {
+                "type": "OBJECT",
+                "properties": {
+                    "summary_detail": {"type": "STRING"},
+                    "key_findings": {"type": "ARRAY", "items": {"type": "STRING"}},
+                    "multiple_perspectives": {"type": "ARRAY", "items": {"type": "STRING"}},
+                    "different_viewpoints": {"type": "ARRAY", "items": {"type": "STRING"}},
+                    "verification_process": {"type": "STRING"},
+                    "verified_sources": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {"name": {"type": "STRING"}, "url": {"type": "STRING"}}}}
+                }
+            },
+            "required": ["title", "summary", "category", "full_content"]
+        }
+    }
 
-        original_url = next((art.url for art in raw_articles_for_source if headline.lower() in art.title.lower()), f"debunkd-news-{headline.replace(' ', '-')[:50]}-{uuid.uuid4()}")
+    print(f"DEBUG: Generating full news article for '{headline}' with AI classification.")
+    generated_data = call_gemini_api_with_json_schema(prompt_text, response_schema, gem_api_key)
+
+    if generated_data and not generated_data.get("error"):
+        # Extract data from the AI's structured response
+        title = generated_data.get("title", headline)
+        summary = generated_data.get("summary", "")
+        category = generated_data.get("category", "General") # Get AI-generated category
+        full_content = generated_data.get("full_content", {})
+        
+        # Ensure full_content has all expected keys, even if empty from AI
+        full_content.setdefault("summary_detail", "")
+        full_content.setdefault("key_findings", [])
+        full_content.setdefault("multiple_perspectives", [])
+        full_content.setdefault("different_viewpoints", [])
+        full_content.setdefault("verification_process", "AI-generated based on general knowledge and AI training data.")
+        full_content.setdefault("verified_sources", [])
+
+        # Generate unique ID and image URL
+        article_id = f"debunkd-news-{uuid.uuid4()}"
+        image_url = f"https://placehold.co/300x200/007bff/FFFFFF?text={category.replace(' ', '+')}" # Use AI category for image text
 
         return {
-            "id": f"debunkd-news-{headline.replace(' ', '-')[:50]}-{uuid.uuid4()}", # Ensure unique ID
-            "title": headline,
-            "summary": parsed_data.get("Summary", "")[:150] + "...",
-            "category": "News Report",
-            "full_content": {
-                "summary_detail": parsed_data.get("Story Content", ""),
-                "key_findings": parsed_data.get("Key Findings", []),
-                "multiple_perspectives": parsed_data.get("Multiple Perspectives", []),
-                "verification_process": parsed_data.get("Verification Process", ""),
-                "different_viewpoints": parsed_data.get("Different Viewpoints", []),
-                "verified_sources": parsed_data.get("Verified Sources", []),
-            },
-            "url": original_url,
-            "image_url": f"https://placehold.co/300x200/007bff/FFFFFF?text=News+Report"
+            "id": article_id,
+            "title": title,
+            "summary": summary,
+            "category": category, # This is now the AI-generated category
+            "full_content": full_content,
+            "url": f"debunkd-news-{title.replace(' ', '-')[:50]}-{uuid.uuid4()}",
+            "image_url": image_url
         }
-    except Exception as e:
-        print(f"Error generating full news article for '{headline}': {e}")
-        traceback.print_exc()
-        return None # Return None if generation fails
+    else:
+        print(f"Error generating full news article for '{headline}': {generated_data.get('error', 'Unknown error')}")
+        return None
 
 def create_full_misconception_article(misconception_title, gem_api_key):
-    current_gemini_client = genai.Client(api_key=gem_api_key)
-
-    misconception_detail_prompt = (
+    prompt_text = (
         f"For the misconception '{misconception_title}', write a detailed article debunking it. "
-        f"Then, provide a short, 1-paragraph summary. Next, provide a ONE WORD LABEL (from 'Environment', 'Politics', 'Business', 'Technology', 'Health', 'Science', 'Society', 'Education'). "
-        f"Then, provide multiple viewpoints (2-3 paragraphs each). Finally, provide a list of sources (names, NOT LINKS). "
-        f"Use 'qwe,' as the delimiter between sections. DO NOT include any other 'qwe,' in the response. "
-        f"DO NOT format the text in any way (no markdown like *, #, `). "
-        f"DO NOT refer to yourself as an AI model. "
-        f"Format for viewpoints: 'Label: Viewpoint text. Label: Viewpoint text.'\n\n"
-        f"Article Content: [Your detailed debunking article here]\n"
-        f"qwe,Summary: [Short summary]\n"
-        f"qwe,Label: [ONE WORD LABEL]\n"
-        f"qwe,Viewpoints: [Label: Viewpoint text. Label: Viewpoint text.]\n"
-        f"qwe,Sources: [Numbered list of source names, e.g., '1. Source Name 1\\n2. Source Name 2']"
+        f"Classify the core topic of this misconception into ONE of the following categories: {', '.join(ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES)}. Prefix the category with 'Label: '. "
+        f"DO NOT refer to yourself as an AI model.\n\n"
+        f"Provide the output in JSON format with the following structure:"
     )
 
-    enforce_rate_limit() # Enforce rate limit before Gemini call
-    try:
-        response_gemini_misconception = current_gemini_client.models.generate_content(
-            model="gemini-2.0-flash", contents=misconception_detail_prompt
-        )
-        parsed_data = parse_gemini_response_to_dict(response_gemini_misconception.text, [
-            "Article Content", "Summary", "Label", "Viewpoints", "Sources"
-        ])
-
-        summary_detail = parsed_data.get("Article Content", "")
-        brief_summary = parsed_data.get("Summary", "")
-        category = parsed_data.get("Label", "General")
-        
-        different_viewpoints = parsed_data.get("Viewpoints", [])
-        verified_sources = parsed_data.get("Sources", [])
-        
-        misconception_dict = {
-            "id": f"debunkd-misconception-{misconception_title.replace(' ', '-')[:50]}-{uuid.uuid4()}", # Ensure unique ID
-            "title": misconception_title,
-            "summary": brief_summary,
-            "category": category,
-            "full_content": {
-                "summary_detail": summary_detail,
-                "key_findings": [],
-                "multiple_perspectives": [],
-                "verification_process": "AI-generated debunking based on general knowledge and AI training data.",
-                "different_viewpoints": different_viewpoints,
-                "verified_sources": verified_sources
+    response_schema = {
+        "type": "OBJECT",
+        "properties": {
+            "title": {"type": "STRING"},
+            "summary": {"type": "STRING"},
+            "category": {
+                "type": "STRING",
+                "enum": [f"Label: {cat}" for cat in ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES] # Enforce "Label: Category" format
             },
-            "url": f"debunkd-misconception-{misconception_title.replace(' ', '-')[:50]}",
-            "image_url": f"https://placehold.co/300x200/FF8C00/FFFFFF?text={category.replace(' ', '+')}"
+            "full_content": {
+                "type": "OBJECT",
+                "properties": {
+                    "summary_detail": {"type": "STRING"},
+                    "key_findings": {"type": "ARRAY", "items": {"type": "STRING"}},
+                    "multiple_perspectives": {"type": "ARRAY", "items": {"type": "STRING"}},
+                    "different_viewpoints": {"type": "ARRAY", "items": {"type": "STRING"}},
+                    "verification_process": {"type": "STRING"},
+                    "verified_sources": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {"name": {"type": "STRING"}, "url": {"type": "STRING"}}}}
+                }
+            }
+        },
+        "required": ["title", "summary", "category", "full_content"]
+    }
+
+    print(f"DEBUG: Generating full misconception article for '{misconception_title}' with AI classification.")
+    generated_data = call_gemini_api_with_json_schema(prompt_text, response_schema, gem_api_key)
+
+    if generated_data and not generated_data.get("error"):
+        title = generated_data.get("title", misconception_title)
+        summary = generated_data.get("summary", "")
+        category = generated_data.get("category", "Label: General") # Get AI-generated category
+        full_content = generated_data.get("full_content", {})
+
+        full_content.setdefault("summary_detail", "")
+        full_content.setdefault("key_findings", [])
+        full_content.setdefault("multiple_perspectives", [])
+        full_content.setdefault("different_viewpoints", [])
+        full_content.setdefault("verification_process", "AI-generated debunking based on general knowledge and AI training data.")
+        full_content.setdefault("verified_sources", [])
+
+        article_id = f"debunkd-misconception-{uuid.uuid4()}"
+        clean_category_for_image = category.replace('Label: ', '').replace(' ', '+')
+        image_url = f"https://placehold.co/300x200/FF8C00/FFFFFF?text={clean_category_for_image}"
+
+        return {
+            "id": article_id,
+            "title": title,
+            "summary": summary,
+            "category": category,
+            "full_content": full_content,
+            "url": f"debunkd-misconception-{title.replace(' ', '-')[:50]}-{uuid.uuid4()}",
+            "image_url": image_url
         }
-        return misconception_dict
-    except Exception as e:
-        print(f"Error generating full misconception article for '{misconception_title}': {e}")
-        traceback.print_exc()
+    else:
+        print(f"Error generating full misconception article for '{misconception_title}': {generated_data.get('error', 'Unknown error')}")
         return None
 
 def create_full_issue_article(issue_title, gem_api_key):
-    current_gemini_client = genai.Client(api_key=gem_api_key)
-
-    issue_detail_prompt = (
+    prompt_text = (
         f"For the important issue '{issue_title}', write a detailed overview. "
-        f"Then, provide a short, 1-paragraph summary. Next, provide a ONE WORD LABEL (from 'Environment', 'Politics', 'Business', 'Technology', 'Health', 'Science', 'Society', 'Education'). "
-        f"Then, provide multiple viewpoints (2-3 paragraphs each). Finally, provide a list of sources (names, NOT LINKS). "
-        f"Use 'qwe,' as the delimiter between sections. DO NOT include any other 'qwe,' in the response. "
-        f"DO NOT format the text in any way (no markdown like *, #, `). "
-        f"DO NOT refer to yourself as an AI model. "
-        f"Format for viewpoints: 'Label: Viewpoint text. Label: Viewpoint text.'\n\n"
-        f"Article Content: [Your detailed issue overview here]\n"
-        f"qwe,Summary: [Short summary]\n"
-        f"qwe,Label: [ONE WORD LABEL]\n"
-        f"qwe,Viewpoints: [Label: Viewpoint text. Label: Viewpoint text.]\n"
-        f"qwe,Sources: [Numbered list of source names, e.g., '1. Source Name 1\\n2. Source Name 2']"
+        f"Classify the core topic of this issue into ONE of the following categories: {', '.join(ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES)}. Prefix the category with 'Label: '. "
+        f"DO NOT refer to yourself as an AI model.\n\n"
+        f"Provide the output in JSON format with the following structure:"
     )
 
-    enforce_rate_limit() # Enforce rate limit before Gemini call
-    try:
-        response_gemini_issue = current_gemini_client.models.generate_content(
-            model="gemini-2.0-flash", contents=issue_detail_prompt
-        )
-        parsed_data = parse_gemini_response_to_dict(response_gemini_issue.text, [
-            "Article Content", "Summary", "Label", "Viewpoints", "Sources"
-        ])
-
-        summary_detail = parsed_data.get("Article Content", "")
-        brief_summary = parsed_data.get("Summary", "")
-        category = parsed_data.get("Label", "General")
-        
-        different_viewpoints = parsed_data.get("Viewpoints", [])
-        verified_sources = parsed_data.get("Sources", [])
-        
-        issue_dict = {
-            "id": f"debunkd-issue-{issue_title.replace(' ', '-')[:50]}-{uuid.uuid4()}", # Ensure unique ID
-            "title": issue_title,
-            "summary": brief_summary,
-            "category": category,
-            "full_content": {
-                "summary_detail": summary_detail,
-                "key_findings": [],
-                "multiple_perspectives": [],
-                "verification_process": "AI-generated overview based on general knowledge and AI training data.",
-                "different_viewpoints": different_viewpoints,
-                "verified_sources": verified_sources
+    response_schema = {
+        "type": "OBJECT",
+        "properties": {
+            "title": {"type": "STRING"},
+            "summary": {"type": "STRING"},
+            "category": {
+                "type": "STRING",
+                "enum": [f"Label: {cat}" for cat in ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES] # Enforce "Label: Category" format
             },
-            "url": f"debunkd-issue-{issue_title.replace(' ', '-')[:50]}",
-            "image_url": f"https://placehold.co/300x200/1A202C/FFFFFF?text={category.replace(' ', '+')}"
+            "full_content": {
+                "type": "OBJECT",
+                "properties": {
+                    "summary_detail": {"type": "STRING"},
+                    "key_findings": {"type": "ARRAY", "items": {"type": "STRING"}},
+                    "multiple_perspectives": {"type": "ARRAY", "items": {"type": "STRING"}},
+                    "different_viewpoints": {"type": "ARRAY", "items": {"type": "STRING"}},
+                    "verification_process": {"type": "STRING"},
+                    "verified_sources": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {"name": {"type": "STRING"}, "url": {"type": "STRING"}}}}
+                }
+            }
+        },
+        "required": ["title", "summary", "category", "full_content"]
+    }
+
+    print(f"DEBUG: Generating full issue article for '{issue_title}' with AI classification.")
+    generated_data = call_gemini_api_with_json_schema(prompt_text, response_schema, gem_api_key)
+
+    if generated_data and not generated_data.get("error"):
+        title = generated_data.get("title", issue_title)
+        summary = generated_data.get("summary", "")
+        category = generated_data.get("category", "Label: General") # Get AI-generated category
+        full_content = generated_data.get("full_content", {})
+
+        full_content.setdefault("summary_detail", "")
+        full_content.setdefault("key_findings", [])
+        full_content.setdefault("multiple_perspectives", [])
+        full_content.setdefault("different_viewpoints", [])
+        full_content.setdefault("verification_process", "AI-generated overview based on general knowledge and AI training data.")
+        full_content.setdefault("verified_sources", [])
+
+        article_id = f"debunkd-issue-{uuid.uuid4()}"
+        clean_category_for_image = category.replace('Label: ', '').replace(' ', '+')
+        image_url = f"https://placehold.co/300x200/1A202C/FFFFFF?text={clean_category_for_image}"
+
+        return {
+            "id": article_id,
+            "title": title,
+            "summary": summary,
+            "category": category,
+            "full_content": full_content,
+            "url": f"debunkd-issue-{title.replace(' ', '-')[:50]}-{uuid.uuid4()}",
+            "image_url": image_url
         }
-        return issue_dict
-    except Exception as e:
-        print(f"Error generating full issue article for '{issue_title}': {e}")
-        traceback.print_exc()
+    else:
+        print(f"Error generating full issue article for '{issue_title}': {generated_data.get('error', 'Unknown error')}")
         return None
 
-# --- Original search_debunked (remains largely the same, but uses API_CALL_DELAY) ---
+# --- search_debunked (Updated to use JSON schema for news/fact-check) ---
 def search_debunked(query, gem_api_key, news_api_key):
-    current_gemini_client = genai.Client(api_key=gem_api_key)
-    current_newsapi_key = news_api_key
-
-    enforce_rate_limit() # Enforce rate limit before Gemini call
+    # Use direct Gemini API call for classification as it's a simple text response
+    enforce_rate_limit()
     try:
-        response_classification = current_gemini_client.models.generate_content(
-            model="gemini-2.0-flash", contents=f"Classify the following text/question as 'news', 'general', or 'not english'. Respond with 'n' for news, 'g' for general, or 'c' for not a word.: {query}"
+        response_classification = requests.post(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+            headers={'Content-Type': 'application/json'},
+            params={'key': gem_api_key},
+            json={"contents": [{"role": "user", "parts": [{"text": f"Classify the following text/question as 'news', 'general', or 'not english'. Respond with 'n' for news, 'g' for general, or 'c' for not a word.: {query}"}]}]},
+            timeout=60
         )
-        classification = response_classification.text.strip().lower()
+        response_classification.raise_for_status()
+        result_classification = response_classification.json()
+        classification = result_classification["candidates"][0]["content"]["parts"][0]["text"].strip().lower()
     except Exception as e:
         print(f"Error in search_debunked (classification): {e}")
         traceback.print_exc()
@@ -395,75 +503,104 @@ def search_debunked(query, gem_api_key, news_api_key):
     if "c" in classification:
         raise Exception("We were not able to interpret your search. Please try explaining more clearly.")
     elif "g" in classification:
-        general_prompt = (
-            f"For the topic '{query}', generate a detailed fact-check in the following structured format. "
-            f"Use 'qwe,' as the delimiter between sections. DO NOT include any other 'qwe,' in the response. "
-            f"Each section should be detailed. Provide evidence for claims. "
-            f"For Key Findings and Multiple Perspectives, use a new line for each item.\n\n"
-            f"Summary Detail: [Detailed summary of the topic/claim]\n"
-            f"qwe,Key Findings: [List of key findings, each on a new line, e.g., '- Finding 1\\n- Finding 2']\n"
-            f"qwe,Multiple Perspectives: [List of different perspectives, each on a new line, e.g., '- Perspective A\\n- Perspective B']\n"
-            f"qwe,Verification Process: [Explanation of how the information was verified]\n"
-            f"qwe,Different Viewpoints: [Label: Viewpoint text. Label: Viewpoint text. (e.g., 'Scientific Community: Text. Public Opinion: Text.')]\n"
-            f"qwe,Verified Sources: [Numbered list of source names, e.g., '1. Source Name 1\\n2. Source Name 2']"
+        # Fact-Check / General Article Generation
+        prompt_text = (
+            f"For the topic '{query}', generate a detailed fact-check in JSON format. "
+            f"Classify this fact-check into ONE of the following categories: {', '.join(ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES)}. Prefix the category with 'Label: '. "
+            f"DO NOT refer to yourself as an AI model.\n\n"
+            f"Provide the output in JSON format with the following structure:"
         )
-        enforce_rate_limit() # Enforce rate limit before Gemini call
-        try:
-            response_gemini_general = current_gemini_client.models.generate_content(
-                model="gemini-2.0-flash", contents=general_prompt
-            )
-            parsed_data = parse_gemini_response_to_dict(response_gemini_general.text, [
-                "Summary Detail", "Key Findings", "Multiple Perspectives",
-                "Verification Process", "Different Viewpoints", "Verified Sources"
-            ])
+
+        response_schema = {
+            "type": "OBJECT",
+            "properties": {
+                "title": {"type": "STRING"},
+                "summary": {"type": "STRING"},
+                "category": {
+                    "type": "STRING",
+                    "enum": [f"Label: {cat}" for cat in ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES] # Enforce "Label: Category" format
+                },
+                "full_content": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "summary_detail": {"type": "STRING"},
+                        "key_findings": {"type": "ARRAY", "items": {"type": "STRING"}},
+                        "multiple_perspectives": {"type": "ARRAY", "items": {"type": "STRING"}},
+                        "different_viewpoints": {"type": "ARRAY", "items": {"type": "STRING"}},
+                        "verification_process": {"type": "STRING"},
+                        "verified_sources": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {"name": {"type": "STRING"}, "url": {"type": "STRING"}}}}
+                    }
+                }
+            },
+            "required": ["title", "summary", "category", "full_content"]
+        }
+
+        print(f"DEBUG: Generating general fact-check for '{query}' with AI classification.")
+        generated_data = call_gemini_api_with_json_schema(prompt_text, response_schema, gem_api_key)
+
+        if generated_data and not generated_data.get("error"):
+            title = generated_data.get("title", f"Fact-Check: {query}")
+            summary = generated_data.get("summary", "")
+            category = generated_data.get("category", "Label: General")
+            full_content = generated_data.get("full_content", {})
+
+            full_content.setdefault("summary_detail", "")
+            full_content.setdefault("key_findings", [])
+            full_content.setdefault("multiple_perspectives", [])
+            full_content.setdefault("different_viewpoints", [])
+            full_content.setdefault("verification_process", "AI-generated fact-check based on general knowledge and AI training data.")
+            full_content.setdefault("verified_sources", [])
+
+            article_id = f"debunkd-search-general-{uuid.uuid4()}"
+            clean_category_for_image = category.replace('Label: ', '').replace(' ', '+')
+            image_url = f"https://placehold.co/300x200/5C6BC0/FFFFFF?text={clean_category_for_image}"
 
             return {
-                "id": f"debunkd-search-general-{query}-{uuid.uuid4()}", # Ensure unique ID
-                "title": f"Fact-Check: {query}",
-                "summary": parsed_data.get("Summary Detail", "")[:150] + "...",
-                "category": "Fact-Check",
-                "full_content": {
-                    "summary_detail": parsed_data.get("Summary Detail", ""),
-                    "key_findings": parsed_data.get("Key Findings", []),
-                    "multiple_perspectives": parsed_data.get("Multiple Perspectives", []),
-                    "verification_process": parsed_data.get("Verification Process", ""),
-                    "different_viewpoints": parsed_data.get("Different Viewpoints", []),
-                    "verified_sources": parsed_data.get("Verified Sources", []),
-                },
-                "url": f"debunkd-search-general-{query}",
-                "image_url": f"https://placehold.co/300x200/5C6BC0/FFFFFF?text=Fact+Check"
+                "id": article_id,
+                "title": title,
+                "summary": summary,
+                "category": category, # AI-generated category
+                "full_content": full_content,
+                "url": f"debunkd-search-general-{title.replace(' ', '-')[:50]}-{uuid.uuid4()}",
+                "image_url": image_url
             }
-        except Exception as e:
-            print(f"Error generating general fact-check: {e}")
-            traceback.print_exc()
-            raise Exception(f"Error generating general fact-check: {e}")
+        else:
+            print(f"Error generating general fact-check: {generated_data.get('error', 'Unknown error')}")
+            raise Exception(f"Error generating general fact-check: {generated_data.get('error', 'Unknown error')}")
 
     elif "n" in classification:
+        # News Search
         keyword_prompt = f"Create a single, concise keyword search term for news articles based on the following text. Provide only the keyword(s) without any additional formatting, punctuation, or conversational text. User query: {query}"
-        enforce_rate_limit() # Enforce rate limit before Gemini call
+        enforce_rate_limit()
         try:
-            response_gemini_keyword = current_gemini_client.models.generate_content(
-                model="gemini-2.0-flash", contents=keyword_prompt
+            response_gemini_keyword = requests.post(
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+                headers={'Content-Type': 'application/json'},
+                params={'key': gem_api_key},
+                json={"contents": [{"role": "user", "parts": [{"text": keyword_prompt}]}]},
+                timeout=60
             )
-            keyword_search_term = response_gemini_keyword.text.strip()
+            response_gemini_keyword.raise_for_status()
+            result_keyword = response_gemini_keyword.json()
+            keyword_search_term = result_keyword["candidates"][0]["content"]["parts"][0]["text"].strip()
         except Exception as e:
             print(f"Error generating search keyword: {e}")
             traceback.print_exc()
             raise Exception(f"Error generating search keyword: {e}")
 
+        # Use NewsAPI to get raw articles for the keyword
         news_api_url = (f'https://newsapi.org/v2/everything?'
                         f'q={keyword_search_term}&'
-                        f'{day}'
-                        'sortBy=popularity&'
-                        f'apiKey={current_newsapi_key}')
+                        f'sortBy=popularity&' # Use popularity for search results
+                        f'apiKey={news_api_key}')
 
-        enforce_rate_limit() # Enforce rate limit before NewsAPI call
+        enforce_rate_limit()
         try:
-            response_newsapi = requests.get(news_api_url)
+            response_newsapi = requests.get(news_api_url, timeout=10)
             response_newsapi.raise_for_status()
             rsp_json = response_newsapi.json()
         except requests.exceptions.RequestException as e:
-            print(f"Error fetching news articles from NewsAPI: {e}")
+            print(f"Error fetching news articles from NewsAPI for search: {e}")
             traceback.print_exc()
             raise Exception(f"Error fetching news articles from NewsAPI: {e}")
 
@@ -471,82 +608,63 @@ def search_debunked(query, gem_api_key, news_api_key):
         if rsp_json['totalResults'] == 0:
             raise Exception("Sorry, I didn't find any news articles for that search term. Please try a different query.")
         else:
-            for article in rsp_json['articles'][:5]:
+            for article in rsp_json['articles'][:5]: # Take top 5 articles
                 articles_for_source.append(Article(url=article['url'], title=article.get('title', 'No Title')))
 
-        source_urls_for_gemini = "\n".join([article.url for article in articles_for_source])
+        if not articles_for_source:
+            raise Exception("No relevant articles found to generate a news report.")
 
-        story_prompt = (
-            f"Create a detailed news story based strictly on the information found at the following URLs. "
-            f"Then, provide a short, 1-paragraph summary. Next, provide key findings (list). "
-            f"Then, provide multiple perspectives (list). Then, provide a verification process explanation. "
-            f"Then, provide different viewpoints (label: text format). Finally, provide verified sources (numbered list of names). "
-            f"Use 'qwe,' as the delimiter between sections. DO NOT include any other 'qwe,' in the response. "
-            f"DO NOT format the text in any way (no markdown like *, #, `). "
-            f"DO NOT refer to yourself as an AI model.\n\n"
-            f"Story Content: [Detailed news story content]\n"
-            f"qwe,Summary: [Short, 1-paragraph summary]\n"
-            f"qwe,Key Findings: [List of key findings, each on a new line, e.g., '- Finding 1\\n- Finding 2']\n"
-            f"qwe,Multiple Perspectives: [List of different perspectives, each on a new line, e.g., '- Perspective A\\n- Perspective B']\n"
-            f"qwe,Verification Process: [Explanation of verification process]\n"
-            f"qwe,Different Viewpoints: [Label: Viewpoint text. Label: Viewpoint text. (e.g., 'Analyst: Text. Public: Text.')]\n"
-            f"qwe,Verified Sources: [Numbered list of source names, e.g., '1. Source Name 1\\n2. Source Name 2']\n\n"
-            f"Sources to use:\n{source_urls_for_gemini}"
+        # Use create_full_news_article to generate the detailed news report with AI classification
+        # Pass the first article's title as the main headline for the generated article
+        generated_news_article = create_full_news_article(
+            articles_for_source[0].title, # Use the title of the first source article as the headline
+            articles_for_source,
+            gem_api_key
         )
-
-        enforce_rate_limit() # Enforce rate limit before Gemini call
-        try:
-            response_gemini_story = current_gemini_client.models.generate_content(
-                model="gemini-2.0-flash", contents=story_prompt
-            )
-            parsed_data = parse_gemini_response_to_dict(response_gemini_story.text, [
-                "Story Content", "Summary", "Key Findings", "Multiple Perspectives",
-                "Verification Process", "Different Viewpoints", "Verified Sources"
-            ])
-
-            original_url = articles_for_source[0].url if articles_for_source else f"debunkd-search-news-{query}-{uuid.uuid4()}"
-
-            return {
-                "id": f"debunkd-search-news-{query.replace(' ', '-')[:50]}-{uuid.uuid4()}", # Ensure unique ID
-                "title": f"News Report: {query}",
-                "summary": parsed_data.get("Summary", "")[:150] + "...",
-                "category": "News Report",
-                "full_content": {
-                    "summary_detail": parsed_data.get("Story Content", ""),
-                    "key_findings": parsed_data.get("Key Findings", []),
-                    "multiple_perspectives": parsed_data.get("Multiple Perspectives", []),
-                    "verification_process": parsed_data.get("Verification Process", ""),
-                    "different_viewpoints": parsed_data.get("Different Viewpoints", []),
-                    "verified_sources": parsed_data.get("Verified Sources", []),
-                },
-                "url": original_url,
-                "image_url": f"https://placehold.co/300x200/007bff/FFFFFF?text=News+Report"
-            }
-
-        except Exception as e:
-           print(f"Error generating news story from sources: {e}")
-           traceback.print_exc()
-           raise Exception(f"Error generating news story from sources: {e}")
+        
+        if generated_news_article:
+            # Override URL with original source if available, otherwise use generated one
+            generated_news_article['url'] = articles_for_source[0].url if articles_for_source else generated_news_article['url']
+            # Override the title to indicate it's a search result
+            generated_news_article['title'] = f"Search Result: {query}"
+            return generated_news_article
+        else:
+            raise Exception("Failed to generate a detailed news report for your query.")
     else:
         raise Exception("Unexpected classification from AI.")
     
 def learn_chat(history, question, gem_api_key):
-    current_gemini_client = genai.Client(api_key=gem_api_key)
+    # Define the context message for the AI
+    context_message = "You are Media Mentor, an AI guide to media literacy. Your goal is to help users learn about media literacy, fact-checking, identifying bias, and navigating information online. Provide helpful, concise, and accurate information. Do not act like a general chatbot outside of media literacy topics. Keep responses focused on education and media literacy."
 
-    current_contents = history + [{"role": "user", "parts": [{"text": question}]}]
+    # Construct the 'contents' list that will be sent to the Gemini model.
+    contents_for_model = [{"role": "user", "parts": [{"text": context_message}]}] + history + [{"role": "user", "parts": [{"text": question}]}]
 
     enforce_rate_limit() # Enforce rate limit before Gemini call
     try:
-        response = current_gemini_client.models.generate_content(
-            model="gemini-2.0-flash", contents=current_contents
+        response = requests.post(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+            headers={'Content-Type': 'application/json'},
+            params={'key': gem_api_key},
+            json={"contents": contents_for_model},
+            timeout=60
         )
-        model_response_text = response.text.strip()
+        response.raise_for_status()
+        result = response.json()
+        
+        if result.get("candidates") and result["candidates"][0].get("content") and result["candidates"][0]["content"].get("parts"):
+            model_response_text = result["candidates"][0]["content"]["parts"][0]["text"].strip()
+            # Construct the 'updated_history' to be returned to the frontend.
+            updated_history_for_frontend = history + [{"role": "user", "parts": [{"text": question}]}] + [{"role": "model", "parts": [{"text": model_response_text}]}]
+            return model_response_text, updated_history_for_frontend
+        else:
+            print(f"WARNING: Chatbot API response missing content: {result}")
+            return "Sorry, I'm having trouble responding right now. Please try again.", history + [{"role": "user", "parts": [{"text": question}]}]
 
-        updated_history = current_contents + [{"role": "model", "parts": [{"text": model_response_text}]}]
-
-        return model_response_text, updated_history
-
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
         print(f"Error in learn_chat: {e}")
         traceback.print_exc()
-        return "Sorry, I'm having trouble responding right now. Please try again.", current_contents
+        return "Sorry, I'm having trouble responding right now. Please try again.", history + [{"role": "user", "parts": [{"text": question}]}]
+    except Exception as e:
+        print(f"An unexpected error occurred in learn_chat: {e}")
+        return "Sorry, I'm having trouble responding right now. Please try again.", history + [{"role": "user", "parts": [{"text": question}]}]

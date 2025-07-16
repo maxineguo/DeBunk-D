@@ -40,7 +40,7 @@ app = Flask(__name__,
             template_folder='templates',
             static_folder='static')
 
-# --- Global Caching and Threading Setup ---
+# --- Gloxal Caching and Threading Setup ---
 ARTICLE_CACHE = {} # Stores full article objects by ID for /article/<id> route
 
 feed_cache = {
@@ -94,7 +94,7 @@ last_429_error_time = 0
 BACKOFF_DURATION_ON_429 = 60 # 5 minutes in seconds, can be increased if needed
 
 def background_article_generation_worker(gemini_key, news_key):
-    """global last_429_error_time
+    global last_429_error_time
     print("DEBUG: Background article generation worker started.")
     
     while not stop_background_thread.is_set():
@@ -456,7 +456,7 @@ def background_article_generation_worker(gemini_key, news_key):
                 print(f"DEBUG: Background: Encountered 429. Initiating backoff for {BACKOFF_DURATION_ON_429} seconds.")
             time.sleep(10) # Short sleep on any error
 
-    print("DEBUG: Background article generation worker stopped.")"""
+    print("DEBUG: Background article generation worker stopped.")
 
 
 # --- Main Page Routes ---
@@ -498,7 +498,7 @@ def get_feed_articles_api():
     Fetches and processes news articles for the Feed page.
     Prioritizes serving from cache. If cache is empty/stale, returns current cache.
     """
-    user_newsapi_key_from_header = request.headers.get('X-User-News-API-Key')
+    """user_newsapi_key_from_header = request.headers.get('X-User-News-API-Key')
     news_api_key_to_use = user_newsapi_key_from_header if user_newsapi_key_from_header else NEWSAPI_API_KEY
 
     user_gemini_api_key_from_header = request.headers.get('X-User-Gemini-API-Key')
@@ -528,8 +528,16 @@ def get_feed_articles_api():
         response_data["initial_generation_complete"] = worker_state["initial_generation_complete"]
 
     print("DEBUG: Serving feed articles from cache. Background worker will handle generation.")
-    return jsonify(response_data)
-
+    return jsonify(response_data)"""
+    print("DEBUG: Returning simple, complete test JSON for /api/get_feed_articles")
+    return jsonify({
+        "latest_news": [
+            {"id": "test1", "title": "Test Article 1", "summary": "This is a test summary.", "category": "General", "image_url": "https://placehold.co/300x200/007bff/FFFFFF?text=Test"}
+        ],
+        "general_misconceptions": [],
+        "important_issues": [],
+        "initial_generation_complete": True # Set to true to bypass polling
+    })
 
 @app.route('/api/search_articles', methods=['GET'])
 def search_articles_api():
