@@ -1,2 +1,5 @@
 .env
 text.txt
+news_backend/__pycache__/__init__.cpython-312.pyc
+news_backend/__pycache__/debunked.cpython-312.pyc
+static/.DS_Store

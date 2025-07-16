@@ -36,49 +36,19 @@
         <div class="chat-input-area">
             <input type="text" id="chat-input" placeholder="Ask me about media literacy...">
             <button id="send-chat-btn" class="send-button">
-                <!-- CHANGED: Reverted to img tag for send.png -->
                 <img src="{{ url_for('static', filename='img/send.png') }}" alt="Send Icon" class="send-icon">
             </button>
         </div>
     </div>
 
     <div class="knowledge-hub-container" id="knowledge-hub-section" style="display: none;">
-        <h2 class="knowledge-hub-title">Knowledge Hub</h2>
-        <p class="knowledge-hub-subtitle">Explore articles and lessons to deepen your media literacy skills.</p>
+        <h2 class="knowledge-hub-main-title">Knowledge Hub</h2>
+        <p class="knowledge-hub-main-subtitle">Explore 31 lessons across 7 learning units about media literacy</p>
 
-        <div class="knowledge-hub-filters">
-            <div class="filter-group">
-                <label for="category-filter">Category:</label>
-                <select id="category-filter">
-                    <option value="all">All Categories</option>
-                    <option value="fundamentals">Fundamentals</option>
-                    <option value="understanding-media">Understanding Media</option>
-                    <option value="credible-sources">Credible Sources</option>
-                    <option value="identifying-bias">Identifying Bias</option>
-                    <option value="deconstructing-messages">Deconstructing Messages</option>
-                    <option value="digital-citizenship">Digital Citizenship</option>
-                    <option value="social-media-literacy">Social Media Literacy</option>
-                    <option value="media-and-ethics">Media and Ethics</option>
-                    <option value="creating-responsible-media">Creating Responsible Media</option>
-                    <option value="media-in-global-context">Media in Global Context</option>
-                    <option value="future-of-media">Future of Media</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="difficulty-filter">Difficulty:</label>
-                <select id="difficulty-filter">
-                    <option value="all">All Difficulties</option>
-                    <option value="beginner">Beginner</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
-                </select>
-            </div>
-            <span id="articles-count" class="articles-count-display"></span>
+        <div class="learn-units-container" id="learn-units-container">
+            <!-- Units will be rendered here by JavaScript -->
         </div>
-
-        <div class="learn-articles-grid" id="learn-articles-grid">
-            <!-- Learning articles will be rendered here by JavaScript -->
-        </div>
+        <p id="total-articles-count" class="total-articles-count text-center">Total: 31 lessons across 7 learning units</p>
     </div>
 </div>
 {% endblock %}

@@ -7,7 +7,6 @@ import threading
 import collections
 import traceback
 import requests
-from news_backend.debunked import Article, enforce_rate_limit # Import enforce_rate_limit
 
 # --- Explicitly load environment variables from .env file ---
 dotenv_path = find_dotenv()
@@ -24,6 +23,7 @@ if not NEWSAPI_API_KEY or not GEMINI_API_KEY:
     print("WARNING: NEWSAPI_API_KEY or GEMINI_API_KEY environment variable not set. API features may not work.")
 
 # --- Your backend logic from debunked.py is imported here ---
+# Ensure these imports match the functions available in debunked.py
 from news_backend.debunked import (
     learn_chat,
     search_debunked,
@@ -40,17 +40,17 @@ app = Flask(__name__,
             template_folder='templates',
             static_folder='static')
 
-# --- Gloxal Caching and Threading Setup ---
+# --- Global Caching and Threading Setup ---
 ARTICLE_CACHE = {} # Stores full article objects by ID for /article/<id> route
 
 feed_cache = {
-    "latest_news": {"headlines": [], "full_articles": [], "timestamp": 0, "last_generated_headline_index": -1, "last_generated_article_index": -1},
-    "general_misconceptions": {"headlines": [], "full_articles": [], "timestamp": 0, "last_generated_headline_index": -1, "last_generated_article_index": -1},
-    "important_issues": {"headlines": [], "full_articles": [], "timestamp": 0, "last_generated_headline_index": -1, "last_generated_article_index": -1}
+    "latest_news": {"headlines": [], "full_articles": [], "timestamp": 0},
+    "general_misconceptions": {"headlines": [], "full_articles": [], "timestamp": 0},
+    "important_issues": {"headlines": [], "full_articles": [], "timestamp": 0}
 }
-cache_lock = threading.Lock()
+cache_lock = threading.Lock() # Protects feed_cache and ARTICLE_CACHE
 
-# New global state for the background worker's sequence
+# Global state for the background worker's sequence
 worker_state = {
     "initial_generation_complete": False,
     "creation_sequence_active": False,
@@ -61,11 +61,8 @@ worker_state = {
 }
 worker_state_lock = threading.Lock() # Protects worker_state
 
-CACHE_DURATION = 3600 # Cache articles for 1 hour (in seconds) - Less relevant with explicit cycles
-# API_CALL_DELAY is imported from debunked.py
-
-MAX_HEADLINES_TO_GENERATE_AT_ONCE = 15 # Changed from 32
-MAX_ARTICLES_PER_SECTION = 30 # Max full articles to generate/store per section (target for creation/refresh)
+MAX_HEADLINES_TO_GENERATE_AT_ONCE = 15
+MAX_ARTICLES_PER_SECTION = 15 # Target max articles to generate/store per section
 INITIAL_DISPLAY_ARTICLES = 3 # Initial articles to display on feed load (from the first 3 generated)
 
 stop_background_thread = threading.Event()
@@ -75,25 +72,35 @@ section_configs = {
     "latest_news": {
         "get_headlines_func": get_news_headlines,
         "create_article_func": create_full_news_article,
-        "needs_news_key": True
+        "headlines_topic": "current events", # Added for get_headlines_func
+        "initial_articles_target": 3,
+        "needs_news_key": True # Indicates if NewsAPI key is needed for headlines
     },
     "general_misconceptions": {
         "get_headlines_func": get_misconception_headlines,
         "create_article_func": create_full_misconception_article,
+        "headlines_topic": "common myths", # Added for get_headlines_func
+        "initial_articles_target": 3,
         "needs_news_key": False
     },
     "important_issues": {
         "get_headlines_func": get_issue_headlines,
         "create_article_func": create_full_issue_article,
+        "headlines_topic": "global challenges", # Added for get_headlines_func
+        "initial_articles_target": 3,
         "needs_news_key": False
     }
 }
 
 # Global variable to track 429 errors and implement backoff
 last_429_error_time = 0
-BACKOFF_DURATION_ON_429 = 60 # 5 minutes in seconds, can be increased if needed
+BACKOFF_DURATION_ON_429 = 300 # 5 minutes in seconds, can be increased if needed
 
 def background_article_generation_worker(gemini_key, news_key):
+    """
+    Worker thread to generate and update articles in the cache.
+    It performs initial generation and then continuous updates.
+    """
     global last_429_error_time
     print("DEBUG: Background article generation worker started.")
     
@@ -122,13 +129,16 @@ def background_article_generation_worker(gemini_key, news_key):
             if not initial_complete:
                 print(f"DEBUG: Initial Generation Sequence - Step {current_step}")
                 with cache_lock: # Acquire lock for cache modifications
-                    sec_names = ["latest_news", "general_misconceptions", "important_issues"]
                     
                     if current_step == 0: # Generate 15 headlines for news
                         print("DEBUG: Initial: Generating 15 headlines for latest_news.")
-                        new_headlines = section_configs["latest_news"]["get_headlines_func"](gemini_key, news_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
-                        feed_cache["latest_news"]["headlines"].extend(new_headlines)
-                        print(f"DEBUG: Initial: Added {len(new_headlines)} headlines to latest_news. Total: {len(feed_cache['latest_news']['headlines'])}")
+                        new_headlines_response = section_configs["latest_news"]["get_headlines_func"](gemini_key, news_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
+                        # CORRECTED: Check if it's a dict (error) or a list (success)
+                        if isinstance(new_headlines_response, list):
+                            feed_cache["latest_news"]["headlines"].extend(new_headlines_response)
+                            print(f"DEBUG: Initial: Added {len(new_headlines_response)} headlines to latest_news. Total: {len(feed_cache['latest_news']['headlines'])}")
+                        else: # It's an error dict
+                            print(f"ERROR: Initial: Failed to get headlines for latest_news: {new_headlines_response.get('error', 'Unknown error')}")
                         with worker_state_lock: worker_state["current_generation_step"] += 1
                         task_processed_in_this_loop = True
                         time.sleep(API_CALL_DELAY) # Delay after API call
@@ -136,15 +146,13 @@ def background_article_generation_worker(gemini_key, news_key):
                     elif current_step == 1: # Generate 3 articles for news
                         print("DEBUG: Initial: Generating 3 articles for latest_news.")
                         for _ in range(3):
-                            next_headline_index = feed_cache["latest_news"]["last_generated_article_index"] + 1
-                            if next_headline_index < len(feed_cache["latest_news"]["headlines"]):
-                                headline_to_process = feed_cache["latest_news"]["headlines"][next_headline_index]
+                            if feed_cache["latest_news"]["headlines"]:
+                                headline_to_process = feed_cache["latest_news"]["headlines"].pop(0) # Get one headline
                                 full_article = section_configs["latest_news"]["create_article_func"](headline_to_process, [], gemini_key) # raw_articles_for_source is empty for now
                                 if full_article:
                                     ARTICLE_CACHE[full_article['id']] = full_article
                                     feed_cache["latest_news"]["full_articles"].append(full_article)
                                     feed_cache["latest_news"]["timestamp"] = time.time()
-                                    feed_cache["latest_news"]["last_generated_article_index"] = next_headline_index
                                     print(f"DEBUG: Initial: Added full article to latest_news. Total: {len(feed_cache['latest_news']['full_articles'])}")
                                 time.sleep(API_CALL_DELAY)
                             else:
@@ -155,9 +163,13 @@ def background_article_generation_worker(gemini_key, news_key):
 
                     elif current_step == 2: # Generate 15 headlines for misconceptions
                         print("DEBUG: Initial: Generating 15 headlines for general_misconceptions.")
-                        new_headlines = section_configs["general_misconceptions"]["get_headlines_func"](gemini_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
-                        feed_cache["general_misconceptions"]["headlines"].extend(new_headlines)
-                        print(f"DEBUG: Initial: Added {len(new_headlines)} headlines to general_misconceptions. Total: {len(feed_cache['general_misconceptions']['headlines'])}")
+                        new_headlines_response = section_configs["general_misconceptions"]["get_headlines_func"](gemini_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
+                        # CORRECTED: Check if it's a dict (error) or a list (success)
+                        if isinstance(new_headlines_response, list):
+                            feed_cache["general_misconceptions"]["headlines"].extend(new_headlines_response)
+                            print(f"DEBUG: Initial: Added {len(new_headlines_response)} headlines to general_misconceptions. Total: {len(feed_cache['general_misconceptions']['headlines'])}")
+                        else: # It's an error dict
+                            print(f"ERROR: Initial: Failed to get headlines for general_misconceptions: {new_headlines_response.get('error', 'Unknown error')}")
                         with worker_state_lock: worker_state["current_generation_step"] += 1
                         task_processed_in_this_loop = True
                         time.sleep(API_CALL_DELAY)
@@ -165,15 +177,13 @@ def background_article_generation_worker(gemini_key, news_key):
                     elif current_step == 3: # Generate 3 articles for misconceptions
                         print("DEBUG: Initial: Generating 3 articles for general_misconceptions.")
                         for _ in range(3):
-                            next_headline_index = feed_cache["general_misconceptions"]["last_generated_article_index"] + 1
-                            if next_headline_index < len(feed_cache["general_misconceptions"]["headlines"]):
-                                headline_to_process = feed_cache["general_misconceptions"]["headlines"][next_headline_index]
+                            if feed_cache["general_misconceptions"]["headlines"]:
+                                headline_to_process = feed_cache["general_misconceptions"]["headlines"].pop(0)
                                 full_article = section_configs["general_misconceptions"]["create_article_func"](headline_to_process, gemini_key)
                                 if full_article:
                                     ARTICLE_CACHE[full_article['id']] = full_article
                                     feed_cache["general_misconceptions"]["full_articles"].append(full_article)
                                     feed_cache["general_misconceptions"]["timestamp"] = time.time()
-                                    feed_cache["general_misconceptions"]["last_generated_article_index"] = next_headline_index
                                     print(f"DEBUG: Initial: Added full article to general_misconceptions. Total: {len(feed_cache['general_misconceptions']['full_articles'])}")
                                 time.sleep(API_CALL_DELAY)
                             else:
@@ -184,9 +194,13 @@ def background_article_generation_worker(gemini_key, news_key):
 
                     elif current_step == 4: # Generate 15 headlines for issues
                         print("DEBUG: Initial: Generating 15 headlines for important_issues.")
-                        new_headlines = section_configs["important_issues"]["get_headlines_func"](gemini_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
-                        feed_cache["important_issues"]["headlines"].extend(new_headlines)
-                        print(f"DEBUG: Initial: Added {len(new_headlines)} headlines to important_issues. Total: {len(feed_cache['important_issues']['headlines'])}")
+                        new_headlines_response = section_configs["important_issues"]["get_headlines_func"](gemini_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
+                        # CORRECTED: Check if it's a dict (error) or a list (success)
+                        if isinstance(new_headlines_response, list):
+                            feed_cache["important_issues"]["headlines"].extend(new_headlines_response)
+                            print(f"DEBUG: Initial: Added {len(new_headlines_response)} headlines to important_issues. Total: {len(feed_cache['important_issues']['headlines'])}")
+                        else: # It's an error dict
+                            print(f"ERROR: Initial: Failed to get headlines for important_issues: {new_headlines_response.get('error', 'Unknown error')}")
                         with worker_state_lock: worker_state["current_generation_step"] += 1
                         task_processed_in_this_loop = True
                         time.sleep(API_CALL_DELAY)
@@ -194,15 +208,13 @@ def background_article_generation_worker(gemini_key, news_key):
                     elif current_step == 5: # Generate 3 articles for issues
                         print("DEBUG: Initial: Generating 3 articles for important_issues.")
                         for _ in range(3):
-                            next_headline_index = feed_cache["important_issues"]["last_generated_article_index"] + 1
-                            if next_headline_index < len(feed_cache["important_issues"]["headlines"]):
-                                headline_to_process = feed_cache["important_issues"]["headlines"][next_headline_index]
+                            if feed_cache["important_issues"]["headlines"]:
+                                headline_to_process = feed_cache["important_issues"]["headlines"].pop(0)
                                 full_article = section_configs["important_issues"]["create_article_func"](headline_to_process, gemini_key)
                                 if full_article:
                                     ARTICLE_CACHE[full_article['id']] = full_article
                                     feed_cache["important_issues"]["full_articles"].append(full_article)
                                     feed_cache["important_issues"]["timestamp"] = time.time()
-                                    feed_cache["important_issues"]["last_generated_article_index"] = next_headline_index
                                     print(f"DEBUG: Initial: Added full article to important_issues. Total: {len(feed_cache['important_issues']['full_articles'])}")
                                 time.sleep(API_CALL_DELAY)
                             else:
@@ -211,53 +223,36 @@ def background_article_generation_worker(gemini_key, news_key):
                         with worker_state_lock: worker_state["current_generation_step"] += 1
                         task_processed_in_this_loop = True
 
-                    elif current_step == 6: # Generate 3 headlines for news (add to current 12)
-                        print("DEBUG: Initial: Generating 3 more headlines for latest_news.")
-                        new_headlines = section_configs["latest_news"]["get_headlines_func"](gemini_key, news_key, count=3)
-                        feed_cache["latest_news"]["headlines"].extend(new_headlines)
-                        print(f"DEBUG: Initial: Added {len(new_headlines)} headlines to latest_news. Total: {len(feed_cache['latest_news']['headlines'])}")
-                        with worker_state_lock: worker_state["current_generation_step"] += 1
-                        task_processed_in_this_loop = True
-                        time.sleep(API_CALL_DELAY)
+                    elif current_step == 6: # Check if initial generation is complete and set flag
+                        all_sections_met_initial_target = True
+                        for section in section_configs:
+                            if len(feed_cache[section]["full_articles"]) < section_configs[section]["initial_articles_target"]:
+                                all_sections_met_initial_target = False
+                                break
                         
-                    elif current_step == 7: # Generate 3 headlines for misconceptions (add to current 12)
-                        print("DEBUG: Initial: Generating 3 more headlines for general_misconceptions.")
-                        new_headlines = section_configs["general_misconceptions"]["get_headlines_func"](gemini_key, count=3)
-                        feed_cache["general_misconceptions"]["headlines"].extend(new_headlines)
-                        print(f"DEBUG: Initial: Added {len(new_headlines)} headlines to general_misconceptions. Total: {len(feed_cache['general_misconceptions']['headlines'])}")
-                        with worker_state_lock: worker_state["current_generation_step"] += 1
-                        task_processed_in_this_loop = True
-                        time.sleep(API_CALL_DELAY)
-                        
-                    elif current_step == 8: # Generate 3 headlines for issues (add to current 12)
-                        print("DEBUG: Initial: Generating 3 more headlines for important_issues.")
-                        new_headlines = section_configs["important_issues"]["get_headlines_func"](gemini_key, count=3)
-                        feed_cache["important_issues"]["headlines"].extend(new_headlines)
-                        print(f"DEBUG: Initial: Added {len(new_headlines)} headlines to important_issues. Total: {len(feed_cache['important_issues']['headlines'])}")
-                        with worker_state_lock: worker_state["current_generation_step"] += 1
-                        task_processed_in_this_loop = True
-                        time.sleep(API_CALL_DELAY)
-                        
-                    elif current_step == 9: # Initial sequence complete, wait 1 minute
-                        print("DEBUG: Initial Generation Sequence Complete. Waiting 1 minute.")
                         with worker_state_lock:
-                            worker_state["initial_generation_complete"] = True
-                            worker_state["last_sequence_execution_time"] = time.time() # Mark time of completion
-                            worker_state["current_generation_step"] = 0 # Reset step for next sequence
+                            worker_state["initial_generation_complete"] = all_sections_met_initial_target
+                            if all_sections_met_initial_target:
+                                print("DEBUG: All initial article generation complete. Resetting step and transitioning.")
+                                worker_state["current_generation_step"] = 0 # Reset for next sequence
+                            else:
+                                print("DEBUG: Initial generation not yet complete. Looping back to step 0.")
+                                worker_state["current_generation_step"] = 0 # Loop back to start if not complete
+                            worker_state["last_sequence_execution_time"] = time.time()
                         task_processed_in_this_loop = True
-                        time.sleep(60) # Wait 1 minute
-                        
+                        time.sleep(5) # Give some time before next loop iteration
+
                 if task_processed_in_this_loop:
                     continue # Continue to next loop iteration immediately after a step is processed
 
             # --- Creation Sequence ---
-            # This sequence runs if initial is complete AND full_articles count is not 15 for any section
+            # This sequence runs if initial is complete AND full_articles count is not MAX_ARTICLES_PER_SECTION for any section
             # And no refresh is active
             needs_creation_sequence = False
             with cache_lock:
                 if initial_complete and not refresh_active:
                     for sec_name in section_configs:
-                        if len(feed_cache[sec_name]["full_articles"]) < 15: # Target 15 articles after initial 3
+                        if len(feed_cache[sec_name]["full_articles"]) < MAX_ARTICLES_PER_SECTION:
                             needs_creation_sequence = True
                             break
             
@@ -267,8 +262,6 @@ def background_article_generation_worker(gemini_key, news_key):
 
                 print(f"DEBUG: Creation Sequence - Step {current_step}")
                 with cache_lock:
-                    sec_names = ["latest_news", "general_misconceptions", "important_issues"]
-                    
                     # Check if 1 minute has passed since last sequence execution (only for steps after the first)
                     if current_step > 0 and current_time - last_exec_time < 60:
                         remaining_wait = 60 - (current_time - last_exec_time)
@@ -279,11 +272,14 @@ def background_article_generation_worker(gemini_key, news_key):
                     # Generate 5 articles per section (2 times)
                     if current_step < 2: # Steps 0, 1 for generating 5 articles per section
                         articles_to_generate = 5
-                        for sec_name in sec_names:
+                        for sec_name in section_configs:
                             for _ in range(articles_to_generate):
-                                next_headline_index = feed_cache[sec_name]["last_generated_article_index"] + 1
-                                if next_headline_index < len(feed_cache[sec_name]["headlines"]):
-                                    headline_to_process = feed_cache[sec_name]["headlines"][next_headline_index]
+                                if len(feed_cache[sec_name]["full_articles"]) >= MAX_ARTICLES_PER_SECTION:
+                                    print(f"DEBUG: Creation: {sec_name} already has MAX_ARTICLES_PER_SECTION. Skipping.")
+                                    continue # Skip to next section if already full
+
+                                if feed_cache[sec_name]["headlines"]:
+                                    headline_to_process = feed_cache[sec_name]["headlines"].pop(0)
                                     create_func = section_configs[sec_name]["create_article_func"]
                                     # Pass raw_articles_for_source as empty list for news, or gemini_key for others
                                     full_article = create_func(headline_to_process, [] if sec_name == "latest_news" else gemini_key, gemini_key if sec_name == "latest_news" else None)
@@ -291,12 +287,21 @@ def background_article_generation_worker(gemini_key, news_key):
                                         ARTICLE_CACHE[full_article['id']] = full_article
                                         feed_cache[sec_name]["full_articles"].append(full_article)
                                         feed_cache[sec_name]["timestamp"] = time.time()
-                                        feed_cache[sec_name]["last_generated_article_index"] = next_headline_index
                                         print(f"DEBUG: Creation: Added full article to {sec_name}. Total: {len(feed_cache[sec_name]['full_articles'])}")
                                     time.sleep(API_CALL_DELAY)
                                 else:
-                                    print(f"WARNING: Creation: Not enough headlines for {sec_name} to generate {articles_to_generate} articles.")
-                                    # Don't break, try other sections for this step
+                                    print(f"WARNING: Creation: Not enough headlines for {sec_name} to generate {articles_to_generate} articles. Re-fetching headlines...")
+                                    get_headlines_func = section_configs[sec_name]["get_headlines_func"]
+                                    if section_configs[sec_name]["needs_news_key"]:
+                                        new_headlines_response = get_headlines_func(gemini_key, news_key, count=5)
+                                    else:
+                                        new_headlines_response = get_headlines_func(gemini_key, count=5)
+                                    # CORRECTED: Check if it's a dict (error) or a list (success)
+                                    if isinstance(new_headlines_response, list):
+                                        feed_cache[sec_name]["headlines"].extend(new_headlines_response)
+                                        print(f"DEBUG: Creation: Added {len(new_headlines_response)} new headlines for {sec_name}.")
+                                    else: # It's an error dict
+                                        print(f"ERROR: Creation: Failed to fetch more headlines for {sec_name}: {new_headlines_response.get('error', 'Unknown error')}")
                         with worker_state_lock:
                             worker_state["current_generation_step"] += 1
                             worker_state["last_sequence_execution_time"] = time.time()
@@ -304,38 +309,54 @@ def background_article_generation_worker(gemini_key, news_key):
                         
                     elif current_step == 2: # Generate 2 articles per section
                         articles_to_generate = 2
-                        for sec_name in sec_names:
+                        for sec_name in section_configs:
                             for _ in range(articles_to_generate):
-                                next_headline_index = feed_cache[sec_name]["last_generated_article_index"] + 1
-                                if next_headline_index < len(feed_cache[sec_name]["headlines"]):
-                                    headline_to_process = feed_cache[sec_name]["headlines"][next_headline_index]
+                                if len(feed_cache[sec_name]["full_articles"]) >= MAX_ARTICLES_PER_SECTION:
+                                    print(f"DEBUG: Creation: {sec_name} already has MAX_ARTICLES_PER_SECTION. Skipping.")
+                                    continue
+
+                                if feed_cache[sec_name]["headlines"]:
+                                    headline_to_process = feed_cache[sec_name]["headlines"].pop(0)
                                     create_func = section_configs[sec_name]["create_article_func"]
                                     full_article = create_func(headline_to_process, [] if sec_name == "latest_news" else gemini_key, gemini_key if sec_name == "latest_news" else None)
                                     if full_article:
                                         ARTICLE_CACHE[full_article['id']] = full_article
                                         feed_cache[sec_name]["full_articles"].append(full_article)
                                         feed_cache[sec_name]["timestamp"] = time.time()
-                                        feed_cache[sec_name]["last_generated_article_index"] = next_headline_index
                                         print(f"DEBUG: Creation: Added full article to {sec_name}. Total: {len(feed_cache[sec_name]['full_articles'])}")
                                     time.sleep(API_CALL_DELAY)
                                 else:
-                                    print(f"WARNING: Creation: Not enough headlines for {sec_name} to generate {articles_to_generate} articles.")
-                                    # Don't break, try other sections for this step
+                                    print(f"WARNING: Creation: Not enough headlines for {sec_name} to generate {articles_to_generate} articles. Re-fetching headlines...")
+                                    get_headlines_func = section_configs[sec_name]["get_headlines_func"]
+                                    if section_configs[sec_name]["needs_news_key"]:
+                                        new_headlines_response = get_headlines_func(gemini_key, news_key, count=5)
+                                    else:
+                                        new_headlines_response = get_headlines_func(gemini_key, count=5)
+                                    # CORRECTED: Check if it's a dict (error) or a list (success)
+                                    if isinstance(new_headlines_response, list):
+                                        feed_cache[sec_name]["headlines"].extend(new_headlines_response)
+                                        print(f"DEBUG: Creation: Added {len(new_headlines_response)} new headlines for {sec_name}.")
+                                    else: # It's an error dict
+                                        print(f"ERROR: Creation: Failed to fetch more headlines for {sec_name}: {new_headlines_response.get('error', 'Unknown error')}")
                         with worker_state_lock:
                             worker_state["current_generation_step"] += 1
                             worker_state["last_sequence_execution_time"] = time.time()
                         task_processed_in_this_loop = True
 
                     elif current_step == 3: # Generate 15 headlines per section
-                        for sec_name in sec_names:
+                        for sec_name in section_configs:
                             print(f"DEBUG: Creation: Generating 15 headlines for {sec_name}.")
                             get_headlines_func = section_configs[sec_name]["get_headlines_func"]
                             if section_configs[sec_name]["needs_news_key"]:
-                                new_headlines = get_headlines_func(gemini_key, news_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
+                                new_headlines_response = get_headlines_func(gemini_key, news_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
                             else:
-                                new_headlines = get_headlines_func(gemini_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
-                            feed_cache[sec_name]["headlines"].extend(new_headlines)
-                            print(f"DEBUG: Creation: Added {len(new_headlines)} headlines to {sec_name}. Total: {len(feed_cache[sec_name]['headlines'])}")
+                                new_headlines_response = get_headlines_func(gemini_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
+                            # CORRECTED: Check if it's a dict (error) or a list (success)
+                            if isinstance(new_headlines_response, list):
+                                feed_cache[sec_name]["headlines"].extend(new_headlines_response)
+                                print(f"DEBUG: Creation: Added {len(new_headlines_response)} headlines to {sec_name}. Total: {len(feed_cache[sec_name]['headlines'])}")
+                            else: # It's an error dict
+                                print(f"ERROR: Creation: Failed to get headlines for {sec_name}: {new_headlines_response.get('error', 'Unknown error')}")
                             time.sleep(API_CALL_DELAY)
                         with worker_state_lock:
                             worker_state["current_generation_step"] += 1
@@ -369,8 +390,6 @@ def background_article_generation_worker(gemini_key, news_key):
             if needs_refresh_sequence:
                 print(f"DEBUG: Refresh Sequence - Step {current_step}")
                 with cache_lock:
-                    sec_names = ["latest_news", "general_misconceptions", "important_issues"]
-
                     # Check if 1 minute has passed since last sequence execution (only for steps after the first)
                     if current_step > 0 and current_time - last_exec_time < 60:
                         remaining_wait = 60 - (current_time - last_exec_time)
@@ -381,38 +400,54 @@ def background_article_generation_worker(gemini_key, news_key):
                     # Generate 5 articles per section (3 times)
                     if current_step < 3: # Steps 0, 1, 2 for generating 5 articles per section
                         articles_to_generate = 5
-                        for sec_name in sec_names:
+                        for sec_name in section_configs:
                             for _ in range(articles_to_generate):
-                                next_headline_index = feed_cache[sec_name]["last_generated_article_index"] + 1
-                                if next_headline_index < len(feed_cache[sec_name]["headlines"]):
-                                    headline_to_process = feed_cache[sec_name]["headlines"][next_headline_index]
+                                if len(feed_cache[sec_name]["full_articles"]) >= MAX_ARTICLES_PER_SECTION:
+                                    print(f"DEBUG: Refresh: {sec_name} already has MAX_ARTICLES_PER_SECTION. Skipping.")
+                                    continue
+
+                                if feed_cache[sec_name]["headlines"]:
+                                    headline_to_process = feed_cache[sec_name]["headlines"].pop(0)
                                     create_func = section_configs[sec_name]["create_article_func"]
                                     full_article = create_func(headline_to_process, [] if sec_name == "latest_news" else gemini_key, gemini_key if sec_name == "latest_news" else None)
                                     if full_article:
                                         ARTICLE_CACHE[full_article['id']] = full_article
                                         feed_cache[sec_name]["full_articles"].append(full_article)
                                         feed_cache[sec_name]["timestamp"] = time.time()
-                                        feed_cache[sec_name]["last_generated_article_index"] = next_headline_index
                                         print(f"DEBUG: Refresh: Added full article to {sec_name}. Total: {len(feed_cache[sec_name]['full_articles'])}")
                                     time.sleep(API_CALL_DELAY)
                                 else:
-                                    print(f"WARNING: Refresh: Not enough headlines for {sec_name} to generate {articles_to_generate} articles.")
-                                    # Don't break, try other sections for this step
+                                    print(f"WARNING: Refresh: Not enough headlines for {sec_name} to generate {articles_to_generate} articles. Re-fetching headlines...")
+                                    get_headlines_func = section_configs[sec_name]["get_headlines_func"]
+                                    if section_configs[sec_name]["needs_news_key"]:
+                                        new_headlines_response = get_headlines_func(gemini_key, news_key, count=5)
+                                    else:
+                                        new_headlines_response = get_headlines_func(gemini_key, count=5)
+                                    # CORRECTED: Check if it's a dict (error) or a list (success)
+                                    if isinstance(new_headlines_response, list):
+                                        feed_cache[sec_name]["headlines"].extend(new_headlines_response)
+                                        print(f"DEBUG: Refresh: Added {len(new_headlines_response)} new headlines for {sec_name}.")
+                                    else: # It's an error dict
+                                        print(f"ERROR: Refresh: Failed to fetch more headlines for {sec_name}: {new_headlines_response.get('error', 'Unknown error')}")
                         with worker_state_lock:
                             worker_state["current_generation_step"] += 1
                             worker_state["last_sequence_execution_time"] = time.time()
                         task_processed_in_this_loop = True
                         
                     elif current_step == 3: # Generate 15 headlines per section
-                        for sec_name in sec_names:
+                        for sec_name in section_configs:
                             print(f"DEBUG: Refresh: Generating 15 headlines for {sec_name}.")
                             get_headlines_func = section_configs[sec_name]["get_headlines_func"]
                             if section_configs[sec_name]["needs_news_key"]:
-                                new_headlines = get_headlines_func(gemini_key, news_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
+                                new_headlines_response = get_headlines_func(gemini_key, news_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
                             else:
-                                new_headlines = get_headlines_func(gemini_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
-                            feed_cache[sec_name]["headlines"].extend(new_headlines)
-                            print(f"DEBUG: Refresh: Added {len(new_headlines)} headlines to {sec_name}. Total: {len(feed_cache[sec_name]['headlines'])}")
+                                new_headlines_response = get_headlines_func(gemini_key, count=MAX_HEADLINES_TO_GENERATE_AT_ONCE)
+                            # CORRECTED: Check if it's a dict (error) or a list (success)
+                            if isinstance(new_headlines_response, list):
+                                feed_cache[sec_name]["headlines"].extend(new_headlines_response)
+                                print(f"DEBUG: Refresh: Added {len(new_headlines_response)} headlines to {sec_name}. Total: {len(feed_cache[sec_name]['headlines'])}")
+                            else: # It's an error dict
+                                print(f"ERROR: Refresh: Failed to get headlines for {sec_name}: {new_headlines_response.get('error', 'Unknown error')}")
                             time.sleep(API_CALL_DELAY)
                         with worker_state_lock:
                             worker_state["current_generation_step"] += 1
@@ -489,6 +524,12 @@ def article_detail(article_id):
         return render_template('error.html', message="Article not found or has expired."), 404
     return render_template('article_detail.html', article=article)
 
+# --- New Route for Learn Article Detail ---
+@app.route('/learn_article/<unit_id>/<lesson_id>/<path:lesson_title>')
+def learn_article_detail(unit_id, lesson_id, lesson_title):
+    # The lesson_title comes URL-encoded, so decode it
+    decoded_title = lesson_title
+    return render_template('learn_article_detail.html', article_title=decoded_title)
 
 # --- API Endpoints ---
 
@@ -498,7 +539,7 @@ def get_feed_articles_api():
     Fetches and processes news articles for the Feed page.
     Prioritizes serving from cache. If cache is empty/stale, returns current cache.
     """
-    """user_newsapi_key_from_header = request.headers.get('X-User-News-API-Key')
+    user_newsapi_key_from_header = request.headers.get('X-User-News-API-Key')
     news_api_key_to_use = user_newsapi_key_from_header if user_newsapi_key_from_header else NEWSAPI_API_KEY
 
     user_gemini_api_key_from_header = request.headers.get('X-User-Gemini-API-Key')
@@ -508,8 +549,6 @@ def get_feed_articles_api():
         # If API keys are missing, return an error and prompt user
         return jsonify({"error": "API keys not provided or configured. Please enter them in your profile settings.", "code": 401}), 401
 
-    current_time = time.time()
-    
     with cache_lock: # Acquire lock for feed_cache read
         response_data = {
             "latest_news": [a for a in feed_cache["latest_news"]["full_articles"] if a is not None][:MAX_ARTICLES_PER_SECTION],
@@ -528,16 +567,8 @@ def get_feed_articles_api():
         response_data["initial_generation_complete"] = worker_state["initial_generation_complete"]
 
     print("DEBUG: Serving feed articles from cache. Background worker will handle generation.")
-    return jsonify(response_data)"""
-    print("DEBUG: Returning simple, complete test JSON for /api/get_feed_articles")
-    return jsonify({
-        "latest_news": [
-            {"id": "test1", "title": "Test Article 1", "summary": "This is a test summary.", "category": "General", "image_url": "https://placehold.co/300x200/007bff/FFFFFF?text=Test"}
-        ],
-        "general_misconceptions": [],
-        "important_issues": [],
-        "initial_generation_complete": True # Set to true to bypass polling
-    })
+    return jsonify(response_data)
+
 
 @app.route('/api/search_articles', methods=['GET'])
 def search_articles_api():
@@ -604,4 +635,4 @@ if __name__ == '__main__':
     else:
         print("WARNING: Background generation worker not started due to missing API keys.")
 
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False) # use_reloader=False for threading

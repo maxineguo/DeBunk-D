@@ -196,6 +196,7 @@ def get_news_headlines(gem_api_key, news_api_key, count=12):
             headlines = [h.strip() for h in result["candidates"][0]["content"]["parts"][0]["text"].split(", ") if h.strip()]
             headlines = list(collections.OrderedDict.fromkeys(headlines)) # Remove duplicates while preserving order
             headlines = headlines[:count] # Ensure we only return 'count' headlines
+            print(f"DEBUG: Generated {len(headlines)} headlines: {headlines}") # Added print
             return headlines
         else:
             print(f"WARNING: Gemini API response missing content for headlines: {result}")
@@ -232,6 +233,7 @@ def get_misconception_headlines(gem_api_key, count=12):
             misconceptions_titles = [m.strip() for m in result["candidates"][0]["content"]["parts"][0]["text"].split(", ") if m.strip()]
             misconceptions_titles = list(collections.OrderedDict.fromkeys(misconceptions_titles))
             misconceptions_titles = misconceptions_titles[:count]
+            print(f"DEBUG: Generated {len(misconceptions_titles)} misconception headlines: {misconceptions_titles}") # Added print
             return misconceptions_titles
         else:
             print(f"WARNING: Gemini API response missing content for misconception headlines: {result}")
@@ -266,6 +268,7 @@ def get_issue_headlines(gem_api_key, count=12):
             issue_titles = [i.strip() for i in result["candidates"][0]["content"]["parts"][0]["text"].split(", ") if i.strip()]
             issue_titles = list(collections.OrderedDict.fromkeys(issue_titles))
             issue_titles = issue_titles[:count]
+            print(f"DEBUG: Generated {len(issue_titles)} issue headlines: {issue_titles}") # Added print
             return issue_titles
         else:
             print(f"WARNING: Gemini API response missing content for issue headlines: {result}")
@@ -287,6 +290,11 @@ def create_full_news_article(headline, raw_articles_for_source, gem_api_key):
         f"If no specific sources are provided, generate a plausible news story for the headline. "
         f"Classify this news article into ONE of the following categories: {', '.join(ALLOWED_ARTICLE_CATEGORIES)}. "
         f"DO NOT refer to yourself as an AI model.\n\n"
+        f"The 'summary_detail' should be a comprehensive, multi-paragraph explanation of the news story. "
+        f"The 'key_findings' should be a list of crucial facts. "
+        f"The 'multiple_perspectives' should provide distinct viewpoints or angles on the topic. "
+        f"The 'different_viewpoints' should offer contrasting opinions or interpretations. "
+        f"The 'verification_process' should briefly explain how such information could be verified.\n\n"
         f"Sources to use:\n{source_urls_for_gemini}\n\n"
         f"Provide the output in JSON format with the following structure:"
     )
@@ -310,12 +318,12 @@ def create_full_news_article(headline, raw_articles_for_source, gem_api_key):
                     "verification_process": {"type": "STRING"},
                     "verified_sources": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {"name": {"type": "STRING"}, "url": {"type": "STRING"}}}}
                 }
-            },
-            "required": ["title", "summary", "category", "full_content"]
-        }
+            }
+        },
+        "required": ["title", "summary", "category", "full_content"]
     }
 
-    print(f"DEBUG: Generating full news article for '{headline}' with AI classification.")
+    print(f"DEBUG: Generating full news article for '{headline}' with AI classification and detailed content.")
     generated_data = call_gemini_api_with_json_schema(prompt_text, response_schema, gem_api_key)
 
     if generated_data and not generated_data.get("error"):
@@ -337,7 +345,7 @@ def create_full_news_article(headline, raw_articles_for_source, gem_api_key):
         article_id = f"debunkd-news-{uuid.uuid4()}"
         image_url = f"https://placehold.co/300x200/007bff/FFFFFF?text={category.replace(' ', '+')}" # Use AI category for image text
 
-        return {
+        article_obj = {
             "id": article_id,
             "title": title,
             "summary": summary,
@@ -346,6 +354,8 @@ def create_full_news_article(headline, raw_articles_for_source, gem_api_key):
             "url": f"debunkd-news-{title.replace(' ', '-')[:50]}-{uuid.uuid4()}",
             "image_url": image_url
         }
+        print(f"DEBUG: Generated News Article: Title='{article_obj['title']}', Category='{article_obj['category']}'") # Added print
+        return article_obj
     else:
         print(f"Error generating full news article for '{headline}': {generated_data.get('error', 'Unknown error')}")
         return None
@@ -355,6 +365,11 @@ def create_full_misconception_article(misconception_title, gem_api_key):
         f"For the misconception '{misconception_title}', write a detailed article debunking it. "
         f"Classify the core topic of this misconception into ONE of the following categories: {', '.join(ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES)}. Prefix the category with 'Label: '. "
         f"DO NOT refer to yourself as an AI model.\n\n"
+        f"The 'summary_detail' should be a comprehensive, multi-paragraph explanation of the debunking. "
+        f"The 'key_findings' should be a list of crucial facts. "
+        f"The 'multiple_perspectives' should provide common arguments for and against the misconception. "
+        f"The 'different_viewpoints' should offer contrasting interpretations of the evidence. "
+        f"The 'verification_process' should briefly explain how such information could be verified.\n\n"
         f"Provide the output in JSON format with the following structure:"
     )
 
@@ -382,7 +397,7 @@ def create_full_misconception_article(misconception_title, gem_api_key):
         "required": ["title", "summary", "category", "full_content"]
     }
 
-    print(f"DEBUG: Generating full misconception article for '{misconception_title}' with AI classification.")
+    print(f"DEBUG: Generating full misconception article for '{misconception_title}' with AI classification and detailed content.")
     generated_data = call_gemini_api_with_json_schema(prompt_text, response_schema, gem_api_key)
 
     if generated_data and not generated_data.get("error"):
@@ -402,7 +417,7 @@ def create_full_misconception_article(misconception_title, gem_api_key):
         clean_category_for_image = category.replace('Label: ', '').replace(' ', '+')
         image_url = f"https://placehold.co/300x200/FF8C00/FFFFFF?text={clean_category_for_image}"
 
-        return {
+        article_obj = {
             "id": article_id,
             "title": title,
             "summary": summary,
@@ -411,6 +426,8 @@ def create_full_misconception_article(misconception_title, gem_api_key):
             "url": f"debunkd-misconception-{title.replace(' ', '-')[:50]}-{uuid.uuid4()}",
             "image_url": image_url
         }
+        print(f"DEBUG: Generated Misconception Article: Title='{article_obj['title']}', Category='{article_obj['category']}'") # Added print
+        return article_obj
     else:
         print(f"Error generating full misconception article for '{misconception_title}': {generated_data.get('error', 'Unknown error')}")
         return None
@@ -420,6 +437,11 @@ def create_full_issue_article(issue_title, gem_api_key):
         f"For the important issue '{issue_title}', write a detailed overview. "
         f"Classify the core topic of this issue into ONE of the following categories: {', '.join(ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES)}. Prefix the category with 'Label: '. "
         f"DO NOT refer to yourself as an AI model.\n\n"
+        f"The 'summary_detail' should be a comprehensive, multi-paragraph explanation of the issue. "
+        f"The 'key_findings' should be a list of crucial facts. "
+        f"The 'multiple_perspectives' should provide different angles or interpretations of the issue. "
+        f"The 'different_viewpoints' should offer contrasting opinions or solutions related to the issue. "
+        f"The 'verification_process' should briefly explain how such information could be verified.\n\n"
         f"Provide the output in JSON format with the following structure:"
     )
 
@@ -447,7 +469,7 @@ def create_full_issue_article(issue_title, gem_api_key):
         "required": ["title", "summary", "category", "full_content"]
     }
 
-    print(f"DEBUG: Generating full issue article for '{issue_title}' with AI classification.")
+    print(f"DEBUG: Generating full issue article for '{issue_title}' with AI classification and detailed content.")
     generated_data = call_gemini_api_with_json_schema(prompt_text, response_schema, gem_api_key)
 
     if generated_data and not generated_data.get("error"):
@@ -467,7 +489,7 @@ def create_full_issue_article(issue_title, gem_api_key):
         clean_category_for_image = category.replace('Label: ', '').replace(' ', '+')
         image_url = f"https://placehold.co/300x200/1A202C/FFFFFF?text={clean_category_for_image}"
 
-        return {
+        article_obj = {
             "id": article_id,
             "title": title,
             "summary": summary,
@@ -476,6 +498,8 @@ def create_full_issue_article(issue_title, gem_api_key):
             "url": f"debunkd-issue-{title.replace(' ', '-')[:50]}-{uuid.uuid4()}",
             "image_url": image_url
         }
+        print(f"DEBUG: Generated Issue Article: Title='{article_obj['title']}', Category='{article_obj['category']}'") # Added print
+        return article_obj
     else:
         print(f"Error generating full issue article for '{issue_title}': {generated_data.get('error', 'Unknown error')}")
         return None
@@ -508,6 +532,11 @@ def search_debunked(query, gem_api_key, news_api_key):
             f"For the topic '{query}', generate a detailed fact-check in JSON format. "
             f"Classify this fact-check into ONE of the following categories: {', '.join(ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES)}. Prefix the category with 'Label: '. "
             f"DO NOT refer to yourself as an AI model.\n\n"
+            f"The 'summary_detail' should be a comprehensive, multi-paragraph explanation of the fact-check. "
+            f"The 'key_findings' should be a list of crucial facts. "
+            f"The 'multiple_perspectives' should provide common arguments for and against the topic. "
+            f"The 'different_viewpoints' should offer contrasting interpretations of the evidence. "
+            f"The 'verification_process' should briefly explain how such information could be verified.\n\n"
             f"Provide the output in JSON format with the following structure:"
         )
 
@@ -535,7 +564,7 @@ def search_debunked(query, gem_api_key, news_api_key):
             "required": ["title", "summary", "category", "full_content"]
         }
 
-        print(f"DEBUG: Generating general fact-check for '{query}' with AI classification.")
+        print(f"DEBUG: Generating general fact-check for '{query}' with AI classification and detailed content.")
         generated_data = call_gemini_api_with_json_schema(prompt_text, response_schema, gem_api_key)
 
         if generated_data and not generated_data.get("error"):
@@ -555,7 +584,7 @@ def search_debunked(query, gem_api_key, news_api_key):
             clean_category_for_image = category.replace('Label: ', '').replace(' ', '+')
             image_url = f"https://placehold.co/300x200/5C6BC0/FFFFFF?text={clean_category_for_image}"
 
-            return {
+            article_obj = {
                 "id": article_id,
                 "title": title,
                 "summary": summary,
@@ -564,6 +593,8 @@ def search_debunked(query, gem_api_key, news_api_key):
                 "url": f"debunkd-search-general-{title.replace(' ', '-')[:50]}-{uuid.uuid4()}",
                 "image_url": image_url
             }
+            print(f"DEBUG: Generated Search (General) Article: Title='{article_obj['title']}', Category='{article_obj['category']}'") # Added print
+            return article_obj
         else:
             print(f"Error generating general fact-check: {generated_data.get('error', 'Unknown error')}")
             raise Exception(f"Error generating general fact-check: {generated_data.get('error', 'Unknown error')}")
@@ -626,7 +657,8 @@ def search_debunked(query, gem_api_key, news_api_key):
             # Override URL with original source if available, otherwise use generated one
             generated_news_article['url'] = articles_for_source[0].url if articles_for_source else generated_news_article['url']
             # Override the title to indicate it's a search result
-            generated_news_article['title'] = f"Search Result: {query}"
+            generated_news_article['title'] = f"News Report: {query}"
+            print(f"DEBUG: Generated Search (News) Article: Title='{generated_news_article['title']}', Category='{generated_news_article['category']}'") # Added print
             return generated_news_article
         else:
             raise Exception("Failed to generate a detailed news report for your query.")

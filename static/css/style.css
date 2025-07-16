@@ -994,10 +994,20 @@ footer p {
 }
 
 .tab-item.active {
-    background-color: #fff; /* White box for active tab */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for active tab */
-    color: #333; /* MODIFIED: Black text for active tab */
+    border-radius: 8px; /* Keep rounded corners for active tab on mobile */
+    margin: 0; /* Remove margin to fit better on mobile */
+    /* Ensure background-color and color are also set for active state */
+    background-color: #fff; /* White background for active tab */
+    color: #000000; /* Black text for active tab */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow for active tab */
 }
+
+/*.tab-item.active {
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+*/
 
 /* MODIFIED: Made tab icons wider */
 .tab-icon {
@@ -1056,14 +1066,6 @@ footer p {
     font-size: 0.9em;
 }
 
-/* REMOVED: .chat-clear-button-container rule as it's no longer in HTML */
-/*
-.chat-clear-button-container {
-    padding: 10px 20px;
-    text-align: right;
-    background-color: #fff;
-}
-*/
 
 .clear-chat-btn {
     background-color: #fff; /* White interior */
@@ -1207,19 +1209,6 @@ footer p {
     background-color: #E64A19; /* Darker orange on hover */
 }
 
-/* Knowledge Hub Container (Initially Hidden) */
-.knowledge-hub-container {
-    width: 100%;
-    max-width: 1200px; /* MODIFIED: Match chatbot-container max-width */
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    margin-top: 20px;
-    padding: 20px;
-    /* display: none; will be set by JS */
-}
-
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     /* ... (rest of your media queries remain unchanged) ... */
@@ -1273,10 +1262,6 @@ footer p {
     .robot-profile-pic {
         margin-right: 0;
         margin-bottom: 10px;
-    }
-
-    .chat-clear-button-container { /* This rule is now effectively for mobile centering of the clear button */
-        text-align: center; /* Center clear button on small screens */
     }
 
     .chat-messages {
@@ -1379,21 +1364,6 @@ footer p {
     height: 20px;
     filter: brightness(0) invert(1); /* Makes icon white */
 }
-
-/* Knowledge Hub Container (Initially Hidden) */
-.knowledge-hub-container {
-    width: 100%;
-    max-width: 800px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    margin-top: 20px;
-    padding: 20px;
-    /* display: none; will be set by JS */
-}
-
-
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
@@ -1523,11 +1493,282 @@ footer p {
         margin-bottom: 10px;
     }
 
-    .chat-clear-button-container {
-        text-align: center; /* Center clear button on small screens */
-    }
-
     .chat-messages {
         max-height: 300px; /* Reduce chat height on small screens */
+    }
+}
+
+/* Knowledge Hub Specific Styles */
+.knowledge-hub-container {
+    width: 100%;
+    max-width: 1200px; /* Match tab container width */
+    margin: 20px auto; /* Center it */
+    padding: 20px;
+    background-color: #f8f8f8; /* Light background for the whole section */
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-top: 20px;
+    /* display: none; will be set by JS */
+}
+
+.knowledge-hub-main-title {
+    font-size: 1.8em; /* Smaller than page-main-title */
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.knowledge-hub-main-subtitle {
+    font-size: 0.95em;
+    color: #666;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.learn-units-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between unit dropdowns */
+}
+
+.unit-dropdown-container {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    overflow: hidden; /* Ensures rounded corners are respected */
+    transition: all 0.3s ease-in-out; /* Smooth expansion */
+}
+
+.unit-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    cursor: pointer;
+    background-color: #fff; /* Ensure header background is white */
+    border-bottom: 1px solid transparent; /* Default transparent border */
+    transition: border-bottom 0.3s ease;
+}
+
+.unit-dropdown-container.expanded .unit-header {
+    border-bottom: 1px solid #eee; /* Light grey line when expanded */
+}
+
+.unit-icon-square {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px; /* Rounded corners for the square */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.unit-icon-square img {
+    width: 24px;
+    height: 24px;
+}
+
+.unit-text-content {
+    flex-grow: 1;
+}
+
+.unit-title {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #000;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.unit-subtitle {
+    font-size: 0.85em;
+    color: #666;
+    margin: 5px 0 0;
+    line-height: 1.3;
+}
+
+.unit-lesson-count {
+    background-color: #eee; /* Grey oval */
+    color: #555;
+    padding: 5px 10px;
+    border-radius: 15px; /* Oval shape */
+    font-size: 0.8em;
+    font-weight: normal;
+    white-space: nowrap; /* Prevent text wrap */
+    margin-left: 20px;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.unit-arrow-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 20px;
+    transition: transform 0.3s ease;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+/* Unit Icon Square Colors */
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(227, 242, 253)"] { /* Unit 1 Blue */
+    background-color: #e3f2fd;
+}
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(232, 245, 233)"] { /* Unit 2 Green */
+    background-color: #e8f5e9;
+}
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(255, 243, 224)"] { /* Unit 3 Yellow */
+    background-color: #fff3e0;
+}
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(237, 231, 246)"] { /* Unit 4 Purple */
+    background-color: #ede7f6;
+}
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(255, 235, 238)"] { /* Unit 5 Red */
+    background-color: #ffebee;
+}
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(224, 242, 247)"] { /* Unit 6 Blue-Green */
+    background-color: #e0f2f7;
+}
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(252, 228, 236)"] { /* Unit 7 Pink-Purple */
+    background-color: #fce4ec;
+}
+
+
+/* Lessons Container and Lesson Cards */
+.lessons-container {
+    padding: 0 20px 15px; /* Padding inside the expanded unit */
+}
+
+.lesson-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px; /* Space between lesson cards */
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    color: #333; /* Default text color for lesson card */
+}
+
+.lesson-card:last-child {
+    margin-bottom: 0; /* No margin after the last lesson card */
+}
+
+.lesson-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.lesson-title {
+    font-size: 0.95em;
+    font-weight: 500; /* Medium weight */
+    flex-grow: 1;
+    margin-right: 15px; /* Space before start button */
+}
+
+.start-button {
+    display: flex;
+    align-items: center;
+    background-color: #f0f0f0; /* Light grey background for button */
+    color: #555;
+    padding: 6px 12px;
+    border-radius: 15px;
+    text-decoration: none;
+    font-size: 0.85em;
+    font-weight: bold;
+    white-space: nowrap;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.start-button:hover {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.start-icon {
+    width: 14px;
+    height: 14px;
+    margin-left: 5px;
+}
+
+.total-articles-count {
+    font-size: 0.9em;
+    color: #777;
+    margin-top: 25px;
+    text-align: center; /* Ensure it's centered */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .knowledge-hub-container {
+        padding: 15px;
+        margin-top: 15px;
+    }
+
+    .knowledge-hub-main-title {
+        font-size: 1.6em;
+    }
+
+    .knowledge-hub-main-subtitle {
+        font-size: 0.9em;
+        margin-bottom: 20px;
+    }
+
+    .unit-header {
+        flex-wrap: wrap; /* Allow header content to wrap */
+        padding: 10px 15px;
+    }
+
+    .unit-icon-square {
+        width: 35px;
+        height: 35px;
+        margin-right: 10px;
+    }
+
+    .unit-icon-square img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .unit-title {
+        font-size: 1em;
+    }
+
+    .unit-subtitle {
+        font-size: 0.8em;
+        width: 100%; /* Make subtitle take full width below title */
+    }
+
+    .unit-lesson-count {
+        margin-left: auto; /* Push to right */
+        margin-top: 5px; /* Add slight margin if it wraps */
+    }
+
+    .unit-arrow-icon {
+        margin-left: 10px;
+    }
+
+    .lessons-container {
+        padding: 0 15px 10px;
+    }
+
+    .lesson-card {
+        flex-direction: column; /* Stack title and button */
+        align-items: flex-start;
+        padding: 10px 12px;
+    }
+
+    .lesson-title {
+        margin-right: 0;
+        margin-bottom: 8px; /* Space between title and button */
+    }
+
+    .start-button {
+        width: 100%; /* Make button full width */
+        justify-content: center; /* Center content in button */
+        margin-top: 5px;
     }
 }
