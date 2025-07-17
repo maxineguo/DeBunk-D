@@ -1501,13 +1501,11 @@ footer p {
 /* Knowledge Hub Specific Styles */
 .knowledge-hub-container {
     width: 100%;
-    max-width: 1200px; /* Match tab container width */
-    margin: 20px auto; /* Center it */
-    padding: 20px;
-    background-color: #f8f8f8; /* Light background for the whole section */
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    max-width: 1200px; /* Keep max-width at 1200px */
+    margin: 20px auto; /* Keep centered */
+    padding: 0; /* MODIFIED: Remove padding from the main container */
+    /* Removed background-color, border, and box-shadow */
+    border-radius: 10px; /* Keep border-radius for consistency */
     margin-top: 20px;
     /* display: none; will be set by JS */
 }
@@ -1539,7 +1537,7 @@ footer p {
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     overflow: hidden; /* Ensures rounded corners are respected */
-    transition: all 0.3s ease-in-out; /* Smooth expansion */
+    /* Removed transition from here, handled by max-height on lessons-container */
 }
 
 .unit-header {
@@ -1548,12 +1546,8 @@ footer p {
     padding: 15px 20px;
     cursor: pointer;
     background-color: #fff; /* Ensure header background is white */
-    border-bottom: 1px solid transparent; /* Default transparent border */
-    transition: border-bottom 0.3s ease;
-}
-
-.unit-dropdown-container.expanded .unit-header {
-    border-bottom: 1px solid #eee; /* Light grey line when expanded */
+    border-bottom: none; /* MODIFIED: Completely remove border-bottom */
+    transition: none; /* MODIFIED: Remove transition on border-bottom as it's no longer needed */
 }
 
 .unit-icon-square {
@@ -1568,12 +1562,18 @@ footer p {
 }
 
 .unit-icon-square img {
-    width: 24px;
-    height: 24px;
+    width: 40px; /* Adjusted to fit better */
+    height: 24px; /* Adjusted to fit better */
 }
 
 .unit-text-content {
     flex-grow: 1;
+}
+
+.unit-title-row {
+    display: flex;
+    align-items: center; /* Align title and lesson count horizontally */
+    margin-bottom: 5px; /* Space between title row and subtitle */
 }
 
 .unit-title {
@@ -1582,36 +1582,40 @@ footer p {
     color: #000;
     margin: 0;
     line-height: 1.2;
+    margin-right: 10px; /* Space between title and lesson count */
 }
 
 .unit-subtitle {
     font-size: 0.85em;
     color: #666;
-    margin: 5px 0 0;
+    margin: 0; /* Removed top margin, controlled by unit-title-row margin-bottom */
     line-height: 1.3;
 }
 
 .unit-lesson-count {
     background-color: #eee; /* Grey oval */
-    color: #555;
+    color: #000000;
     padding: 5px 10px;
     border-radius: 15px; /* Oval shape */
     font-size: 0.8em;
     font-weight: normal;
     white-space: nowrap; /* Prevent text wrap */
-    margin-left: 20px;
     flex-shrink: 0; /* Prevent shrinking */
 }
 
 .unit-arrow-icon {
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 9px;
     margin-left: 20px;
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease-out; /* Smooth transition for rotation */
     flex-shrink: 0; /* Prevent shrinking */
 }
 
-/* Unit Icon Square Colors */
+.unit-arrow-icon.rotated {
+    transform: rotate(180deg); /* Rotate 180 degrees when 'rotated' class is present */
+}
+
+/* Unit Icon Square Colors (same as before) */
 .unit-dropdown-container .unit-icon-square[style*="background-color: rgb(227, 242, 253)"] { /* Unit 1 Blue */
     background-color: #e3f2fd;
 }
@@ -1630,20 +1634,22 @@ footer p {
 .unit-dropdown-container .unit-icon-square[style*="background-color: rgb(224, 242, 247)"] { /* Unit 6 Blue-Green */
     background-color: #e0f2f7;
 }
-.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(252, 228, 236)"] { /* Unit 7 Pink-Purple */
-    background-color: #fce4ec;
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(237, 231, 246)"] { /* Unit 7 Pink-Purple */
+    background-color: #ede7f6;
 }
 
 
 /* Lessons Container and Lesson Cards */
 .lessons-container {
-    padding: 0 20px 15px; /* Padding inside the expanded unit */
+    padding: 0 20px 25px; /* MODIFIED: Increased bottom padding from 15px to 25px */
+    transition: max-height 0.2s ease-out, padding 0.2s ease-out;
+    overflow: hidden;
 }
 
 .lesson-card {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; /* Space out title and start indicator */
     padding: 12px 15px;
     border-radius: 8px;
     margin-bottom: 10px; /* Space between lesson cards */
@@ -1651,10 +1657,11 @@ footer p {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     color: #333; /* Default text color for lesson card */
+    text-decoration: none; /* Ensure no underline for the whole card */
 }
 
 .lesson-card:last-child {
-    margin-bottom: 0; /* No margin after the last lesson card */
+    margin-bottom: 15px; /* MODIFIED: Add space below the last lesson card */
 }
 
 .lesson-card:hover {
@@ -1665,31 +1672,20 @@ footer p {
 .lesson-title {
     font-size: 0.95em;
     font-weight: 500; /* Medium weight */
-    flex-grow: 1;
-    margin-right: 15px; /* Space before start button */
+    flex-grow: 1; /* Allow title to take most space */
+    margin-right: 15px; /* Space between title and start indicator */
 }
 
-.start-button {
+.lesson-start-indicator {
     display: flex;
     align-items: center;
-    background-color: #f0f0f0; /* Light grey background for button */
-    color: #555;
-    padding: 6px 12px;
-    border-radius: 15px;
-    text-decoration: none;
+    color: #555; /* Grey text for "Start" */
     font-size: 0.85em;
     font-weight: bold;
     white-space: nowrap;
-    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.start-button:hover {
-    background-color: #e0e0e0;
-    color: #333;
-}
-
-.start-icon {
-    width: 14px;
+.lesson-start-indicator .start-icon {
     height: 14px;
     margin-left: 5px;
 }
@@ -1699,6 +1695,13 @@ footer p {
     color: #777;
     margin-top: 25px;
     text-align: center; /* Ensure it's centered */
+}
+
+.lessons-container:not(.expanded) {
+    max-height: 0;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 /* Responsive adjustments */
@@ -1729,12 +1732,20 @@ footer p {
     }
 
     .unit-icon-square img {
-        width: 20px;
-        height: 20px;
+        width: 24px; /* Match the default size for better scaling */
+        height: 24px;
+    }
+
+    .unit-title-row {
+        flex-direction: column; /* Stack title and count on small screens */
+        align-items: flex-start;
+        margin-bottom: 0; /* Adjust as needed */
     }
 
     .unit-title {
         font-size: 1em;
+        margin-right: 0; /* Remove horizontal margin */
+        margin-bottom: 5px; /* Add vertical space */
     }
 
     .unit-subtitle {
@@ -1743,32 +1754,31 @@ footer p {
     }
 
     .unit-lesson-count {
-        margin-left: auto; /* Push to right */
-        margin-top: 5px; /* Add slight margin if it wraps */
+        margin-left: 0; /* Remove auto margin */
+        margin-top: 0; /* Remove top margin */
     }
 
     .unit-arrow-icon {
         margin-left: 10px;
+        width: 15px;
+        height: 9px;
     }
 
     .lessons-container {
-        padding: 0 15px 10px;
+        padding: 0 20px 25px;
     }
 
     .lesson-card {
-        flex-direction: column; /* Stack title and button */
-        align-items: flex-start;
+        flex-direction: row; /* Keep row layout for lesson cards */
+        align-items: center;
         padding: 10px 12px;
     }
 
     .lesson-title {
-        margin-right: 0;
-        margin-bottom: 8px; /* Space between title and button */
+        margin-right: 10px; /* Add some space from start indicator on mobile */
     }
 
-    .start-button {
-        width: 100%; /* Make button full width */
-        justify-content: center; /* Center content in button */
-        margin-top: 5px;
+    .lesson-start-indicator {
+        margin-left: auto; /* Push to right */
     }
 }

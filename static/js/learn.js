@@ -22,65 +22,65 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize chat history from session storage or an empty array
     let chatHistory = JSON.parse(sessionStorage.getItem('learnChatHistory') || '[]');
 
-    // --- NEW: Learning Units Data based on the refined curriculum ---
+    // --- UPDATED: Learning Units Data based on the refined curriculum (Unit 3 & 4 swapped) ---
     const learningUnitsData = [
         {
             id: 'unit1', title: 'Unit 1: What is Media Literacy?', subtitle: 'Understanding media forms, functions, and critical thinking', color: '#e3f2fd', icon: 'bbook.png', lessons: [
-                { id: 'u1-l1', title: '1.1 What is Media? Forms, Functions, Evolution', read_time: '5 min read', summary: 'Explore the diverse forms and evolving functions of media in our daily lives.' },
-                { id: 'u1-l2', title: '1.2 Why Media Literacy Matters: Navigating the Information Age', read_time: '6 min read', summary: 'Understand the critical importance of media literacy in a world saturated with information.' },
-                { id: 'u1-l3', title: '1.3 How Media Shapes Us: Individuals and Society', read_time: '7 min read', summary: 'Examine how media shapes perceptions, behaviors, and societal norms.' },
-                { id: 'u1-l4', title: '1.4 Thinking Critically About Media', read_time: '8 min read', summary: 'Learn foundational skills to analyze, evaluate, and interpret media messages effectively.' },
+                { id: 'u1-l1', title: '1.1 What is Media? Forms, Functions, Evolution' },
+                { id: 'u1-l2', title: '1.2 Why Media Literacy Matters: Navigating the Information Age' },
+                { id: 'u1-l3', title: '1.3 How Media Shapes Us: Individuals and Society' },
+                { id: 'u1-l4', title: '1.4 Thinking Critically About Media' },
             ]
         },
         {
             id: 'unit2', title: 'Unit 2: How Media Messages Work', subtitle: 'Breaking down media messages and understanding persuasion', color: '#e8f5e9', icon: 'gtarget.png', lessons: [
-                { id: 'u2-l1', title: '2.1 Breaking Down Media Messages: Purpose and Audience', read_time: '7 min read', summary: 'Unpack media messages by identifying their creators\' intentions and target demographics.' },
-                { id: 'u2-l2', title: '2.2 The Power of Words and Framing', read_time: '8 min read', summary: 'Discover how word choice and narrative structure influence understanding and perception.' },
-                { id: 'u2-l3', title: '2.3 Understanding Pictures, Videos, and Infographics', read_time: '9 min read', summary: 'Analyze the persuasive power of visual media and how it conveys information and emotion.' },
-                { id: 'u2-l4', title: '2.4 Finding the Main Point: Arguments and Persuasion', read_time: '7 min read', summary: 'Distinguish between logical arguments and various rhetorical strategies used to influence.' },
+                { id: 'u2-l1', title: '2.1 Breaking Down Media Messages: Purpose and Audience' },
+                { id: 'u2-l2', title: '2.2 The Power of Words and Framing' },
+                { id: 'u2-l3', title: '2.3 Understanding Pictures, Videos, and Infographics' },
+                { id: 'u2-l4', title: '2.4 Finding the Main Point: Arguments and Persuasion' },
             ]
         },
         {
             id: 'unit3', title: 'Unit 3: Spotting Fake News & Bias', subtitle: 'Recognizing misinformation and breaking out of echo chambers', color: '#fff3e0', icon: 'yeye.png', lessons: [
-                { id: 'u3-l1', title: '3.1 What\'s the Difference? Misinformation, Disinformation, Malinformation', read_time: '6 min read', summary: 'Define and differentiate between various forms of false or misleading information.' },
-                { id: 'u3-l2', title: '3.2 Uncovering Different Kinds of Bias: Personal, Political, Commercial', read_time: '7 min read', summary: 'Learn to identify and analyze different types of bias present in media content.' },
-                { id: 'u3-l3', title: '3.3 Watch Out! Propaganda and Tricky Tactics', read_time: '9 min read', summary: 'Recognize common propaganda techniques and manipulative strategies used in media.' },
-                { id: 'u3-l4', title: '3.4 Breaking Out of Your Bubble: Confirmation Bias and Echo Chambers', read_time: '10 min read', summary: 'Understand how personal biases and online environments can limit exposure to diverse viewpoints.' },
+                { id: 'u3-l1', title: '3.1 What\'s the Difference? Misinformation, Disinformation, Malinformation' },
+                { id: 'u3-l2', title: '3.2 Uncovering Different Kinds of Bias: Personal, Political, Commercial' },
+                { id: 'u3-l3', title: '3.3 Watch Out! Propaganda and Tricky Tactics' },
+                { id: 'u3-l4', title: '3.4 Breaking Out of Your Bubble: Confirmation Bias and Echo Chambers' },
             ]
         },
         {
             id: 'unit4', title: 'Unit 4: Finding Reliable Information', subtitle: 'Identifying credible sources and expert content', color: '#ede7f6', icon: 'pmagnify.png', lessons: [
-                { id: 'u4-l1', title: '4.1 Who Made This? Authorship and Expertise', read_time: '6 min read', summary: 'Evaluate the credentials and background of content creators and their relevance to the topic.' },
-                { id: 'u4-l2', title: '4.2 Where Did This Come From? Publishers, Platforms, URLs', read_time: '7 min read', summary: 'Assess the reputation and potential biases of the outlets and platforms distributing information.' },
-                { id: 'u4-l3', title: '4.3 Following the Money: Funding and Bias', read_time: '9 min read', summary: 'Investigate financial interests or affiliations that could influence media content.' },
-                { id: 'u4-l4', title: '4.4 Trusting Experts: Peer Review and Research', read_time: '10 min read', summary: 'Understand the importance of peer-reviewed research and expert consensus in verifying information.' },
-                { id: 'u4-l5', title: '4.5 News vs. Opinion: Different Kinds of Sources', read_time: '8 min read', summary: 'Distinguish between factual reporting, analytical pieces, and purely opinion-based content.' },
+                { id: 'u4-l1', title: '4.1 Who Made This? Authorship and Expertise' },
+                { id: 'u4-l2', title: '4.2 Where Did This Come From? Publishers, Platforms, URLs' },
+                { id: 'u4-l3', title: '4.3 Following the Money: Funding and Bias' },
+                { id: 'u4-l4', title: '4.4 Trusting Experts: Peer Review and Research' },
+                { id: 'u4-l5', title: '4.5 News vs. Opinion: Different Kinds of Sources' },
             ]
         },
         {
             id: 'unit5', title: 'Unit 5: Becoming a Fact-Checking Pro', subtitle: 'Advanced research techniques and verification skills', color: '#ffebee', icon: 'rlightning.png', lessons: [
-                { id: 'u5-l1', title: '5.1 Smart Searching: How to Research Effectively', read_time: '7 min read', summary: 'Master advanced search queries, operators, and strategies to find reliable information quickly.' },
-                { id: 'u5-l2', title: '5.2 Digging Deeper: Lateral Reading and Reverse Image Search', read_time: '8 min read', summary: 'Learn powerful techniques to verify information by cross-referencing and tracing image origins.' },
-                { id: 'u5-l3', title: '5.3 Checking the Numbers: Verifying Data and Statistics', read_time: '9 min read', summary: 'Understand how to critically evaluate numerical data, graphs, and statistical claims.' },
-                { id: 'u5-l4', title: '5.4 Is it Real? Spotting Deepfakes and AI-Generated Content', read_time: '7 min read', summary: 'Identify characteristics of synthetic media and learn tools to detect AI-generated fakes.' },
+                { id: 'u5-l1', title: '5.1 Smart Searching: How to Research Effectively' },
+                { id: 'u5-l2', title: '5.2 Digging Deeper: Lateral Reading and Reverse Image Search' },
+                { id: 'u5-l3', title: '5.3 Checking the Numbers: Verifying Data and Statistics' },
+                { id: 'u5-l4', title: '5.4 Is it Real? Spotting Deepfakes and AI-Generated Content' },
             ]
         },
         {
             id: 'unit6', title: 'Unit 6: Being Smart Online & on Social Media', subtitle: 'Digital citizenship and media literacy', color: '#e0f2f7', icon: 'bpeople.png', lessons: [
-                { id: 'u6-l1', title: '6.1 Being a Good Digital Citizen: Rights and Responsibilities', read_time: '6 min read', summary: 'Understand your role and impact in the digital community, promoting positive online interactions.' },
-                { id: 'u6-l2', title: '6.2 Keeping Your Info Safe: Privacy and Data Security', read_time: '8 min read', summary: 'Learn strategies to protect personal data and understand online privacy settings.' },
-                { id: 'u6-l3', title: '6.3 Understanding Social Media: Algorithms and Their Effects', read_time: '9 min read', summary: 'Explore how social media platforms curate content and influence user behavior.' },
-                { id: 'u6-l4', title: '6.4 Spotting Online Scams and Tricky Ads: Influencers, Sponsored Content', read_time: '7 min read', summary: 'Identify deceptive online practices, including phishing, scams, and hidden advertisements.' },
-                { id: 'u6-l5', title: '6.5 Standing Up to Cyberbullying & Being Kind Online', read_time: '6 min read', summary: 'Learn how to address cyberbullying and foster a supportive and empathetic online environment.' },
-                { id: 'u6-l6', title: '6.6 Your Digital Footprint: What You Leave Behind', read_time: '8 min read', summary: 'Understand the lasting impact of your online activities and how to manage your digital reputation.' },
+                { id: 'u6-l1', title: '6.1 Being a Good Digital Citizen: Rights and Responsibilities' },
+                { id: 'u6-l2', title: '6.2 Keeping Your Info Safe: Privacy and Data Security' },
+                { id: 'u6-l3', title: '6.3 Understanding Social Media: Algorithms and Their Effects' },
+                { id: 'u6-l4', title: '6.4 Spotting Online Scams and Tricky Ads: Influencers, Sponsored Content' },
+                { id: 'u6-l5', title: '6.5 Standing Up to Cyberbullying & Being Kind Online' },
+                { id: 'u6-l6', title: '6.6 Your Digital Footprint: What You Leave Behind' },
             ]
         },
         {
             id: 'unit7', title: 'Unit 7: Creating Media & Future Trends', subtitle: 'Media creation ethics and future technologies', color: '#fce4ec', icon: 'plightning.png', lessons: [
-                { id: 'u7-l1', title: '7.1 Making Media Responsibly: Ethics and Best Practices', read_time: '7 min read', summary: 'Guidelines for producing honest, accurate, and fair media content.' },
-                { id: 'u7-l2', title: '7.2 Using Other People\'s Work: Copyright and Fair Use', read_time: '9 min read', summary: 'Understand legal and ethical considerations for using and sharing digital content.' },
-                { id: 'u7-l3', title: '7.3 AI in Media: Friend or Foe?', read_time: '8 min read', summary: 'Explore how AI is transforming media creation, consumption, and the challenges it presents.' },
-                { id: 'u7-l4', title: '7.4 The Future is Now: VR, AR, and New Ways to Get Info', read_time: '10 min read', summary: 'Consider the evolving landscape of news and information and its societal implications.' },
+                { id: 'u7-l1', title: '7.1 Making Media Responsibly: Ethics and Best Practices' },
+                { id: 'u7-l2', title: '7.2 Using Other People\'s Work: Copyright and Fair Use' },
+                { id: 'u7-l3', title: '7.3 AI in Media: Friend or Foe?' },
+                { id: 'u7-l4', title: '7.4 The Future is Now: VR, AR, and New Ways to Get Info' },
             ]
         }
     ];
@@ -280,31 +280,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img src="/static/img/${unit.icon}" alt="${unit.title} Icon">
             </div>
             <div class="unit-text-content">
-                <h3 class="unit-title">${unit.title}</h3>
+                <div class="unit-title-row">
+                    <h3 class="unit-title">${unit.title}</h3>
+                    <span class="unit-lesson-count">${unit.lessons.length} lessons</span>
+                </div>
                 <p class="unit-subtitle">${unit.subtitle}</p>
             </div>
-            <span class="unit-lesson-count">${unit.lessons.length} lessons</span>
             <img src="/static/img/down-arrow.png" alt="Toggle Arrow" class="unit-arrow-icon">
         `;
         unitContainer.appendChild(unitHeader);
 
-        const lessonsContainer = document.createElement('div');
+        const lessonsContainer = document.createElement('div'); // Still a div
         lessonsContainer.classList.add('lessons-container');
-        lessonsContainer.style.display = 'none'; // Initially hidden
+        lessonsContainer.style.maxHeight = '0'; // Initially hidden
+        lessonsContainer.style.overflow = 'hidden';
+        lessonsContainer.style.transition = 'max-height 0.2s ease-out'; // Faster transition
+
 
         unit.lessons.forEach(lesson => {
-            const lessonCard = document.createElement('div');
+            const lessonCard = document.createElement('div'); // Still a div
             lessonCard.classList.add('lesson-card');
             lessonCard.style.backgroundColor = unit.color; // Match unit color
-            lessonCard.dataset.unitId = unit.id;
-            lessonCard.dataset.lessonId = lesson.id;
-            lessonCard.dataset.lessonTitle = lesson.title; // Pass title for URL
-
+            
+            // Add click listener to the entire card
+            lessonCard.addEventListener('click', () => {
+                window.location.href = `/learn_article/${unit.id}/${lesson.id}/${encodeURIComponent(lesson.title)}`;
+            });
+            
+            // Re-added "Start" text and icon directly within the card
             lessonCard.innerHTML = `
                 <span class="lesson-title">${lesson.title}</span>
-                <a href="/learn_article/${unit.id}/${lesson.id}/${encodeURIComponent(lesson.title)}" class="start-button">
-                    Start <img src="/static/img/right-arrow.png" alt="Start" class="start-icon">
-                </a>
+                <div class="lesson-start-indicator">
+                    <span>Start</span>
+                    <img src="/static/img/right-arrow.png" alt="Start" class="start-icon">
+                </div>
             `;
             lessonsContainer.appendChild(lessonCard);
         });
@@ -312,10 +321,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Toggle functionality
         unitHeader.addEventListener('click', () => {
-            const isExpanded = lessonsContainer.style.display === 'block';
-            lessonsContainer.style.display = isExpanded ? 'none' : 'block';
-            unitHeader.querySelector('.unit-arrow-icon').src = isExpanded ? '/static/img/down-arrow.png' : '/static/img/up-arrow.png';
-            unitContainer.classList.toggle('expanded', !isExpanded); // Add/remove expanded class
+            const isExpanded = unitContainer.classList.contains('expanded');
+            const arrowIcon = unitHeader.querySelector('.unit-arrow-icon');
+            
+            if (isExpanded) {
+                lessonsContainer.style.maxHeight = lessonsContainer.scrollHeight + 'px'; // Set current height
+                requestAnimationFrame(() => { // Wait for next frame to apply 0
+                    lessonsContainer.style.maxHeight = '0'; // Collapse
+                });
+                arrowIcon.classList.remove('rotated'); // Remove rotation
+                unitContainer.classList.remove('expanded');
+            } else {
+                lessonsContainer.style.maxHeight = lessonsContainer.scrollHeight + 'px';
+                arrowIcon.classList.add('rotated'); // Add rotation
+                unitContainer.classList.add('expanded');
+                // Optional: After transition, set maxHeight to 'auto' to handle dynamic content changes
+                lessonsContainer.addEventListener('transitionend', function handler() {
+                    if (!unitContainer.classList.contains('expanded')) { // Only if collapsing
+                        lessonsContainer.style.maxHeight = 'auto';
+                    }
+                    lessonsContainer.removeEventListener('transitionend', handler);
+                });
+            }
         });
 
         return unitContainer;
@@ -334,8 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
             learnUnitsContainer.appendChild(createUnitDropdown(unit));
             totalLessons += unit.lessons.length;
         });
-
-        totalArticlesCountDisplay.textContent = `Total: ${totalLessons} lessons across ${learningUnitsData.length} learning units`;
     }
 
     // Initial load of content when the page loads
