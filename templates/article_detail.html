@@ -14,7 +14,10 @@
         {% endif %}
 
         <h1 class="article-detail-title">{{ article.title }}</h1>
-        <p class="article-detail-summary">{{ article.full_content.summary_detail }}</p>
+        {# The main content from summary_detail, now in a div for specific styling #}
+        <div class="article-main-content">
+            {{ article.full_content.summary_detail }}
+        </div>
 
         {% if article.full_content.key_findings %}
         <h2 class="article-detail-section-title">Key Findings</h2>
@@ -25,26 +28,13 @@
         </ul>
         {% endif %}
 
-        {% if article.full_content.multiple_perspectives %}
-        <h2 class="article-detail-section-title">Multiple Perspectives</h2>
-        <ul class="article-detail-list">
-            {% for perspective in article.full_content.multiple_perspectives %}
-            <li>{{ perspective }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-
-        {% if article.full_content.verification_process %}
-        <h2 class="article-detail-section-title">Verification Process</h2>
-        <p>{{ article.full_content.verification_process }}</p>
-        {% endif %}
-
-        {% if article.full_content.different_viewpoints %}
-        <h2 class="article-detail-section-title">Different Viewpoints</h2>
+        {# Consolidated viewpoints section: now displays content from article.full_content.viewpoints #}
+        {% if article.full_content.viewpoints %}
+        <h2 class="article-detail-section-title">Viewpoints</h2>
         <div class="viewpoints-container">
-            {% for viewpoint in article.full_content.different_viewpoints %}
+            {% for viewpoint_text in article.full_content.viewpoints %}
             <div class="article-detail-viewpoint">
-                <strong>{{ viewpoint.label }}:</strong> <p>{{ viewpoint.text }}</p>
+                <p>{{ viewpoint_text }}</p>
             </div>
             {% endfor %}
         </div>

@@ -4,3 +4,5 @@ news_backend/__pycache__/__init__.cpython-312.pyc
 news_backend/__pycache__/debunked.cpython-312.pyc
 static/.DS_Store
 static/img/.DS_Store
+static/img/avatars/.DS_Store
+.DS_Store

@@ -47,8 +47,8 @@ header {
 }
 
 .profile-pic-container {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%; /* Keep profile pic circular */
     overflow: hidden;
     cursor: pointer;
@@ -339,7 +339,7 @@ main.container {
     font-size: 0.85em;
     font-weight: bold;
     margin-bottom: 7px;
-    text-transform: uppercase;
+    text-transform: capitalize;
 }
 
 /* Category Tag Colors */
@@ -518,7 +518,7 @@ main.container {
     font-size: 0.9em;
     font-weight: bold;
     margin-bottom: 20px;
-    text-transform: uppercase;
+    text-transform: capitalize;
 }
 
 .article-detail-title {
@@ -530,9 +530,9 @@ main.container {
 
 .article-detail-summary {
     font-size: 1.1em;
-    color: #555;
+    color: #000; /* Changed from #555 to black */
     margin-bottom: 30px;
-    font-style: italic;
+    font-style: normal; /* Changed from italic to normal */
 }
 
 .article-detail-section-title {
@@ -561,12 +561,15 @@ main.container {
 
 .article-detail-viewpoint {
     background-color: #f9f9f9;
-    border-left: 4px solid #007bff;
+    border-left: 4px solid #007bff; /* The blue bar on the left */
     padding: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 15px; /* Space between boxes */
     border-radius: 5px;
+    color: #000; /* Ensure text is black */
+    font-style: normal; /* Ensure no italics */
 }
 
+/* You can remove this if it exists, as the strong tag is no longer used for labels */
 .article-detail-viewpoint strong {
     color: #007bff;
     display: block;
@@ -1780,5 +1783,793 @@ footer p {
 
     .lesson-start-indicator {
         margin-left: auto; /* Push to right */
+    }
+}
+
+/* NEW: Style for the main content (summary_detail) */
+.article-main-content {
+    font-size: 1.1em; /* Slightly larger text for readability */
+    color: #000; /* Explicitly black text */
+    line-height: 1.8; /* Increased line height for better readability */
+    margin-bottom: 30px; /* Space below the main content */
+    white-space: pre-wrap; /* Preserve whitespace and wrap text for paragraph breaks */
+    font-style: normal; /* Ensure no italics */
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    padding: 20px; /* Add some padding around the modal content */
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto; /* Centered */
+    padding: 30px; /* Increased padding */
+    border: 1px solid #888;
+    width: 90%; /* Responsive width */
+    max-width: 500px; /* Max width for larger screens */
+    border-radius: 10px; /* Rounded corners */
+    position: relative; /* For close button positioning */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    animation-name: animatemodal;
+    animation-duration: 0.4s
+}
+
+/* The Close Button */
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute; /* Position relative to modal-content */
+    top: 10px;
+    right: 15px;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Add animation (optional) */
+@keyframes animatemodal {
+    from {opacity: 0; transform: translateY(-50px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+/* Basic styling for profile sections within modal */
+.profile-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+.profile-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.profile-section h3 {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+.theme-options label {
+    display: block;
+    margin-bottom: 5px;
+}
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-right: 10px;
+}
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 34px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: #2196F3;
+}
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+.slider.round:before {
+    border-radius: 50%;
+}
+.api-key-fields label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.api-key-fields input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box; /* Include padding in width */
+}
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+.primary-btn {
+    background-color: #007bff;
+    color: white;
+}
+.primary-btn:hover {
+    background-color: #0056b3;
+}
+.secondary-btn {
+    background-color: #6c757d;
+    color: white;
+}
+.secondary-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Profile Picture Display Area */
+.profile-pic-display-area {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px; /* Space below the profile picture area */
+}
+
+.current-profile-pic-wrapper {
+    position: relative;
+    width: 120px; /* Size of the circular profile picture */
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: box-shadow 0.3s ease;
+}
+
+.current-profile-pic-wrapper:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.current-profile-pic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%; /* Ensure image is circular */
+    transition: filter 0.3s ease; /* Smooth transition for darkening */
+}
+
+.profile-pic-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0); /* Initially transparent */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Initially hidden */
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.current-profile-pic-wrapper:hover .profile-pic-overlay {
+    background-color: rgba(0, 0, 0, 0.4); /* Darken on hover */
+    opacity: 1; /* Show overlay */
+}
+
+.profile-pic-edit-icon {
+    color: white;
+    font-size: 2em; /* Size of the pencil icon */
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease;
+}
+
+.current-profile-pic-wrapper:hover .profile-pic-edit-icon {
+    opacity: 1; /* Show pencil icon on hover */
+}
+
+/* Profile Picture Options View */
+.profile-pic-options-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px; /* Space from the top of the modal content */
+}
+
+.back-button-modal {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px; /* Space below back button */
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.back-button-modal:hover {
+    background-color: #e0e0e0;
+    border-color: #bbb;
+}
+
+.back-button-modal i {
+    margin-right: 8px;
+}
+
+.avatar-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); /* Responsive grid for avatars */
+    gap: 15px; /* Space between avatar options */
+    width: 100%;
+    max-width: 400px; /* Limit grid width */
+    margin-top: 20px; /* Space below "Choose Your Avatar" title */
+    justify-content: center; /* Center grid items if they don't fill the row */
+}
+
+.avatar-option {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid transparent; /* Transparent border for non-selected */
+    transition: border-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-option:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.avatar-option.selected {
+    border-color: #007bff; /* Blue outline for selected avatar */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); /* Blue glow around the border */
+}
+
+.avatar-option img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%; /* Ensure image is circular within its container */
+}
+
+/* Responsive adjustments for modal content */
+@media (max-width: 600px) {
+    .modal-content {
+        width: 95%; /* Wider on smaller screens */
+        padding: 20px;
+    }
+
+    .profile-pic-display-area {
+        margin-bottom: 20px;
+    }
+
+    .current-profile-pic-wrapper {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-pic-edit-icon {
+        font-size: 1.8em;
+    }
+
+    .back-button-modal {
+        margin-bottom: 20px;
+        padding: 6px 12px;
+        font-size: 0.9em;
+    }
+
+    .avatar-options-grid {
+        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Smaller avatars on small screens */
+        gap: 10px;
+        max-width: 300px;
+    }
+
+    .avatar-option {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* Profile Modal Redesign Styles */
+
+/* Profile Modal Redesign Styles - CONTINUED */
+
+/* Profile Picture Display Area */
+.profile-pic-display-area {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px; /* Space below the profile picture area */
+}
+
+.current-profile-pic-wrapper {
+    position: relative;
+    width: 150px; /* Increased from 120px to 150px */
+    height: 150px; /* Increased from 120px to 150px */
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: box-shadow 0.3s ease;
+}
+
+.current-profile-pic-wrapper:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.current-profile-pic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%; /* Ensure image is circular */
+    transition: filter 0.3s ease; /* Smooth transition for darkening */
+}
+
+.profile-pic-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0); /* Initially transparent */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Initially hidden */
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.current-profile-pic-wrapper:hover .profile-pic-overlay {
+    background-color: rgba(0, 0, 0, 0.4); /* Darken on hover */
+    opacity: 1; /* Show overlay */
+}
+
+/* Styling for the SVG pencil icon */
+.profile-pic-edit-icon {
+    width: 40px; /* Size of the pencil icon */
+    height: 40px;
+    filter: brightness(0) invert(1); /* Makes the SVG white */
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease;
+}
+
+.current-profile-pic-wrapper:hover .profile-pic-edit-icon {
+    opacity: 1; /* Show pencil icon on hover */
+}
+
+/* Username Area Styles */
+.username-area {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center username and icon */
+    margin-bottom: 25px; /* Space below username, above settings */
+    position: relative; /* For positioning the icon on hover */
+    cursor: pointer; /* Indicate it's clickable */
+    padding: 5px 10px; /* Add some padding for hover area */
+    border-radius: 8px; /* Subtle rounded corners for hover effect */
+    transition: background-color 0.2s ease;
+}
+
+.username-area:hover {
+    background-color: #f5f5f5; /* Light background on hover */
+}
+
+.username-text {
+    font-size: 1.8em; /* Large font for username */
+    font-weight: bold;
+    color: #333;
+    margin-right: 10px; /* Space between text and icon */
+    white-space: nowrap; /* Prevent wrapping */
+    overflow: hidden; /* Hide overflow if text is too long */
+    text-overflow: ellipsis; /* Add ellipsis for overflow */
+    max-width: 200px; /* Limit width to prevent text from pushing icon too far */
+}
+
+.username-edit-icon {
+    width: 24px; /* Smaller pencil icon for username */
+    height: 24px;
+    filter: brightness(0) invert(0.5); /* Greyish color for username pencil */
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.2s ease;
+}
+
+.username-area:hover .username-edit-icon {
+    opacity: 1; /* Show on hover */
+}
+
+.username-input {
+    font-size: 1.8em; /* Match text size */
+    font-weight: bold;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px 10px;
+    width: 200px; /* Fixed width for input */
+    box-sizing: border-box; /* Include padding in width */
+    text-align: center; /* Center input text */
+}
+
+
+/* Profile Picture Options View */
+.profile-pic-options-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px; /* Space from the top of the modal content */
+    position: relative; /* CRITICAL: For absolute positioning of back button */
+    padding-bottom: 20px; /* Ensure space at the bottom */
+}
+
+/* Back Button - positioned absolutely within this view */
+.back-button-modal {
+    background-color: #f0f0f0;
+    color: #333;
+    border: none; /* REMOVED OUTLINE */
+    outline: none; /* REMOVED FOCUS OUTLINE */
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+    position: absolute; /* CRITICAL: Absolute positioning */
+    top: 15px; /* Distance from top of modal-content */
+    left: 20px; /* Distance from left of modal-content */
+    z-index: 10; /* Ensure it's above other content */
+}
+
+.back-button-modal:hover {
+    background-color: #e0e0e0;
+}
+
+.back-button-modal i {
+    margin-right: 8px;
+}
+
+/* Selected PFP at the top of the options view */
+.selected-pfp-top-display {
+    margin-bottom: 25px; /* Space below the top selected PFP */
+    display: flex;
+    justify-content: center;
+    width: 100%; /* Take full width to center its content */
+}
+
+.selected-pfp-top {
+    width: 100px; /* Increased from 80px to 100px */
+    height: 100px; /* Increased from 80px to 100px */
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+
+.avatar-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); /* Responsive grid for avatars */
+    gap: 15px; /* Space between avatar options */
+    width: 100%;
+    max-width: 400px; /* Limit grid width */
+    margin-top: 20px; /* Space below "Choose Your Avatar" title */
+    justify-content: center; /* Center grid items if they don't fill the row */
+}
+
+.avatar-option {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid transparent; /* Transparent border for non-selected */
+    transition: border-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-option:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.avatar-option.selected {
+    border-color: #007bff; /* Blue outline for selected avatar */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); /* Blue glow around the border */
+}
+
+.avatar-option img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%; /* Ensure image is circular within its container */
+}
+
+/* Responsive adjustments for modal content */
+@media (max-width: 600px) {
+    .modal-content {
+        width: 95%; /* Wider on smaller screens */
+        padding: 20px;
+    }
+
+    .profile-pic-display-area {
+        margin-bottom: 20px;
+    }
+
+    .current-profile-pic-wrapper {
+        width: 120px; /* Adjusted for mobile */
+        height: 120px; /* Adjusted for mobile */
+    }
+
+    .profile-pic-edit-icon {
+        width: 35px; /* Adjust size for mobile */
+        height: 35px;
+    }
+
+    .username-area {
+        margin-bottom: 20px;
+    }
+
+    .username-text, .username-input {
+        font-size: 1.5em; /* Smaller font on mobile */
+    }
+
+    .username-edit-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .back-button-modal {
+        margin-bottom: 20px;
+        padding: 6px 12px;
+        font-size: 0.9em;
+        top: 10px; /* Adjust for smaller screens */
+        left: 10px; /* Adjust for smaller screens */
+    }
+
+    .selected-pfp-top {
+        width: 80px; /* Adjusted for mobile */
+        height: 80px;
+    }
+
+    .avatar-options-grid {
+        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Smaller avatars on small screens */
+        gap: 10px;
+        max-width: 300px;
+    }
+
+    .avatar-option {
+        width: 50px;
+        height: 50px;
+    }
+}
+/* Profile Picture Display Area */
+.profile-pic-display-area {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px; /* REDUCED from 25px to 10px - Space below the profile picture area */
+}
+
+.current-profile-pic-wrapper {
+    position: relative;
+    width: 150px; /* Increased from 120px to 150px */
+    height: 150px; /* Increased from 120px to 150px */
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: box-shadow 0.3s ease;
+}
+
+.current-profile-pic-wrapper:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.current-profile-pic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%; /* Ensure image is circular */
+    transition: filter 0.3s ease; /* Smooth transition for darkening */
+}
+
+.profile-pic-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0); /* Initially transparent */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Initially hidden */
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.current-profile-pic-wrapper:hover .profile-pic-overlay {
+    background-color: rgba(0, 0, 0, 0.4); /* Darken on hover */
+    opacity: 1; /* Show overlay */
+}
+
+/* Styling for the SVG pencil icon */
+.profile-pic-edit-icon {
+    width: 40px; /* Size of the pencil icon */
+    height: 40px;
+    filter: brightness(0) invert(1); /* Makes the SVG white */
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease;
+}
+
+.current-profile-pic-wrapper:hover .profile-pic-edit-icon {
+    opacity: 1; /* Show pencil icon on hover */
+}
+
+/* Username Area Styles */
+.username-area {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center username and icon */
+    margin-bottom: 25px; /* Space below username, above settings */
+    position: relative; /* For positioning the icon on hover */
+    cursor: pointer; /* Indicate it's clickable */
+    padding: 5px 10px; /* Add some padding for hover area */
+    border-radius: 8px; /* Subtle rounded corners for hover effect */
+    transition: background-color 0.2s ease;
+    margin-left: 5px; /* NEW: Move entire area 5px to the right */
+}
+
+.username-area:hover {
+    background-color: #f5f5f5; /* Light background on hover */
+}
+
+.username-text {
+    font-size: 1.8em; /* Large font for username */
+    font-weight: bold;
+    color: #333;
+    margin-right: 10px; /* Space between text and icon */
+    white-space: nowrap; /* Prevent wrapping */
+    overflow: hidden; /* Hide overflow if text is too long */
+    text-overflow: ellipsis; /* Add ellipsis for overflow */
+    max-width: 200px; /* Limit width to prevent text from pushing icon too far */
+}
+
+.username-edit-icon {
+    width: 24px; /* Smaller pencil icon for username */
+    height: 24px;
+    filter: brightness(0) invert(0.5); /* Greyish color for username pencil */
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.2s ease;
+}
+
+.username-area:hover .username-edit-icon {
+    opacity: 1; /* Show on hover */
+}
+
+.username-input {
+    font-size: 1.8em; /* Match text size */
+    font-weight: bold;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px 10px;
+    width: 200px; /* Fixed width for input */
+    box-sizing: border-box; /* Include padding in width */
+    text-align: center; /* Center input text */
+}
+
+/* Responsive adjustments for modal content */
+@media (max-width: 600px) {
+    .modal-content {
+        width: 95%; /* Wider on smaller screens */
+        padding: 20px;
+    }
+
+    .profile-pic-display-area {
+        margin-bottom: 10px; /* Adjusted for mobile */
+    }
+
+    .current-profile-pic-wrapper {
+        width: 120px; /* Adjusted for mobile */
+        height: 120px; /* Adjusted for mobile */
+    }
+
+    .profile-pic-edit-icon {
+        width: 35px; /* Adjust size for mobile */
+        height: 35px;
+    }
+
+    .username-area {
+        margin-bottom: 20px;
+        margin-left: 0; /* Reset margin on mobile for centering */
+    }
+
+    .username-text, .username-input {
+        font-size: 1.5em; /* Smaller font on mobile */
+    }
+
+    .username-edit-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .back-button-modal {
+        margin-bottom: 20px;
+        padding: 6px 12px;
+        font-size: 0.9em;
+        top: 10px; /* Adjust for smaller screens */
+        left: 10px; /* Adjust for smaller screens */
+    }
+
+    .selected-pfp-top {
+        width: 80px; /* Adjusted for mobile */
+        height: 80px;
+    }
+
+    .avatar-options-grid {
+        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Smaller avatars on small screens */
+        gap: 10px;
+        max-width: 300px;
+    }
+
+    .avatar-option {
+        width: 50px;
+        height: 50px;
     }
 }

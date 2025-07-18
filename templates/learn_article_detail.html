@@ -1,9 +1,134 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="learn-article-detail-page">
-    <h1 class="page-main-title text-center">{{ article_title }}</h1>
-    <p class="text-center">This is a placeholder page for the lesson content.</p>
-    <!-- Actual lesson content would go here -->
+<div class="article-detail-page bg-gray-50 min-h-screen py-8">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+        <!-- Back Button -->
+        <a href="javascript:history.back()" class="back-button flex items-center text-blue-600 hover:text-blue-800 mb-6 font-medium">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Knowledge Hub
+        </a>
+
+        <div class="article-content-wrapper bg-white shadow-lg rounded-lg p-6 sm:p-8">
+            <!-- Category Tag (if available) -->
+            {% if article.category %}
+            <span class="article-detail-category-tag inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full mb-2">
+                {{ article.category }}
+            </span>
+            {% endif %}
+
+            <!-- Article Title -->
+            <h1 class="article-detail-title text-3xl sm:text-4xl font-bold text-gray-900 mb-2 leading-tight">
+                {{ article.title }}
+            </h1>
+
+            <!-- Introduction -->
+            {% if article.introduction %}
+            <div class="article-detail-introduction text-lg text-gray-700 leading-tight" data-markdown-target="introduction"> {# Removed mb-3 here, as paragraphs inside will control spacing #}
+                {{ article.introduction }}
+            </div>
+            {% endif %}
+
+            <!-- Main Content Sections -->
+            {% if article.sections %}
+            <div class="article-sections space-y-3"> {# This space-y will still apply between the article-section divs #}
+                {% for section in article.sections %}
+                <div class="article-section">
+                    <h2 class="article-detail-section-heading text-2xl sm:text-3xl font-semibold text-gray-800 mb-1 mt-4"> {# mb-1 for minimal space below heading, mt-4 for space above #}
+                        {{ section.heading }}
+                    </h2>
+                    <div class="article-detail-section-content text-base text-gray-700 leading-tight" data-markdown-target="section-content">
+                        {{ section.content }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Conclusion -->
+            {% if article.conclusion %}
+            <div class="article-conclusion mt-4 pt-2 border-t border-gray-200">
+                <h2 class="article-detail-section-heading text-2xl sm:text-3xl font-semibold text-gray-800 mb-1">
+                    Your Future-Ready Media Literacy Superpower
+                </h2>
+                <div class="article-detail-conclusion-text text-lg text-gray-700 leading-tight" data-markdown-target="conclusion">
+                    {{ article.conclusion }}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }} {# This ensures any scripts from base.html are included #}
+    <script>
+        // Function to render markdown (copied from learn.js, enhanced for paragraphs)
+        function renderMarkdown(text) {
+            if (!text) return '';
+
+            let html = text;
+
+            // 1. Handle paragraphs: Blocks of text separated by two or more newlines
+            // Replace multiple newlines with a unique placeholder, then split by it
+            html = html.replace(/\n{2,}/g, 'PARAGRAPH_BREAK_PLACEHOLDER');
+            let paragraphs = html.split('PARAGRAPH_BREAK_PLACEHOLDER');
+
+            // Process each paragraph
+            let processedParagraphs = paragraphs.map(p => {
+                // Trim leading/trailing whitespace from each paragraph
+                p = p.trim();
+                if (p === '') return ''; // Skip empty paragraphs
+
+                // Convert single newlines within a paragraph to <br>
+                p = p.replace(/\n/g, '<br>');
+
+                // Bold: **text** to <strong>text</strong>
+                p = p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                // Italic: *text* to <em>text</em>
+                p = p.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+                // Handle bullet points: - item to <ul><li>item</li></ul>
+                // This regex now works on the paragraph 'p' and handles multiple list items
+                // It finds lines starting with '-' (after an optional <br> or at the start of 'p')
+                // and converts them to <li> tags with tight margins.
+                p = p.replace(/(?:<br>\s*|^)\s*-\s*(.*?)(?=<br>|$)/g, '<li class="mb-0.5">$1</li>');
+                // Then, wrap consecutive <li> tags in a <ul> with tight margins
+                p = p.replace(/(<li.*?<\/li>)+/g, '<ul class="list-disc pl-5 my-0.5">$&</ul>');
+
+                // Remove any remaining stray asterisks or hyphens
+                p = p.replace(/(\*|\-)\s/g, '');
+
+                // Wrap the processed paragraph in a <p> tag with no vertical margin
+                // Only wrap if it's not already a list (to avoid <p> around <ul>)
+                if (!p.startsWith('<ul')) {
+                    return `<p class="my-0 leading-tight">${p}</p>`; // Apply my-0 and leading-tight directly
+                }
+                return p; // Return as is if it's a list
+            });
+
+            return processedParagraphs.join(''); // Join processed paragraphs back
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Apply markdown rendering to the introduction
+            const introElement = document.querySelector('[data-markdown-target="introduction"]');
+            if (introElement) {
+                introElement.innerHTML = renderMarkdown(introElement.textContent);
+            }
+
+            // Apply markdown rendering to each section's content
+            const sectionContentElements = document.querySelectorAll('[data-markdown-target="section-content"]');
+            sectionContentElements.forEach(element => {
+                element.innerHTML = renderMarkdown(element.textContent);
+            });
+
+            // Apply markdown rendering to the conclusion
+            const conclusionElement = document.querySelector('[data-markdown-target="conclusion"]');
+            if (conclusionElement) {
+                conclusionElement.innerHTML = renderMarkdown(conclusionElement.textContent);
+            }
+        });
+    </script>
 {% endblock %}

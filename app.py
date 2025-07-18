@@ -7,6 +7,9 @@ import threading
 import collections
 import traceback
 import requests
+import json # Make sure this is imported at the top
+import markdown
+from news_backend.knowledge_hub_data import knowledge_articles # Make sure this import is correct based on your file path
 
 # --- Explicitly load environment variables from .env file ---
 dotenv_path = find_dotenv()
@@ -513,7 +516,7 @@ def search():
 
 @app.route('/learn')
 def learn():
-    """Serves the Learn page (Chatbot, Articles, Quizzes)."""
+    # Pass the raw JSON string. Jinja2's 'tojson' filter will handle escaping in HTML.
     return render_template('learn.html')
 
 # --- New Route for Full Article Display ---
@@ -524,13 +527,16 @@ def article_detail(article_id):
         return render_template('error.html', message="Article not found or has expired."), 404
     return render_template('article_detail.html', article=article)
 
-# --- New Route for Learn Article Detail ---
-@app.route('/learn_article/<unit_id>/<lesson_id>/<path:lesson_title>')
-def learn_article_detail(unit_id, lesson_id, lesson_title):
-    # The lesson_title comes URL-encoded, so decode it
-    decoded_title = lesson_title
-    return render_template('learn_article_detail.html', article_title=decoded_title)
-
+@app.route('/learn/<path:article_id>')
+def learn_article_detail(article_id):
+    article_data = None
+    for unit_name, unit_info in knowledge_articles.items():
+        if article_id in unit_info["lessons"]:
+            article_data = unit_info["lessons"][article_id]
+            break
+    if not article_data:
+        return "Article not found", 404
+    return render_template('learn_article_detail.html', article=article_data)
 # --- API Endpoints ---
 
 @app.route('/api/get_feed_articles', methods=['GET'])

@@ -3,30 +3,71 @@
         <span class="close-button" id="profile-close-btn">&times;</span>
         <h2>Profile Settings</h2>
 
-        <div class="profile-section">
-            <h3>Theme</h3>
-            <div class="theme-options">
-                <label>
-                    <input type="radio" name="theme" value="light" id="light-theme-radio"> Light Mode
-                </label>
-                <label>
-                    <input type="radio" name="theme" value="dark" id="dark-theme-radio"> Dark Mode
-                </label>
+        <!-- Profile Picture Display Area (visible in main settings view) -->
+        <div id="profile-pic-display-area" class="profile-pic-display-area">
+            <div class="current-profile-pic-wrapper">
+                <img id="modal-profile-pic" src="{{ url_for('static', filename='img/default_profile.jpeg') }}" alt="Current Profile Picture" class="current-profile-pic">
+                <div class="profile-pic-overlay">
+                    <img src="{{ url_for('static', filename='img/pencil.svg') }}" alt="Edit Profile Picture" class="profile-pic-edit-icon">
+                </div>
             </div>
         </div>
 
-        <div class="profile-section">
-            <h3>API Key Settings</h3>
-            <label class="toggle-switch">
-                <input type="checkbox" id="use-own-api-key-toggle">
-                <span class="slider round"></span> Use your own NewsAPI Key
-            </label>
-            <div id="news-api-key-input-container" style="display: none; margin-top: 15px;">
-                <label for="news-api-key-input">NewsAPI Key:</label>
-                <input type="password" id="news-api-key-input" placeholder="Enter your NewsAPI Key">
-                <button id="save-news-api-key-btn" class="btn secondary-btn">Save Key for Session</button>
-            </div>
+        <!-- Username Display and Edit Area -->
+        <div id="username-area" class="username-area">
+            <span id="username-text" class="username-text">Your name</span>
+            <img id="username-edit-icon" src="{{ url_for('static', filename='img/pencil.svg') }}" alt="Edit Username" class="username-edit-icon">
+            <input type="text" id="username-input" class="username-input" style="display: none;">
+        </div>
+
+        <!-- Main Settings View -->
+        <div id="main-settings-view">
+            <div class="profile-section">
+                <h3>Theme</h3>
+                <div class="theme-options">
+                    <label>
+                        <input type="radio" name="theme" value="light" id="light-theme-radio"> Light Mode
+                    </label>
+                    <label>
+                        <input type="radio" name="theme" value="dark" id="dark-theme-radio"> Dark Mode
+                    </label>
+                </div>
             </div>
 
+            <div class="profile-section">
+                <h3>API Key Settings</h3>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="use-own-api-key-toggle">
+                    <span class="slider round"></span> Use your own API Keys
+                </label>
+                <div id="api-key-input-container" style="display: none; margin-top: 15px;">
+                    <label for="news-api-key-input">NewsAPI Key:</label>
+                    <input type="password" id="news-api-key-input" placeholder="Enter your NewsAPI Key">
+                    <br>
+                    <label for="gemini-api-key-input" class="mt-3 block">Gemini Key:</label>
+                    <input type="password" id="gemini-api-key-input" placeholder="Enter your Gemini Key">
+                    <button id="save-api-keys-btn" class="btn secondary-btn mt-4">Save Keys for Session</button>
+                    <div id="api-key-message" class="text-sm text-green-600 mt-2" style="display: none;"></div>
+                </div>
+            </div>
         </div>
+
+        <!-- Profile Picture Options View (Initially hidden) -->
+        <div id="profile-pic-options-view" class="profile-pic-options-view" style="display: none;">
+            <!-- Back Button - positioned absolutely within this view -->
+            <button id="back-to-settings-btn" class="back-button-modal">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Settings
+            </button>
+
+            <!-- Selected Profile Picture at the top -->
+            <div class="selected-pfp-top-display">
+                <img id="selected-pfp-top-img" src="{{ url_for('static', filename='img/default_profile.jpeg') }}" alt="Selected Profile Picture" class="selected-pfp-top">
+            </div>
+
+            <h3 class="text-center text-xl font-semibold mb-4">Choose Your Avatar</h3>
+            <div id="avatar-options-grid" class="avatar-options-grid">
+                {# Avatars will be dynamically inserted here by JavaScript #}
+            </div>
+        </div>
+    </div>
 </div>

@@ -233,7 +233,7 @@ def get_misconception_headlines(gem_api_key, count=12):
             misconceptions_titles = [m.strip() for m in result["candidates"][0]["content"]["parts"][0]["text"].split(", ") if m.strip()]
             misconceptions_titles = list(collections.OrderedDict.fromkeys(misconceptions_titles))
             misconceptions_titles = misconceptions_titles[:count]
-            print(f"DEBUG: Generated {len(misconceptions_titles)} misconception headlines: {misconceptions_titles}") # Added print
+            print(f"DEBUG: Generated {len(misconceptions_titles)} misconception headlines: {misconceptions_titles}")
             return misconceptions_titles
         else:
             print(f"WARNING: Gemini API response missing content for misconception headlines: {result}")
@@ -286,15 +286,15 @@ def create_full_news_article(headline, raw_articles_for_source, gem_api_key):
     source_urls_for_gemini = "\n".join([article.url for article in raw_articles_for_source]) if raw_articles_for_source else "No specific sources provided."
 
     prompt_text = (
-        f"Create a detailed news story based strictly on the information found at the following URLs, focusing on the headline '{headline}'. "
-        f"If no specific sources are provided, generate a plausible news story for the headline. "
+        f"Create a detailed, in-depth news story based strictly on the information found at the following URLs, focusing on the headline '{headline}'. "
+        f"If no specific sources are provided, generate a plausible, well-researched news story for the headline. "
         f"Classify this news article into ONE of the following categories: {', '.join(ALLOWED_ARTICLE_CATEGORIES)}. "
-        f"DO NOT refer to yourself as an AI model.\n\n"
-        f"The 'summary_detail' should be a comprehensive, multi-paragraph explanation of the news story. "
-        f"The 'key_findings' should be a list of crucial facts. "
-        f"The 'multiple_perspectives' should provide distinct viewpoints or angles on the topic. "
-        f"The 'different_viewpoints' should offer contrasting opinions or interpretations. "
-        f"The 'verification_process' should briefly explain how such information could be verified.\n\n"
+        f"DO NOT refer to yourself as an AI model. DO NOT use any Markdown formatting like italics, bolding, or headings within the generated text content. "
+        f"The 'title' should be a concise and engaging article title, not just the headline. "
+        f"The 'summary_detail' should be a comprehensive, multi-paragraph explanation of the news story. Ensure it is at least 3 distinct paragraphs, with each paragraph separated by two newline characters (\\n\\n) to ensure proper visual separation, and provides thorough detail. "
+        f"The 'key_findings' should be a list of crucial facts, each as a separate string item. "
+        f"The 'viewpoints' should provide at least 2-3 distinct perspectives or contrasting opinions on the topic, each as a separate string item. " # Enhanced instruction
+        f"The 'verified_sources' should be a list of objects, each with a 'name' and 'url' for the sources used.\n\n"
         f"Sources to use:\n{source_urls_for_gemini}\n\n"
         f"Provide the output in JSON format with the following structure:"
     )
@@ -313,9 +313,7 @@ def create_full_news_article(headline, raw_articles_for_source, gem_api_key):
                 "properties": {
                     "summary_detail": {"type": "STRING"},
                     "key_findings": {"type": "ARRAY", "items": {"type": "STRING"}},
-                    "multiple_perspectives": {"type": "ARRAY", "items": {"type": "STRING"}},
-                    "different_viewpoints": {"type": "ARRAY", "items": {"type": "STRING"}},
-                    "verification_process": {"type": "STRING"},
+                    "viewpoints": {"type": "ARRAY", "items": {"type": "STRING"}}, # Consolidated field
                     "verified_sources": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {"name": {"type": "STRING"}, "url": {"type": "STRING"}}}}
                 }
             }
@@ -336,9 +334,7 @@ def create_full_news_article(headline, raw_articles_for_source, gem_api_key):
         # Ensure full_content has all expected keys, even if empty from AI
         full_content.setdefault("summary_detail", "")
         full_content.setdefault("key_findings", [])
-        full_content.setdefault("multiple_perspectives", [])
-        full_content.setdefault("different_viewpoints", [])
-        full_content.setdefault("verification_process", "AI-generated based on general knowledge and AI training data.")
+        full_content.setdefault("viewpoints", []) # Consolidated field
         full_content.setdefault("verified_sources", [])
 
         # Generate unique ID and image URL
@@ -363,13 +359,13 @@ def create_full_news_article(headline, raw_articles_for_source, gem_api_key):
 def create_full_misconception_article(misconception_title, gem_api_key):
     prompt_text = (
         f"For the misconception '{misconception_title}', write a detailed article debunking it. "
-        f"Classify the core topic of this misconception into ONE of the following categories: {', '.join(ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES)}. Prefix the category with 'Label: '. "
-        f"DO NOT refer to yourself as an AI model.\n\n"
-        f"The 'summary_detail' should be a comprehensive, multi-paragraph explanation of the debunking. "
-        f"The 'key_findings' should be a list of crucial facts. "
-        f"The 'multiple_perspectives' should provide common arguments for and against the misconception. "
-        f"The 'different_viewpoints' should offer contrasting interpretations of the evidence. "
-        f"The 'verification_process' should briefly explain how such information could be verified.\n\n"
+        f"Classify the core topic of this misconception into ONE of the following categories: {', '.join(ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES)}. "
+        f"DO NOT refer to yourself as an AI model. DO NOT use any Markdown formatting like italics, bolding, or headings within the generated text content. "
+        f"The 'title' should be a concise and engaging article title, not just the misconception title. "
+        f"The 'summary_detail' should be a comprehensive, multi-paragraph explanation of the debunking. Ensure it is at least 3 distinct paragraphs, with each paragraph separated by two newline characters (\\n\\n) to ensure proper visual separation, and provides thorough detail. "
+        f"The 'key_findings' should be a list of crucial facts, each as a separate string item. "
+        f"The 'viewpoints' should provide at least 2-3 distinct common arguments for and against the misconception, or contrasting interpretations of the evidence, each as a separate string item. " # Enhanced instruction
+        f"The 'verified_sources' should be a list of objects, each with a 'name' and 'url' for the sources used.\n\n"
         f"Provide the output in JSON format with the following structure:"
     )
 
@@ -380,16 +376,14 @@ def create_full_misconception_article(misconception_title, gem_api_key):
             "summary": {"type": "STRING"},
             "category": {
                 "type": "STRING",
-                "enum": [f"Label: {cat}" for cat in ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES] # Enforce "Label: Category" format
+                "enum": ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES
             },
             "full_content": {
                 "type": "OBJECT",
                 "properties": {
                     "summary_detail": {"type": "STRING"},
                     "key_findings": {"type": "ARRAY", "items": {"type": "STRING"}},
-                    "multiple_perspectives": {"type": "ARRAY", "items": {"type": "STRING"}},
-                    "different_viewpoints": {"type": "ARRAY", "items": {"type": "STRING"}},
-                    "verification_process": {"type": "STRING"},
+                    "viewpoints": {"type": "ARRAY", "items": {"type": "STRING"}},
                     "verified_sources": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {"name": {"type": "STRING"}, "url": {"type": "STRING"}}}}
                 }
             }
@@ -403,18 +397,16 @@ def create_full_misconception_article(misconception_title, gem_api_key):
     if generated_data and not generated_data.get("error"):
         title = generated_data.get("title", misconception_title)
         summary = generated_data.get("summary", "")
-        category = generated_data.get("category", "Label: General") # Get AI-generated category
+        category = generated_data.get("category", "General")
         full_content = generated_data.get("full_content", {})
 
         full_content.setdefault("summary_detail", "")
         full_content.setdefault("key_findings", [])
-        full_content.setdefault("multiple_perspectives", [])
-        full_content.setdefault("different_viewpoints", [])
-        full_content.setdefault("verification_process", "AI-generated debunking based on general knowledge and AI training data.")
+        full_content.setdefault("viewpoints", [])
         full_content.setdefault("verified_sources", [])
 
         article_id = f"debunkd-misconception-{uuid.uuid4()}"
-        clean_category_for_image = category.replace('Label: ', '').replace(' ', '+')
+        clean_category_for_image = category.replace(' ', '+')
         image_url = f"https://placehold.co/300x200/FF8C00/FFFFFF?text={clean_category_for_image}"
 
         article_obj = {
@@ -435,13 +427,13 @@ def create_full_misconception_article(misconception_title, gem_api_key):
 def create_full_issue_article(issue_title, gem_api_key):
     prompt_text = (
         f"For the important issue '{issue_title}', write a detailed overview. "
-        f"Classify the core topic of this issue into ONE of the following categories: {', '.join(ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES)}. Prefix the category with 'Label: '. "
-        f"DO NOT refer to yourself as an AI model.\n\n"
-        f"The 'summary_detail' should be a comprehensive, multi-paragraph explanation of the issue. "
-        f"The 'key_findings' should be a list of crucial facts. "
-        f"The 'multiple_perspectives' should provide different angles or interpretations of the issue. "
-        f"The 'different_viewpoints' should offer contrasting opinions or solutions related to the issue. "
-        f"The 'verification_process' should briefly explain how such information could be verified.\n\n"
+        f"Classify the core topic of this issue into ONE of the following categories: {', '.join(ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES)}. "
+        f"DO NOT refer to yourself as an AI model. DO NOT use any Markdown formatting like italics, bolding, or headings within the generated text content. "
+        f"The 'title' should be a concise and engaging article title, not just the issue title. "
+        f"The 'summary_detail' should be a comprehensive, multi-paragraph explanation of the issue. Ensure it is at least 3 distinct paragraphs, with each paragraph separated by two newline characters (\\n\\n) to ensure proper visual separation, and provides thorough detail. "
+        f"The 'key_findings' should be a list of crucial facts, each as a separate string item. "
+        f"The 'viewpoints' should provide at least 2-3 distinct angles or contrasting opinions/solutions related to the issue, each as a separate string item. " # Enhanced instruction
+        f"The 'verified_sources' should be a list of objects, each with a 'name' and 'url' for the sources used.\n\n"
         f"Provide the output in JSON format with the following structure:"
     )
 
@@ -452,16 +444,14 @@ def create_full_issue_article(issue_title, gem_api_key):
             "summary": {"type": "STRING"},
             "category": {
                 "type": "STRING",
-                "enum": [f"Label: {cat}" for cat in ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES] # Enforce "Label: Category" format
+                "enum": ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES
             },
             "full_content": {
                 "type": "OBJECT",
                 "properties": {
                     "summary_detail": {"type": "STRING"},
                     "key_findings": {"type": "ARRAY", "items": {"type": "STRING"}},
-                    "multiple_perspectives": {"type": "ARRAY", "items": {"type": "STRING"}},
-                    "different_viewpoints": {"type": "ARRAY", "items": {"type": "STRING"}},
-                    "verification_process": {"type": "STRING"},
+                    "viewpoints": {"type": "ARRAY", "items": {"type": "STRING"}},
                     "verified_sources": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {"name": {"type": "STRING"}, "url": {"type": "STRING"}}}}
                 }
             }
@@ -475,18 +465,16 @@ def create_full_issue_article(issue_title, gem_api_key):
     if generated_data and not generated_data.get("error"):
         title = generated_data.get("title", issue_title)
         summary = generated_data.get("summary", "")
-        category = generated_data.get("category", "Label: General") # Get AI-generated category
+        category = generated_data.get("category", "General")
         full_content = generated_data.get("full_content", {})
 
         full_content.setdefault("summary_detail", "")
         full_content.setdefault("key_findings", [])
-        full_content.setdefault("multiple_perspectives", [])
-        full_content.setdefault("different_viewpoints", [])
-        full_content.setdefault("verification_process", "AI-generated overview based on general knowledge and AI training data.")
+        full_content.setdefault("viewpoints", [])
         full_content.setdefault("verified_sources", [])
 
         article_id = f"debunkd-issue-{uuid.uuid4()}"
-        clean_category_for_image = category.replace('Label: ', '').replace(' ', '+')
+        clean_category_for_image = category.replace(' ', '+')
         image_url = f"https://placehold.co/300x200/1A202C/FFFFFF?text={clean_category_for_image}"
 
         article_obj = {
@@ -529,14 +517,14 @@ def search_debunked(query, gem_api_key, news_api_key):
     elif "g" in classification:
         # Fact-Check / General Article Generation
         prompt_text = (
-            f"For the topic '{query}', generate a detailed fact-check in JSON format. "
-            f"Classify this fact-check into ONE of the following categories: {', '.join(ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES)}. Prefix the category with 'Label: '. "
-            f"DO NOT refer to yourself as an AI model.\n\n"
-            f"The 'summary_detail' should be a comprehensive, multi-paragraph explanation of the fact-check. "
-            f"The 'key_findings' should be a list of crucial facts. "
-            f"The 'multiple_perspectives' should provide common arguments for and against the topic. "
-            f"The 'different_viewpoints' should offer contrasting interpretations of the evidence. "
-            f"The 'verification_process' should briefly explain how such information could be verified.\n\n"
+            f"For the topic '{query}', generate a detailed, in-depth fact-check in JSON format. "
+            f"Classify this fact-check into ONE of the following categories: {', '.join(ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES)}. "
+            f"DO NOT refer to yourself as an AI model. DO NOT use any Markdown formatting like italics, bolding, or headings within the generated text content. "
+            f"The 'title' should be a concise and engaging article title based on the query, not just the query itself. "
+            f"The 'summary_detail' should be a comprehensive, multi-paragraph explanation of the fact-check. Ensure it is at least 3 distinct paragraphs, with each paragraph separated by two newline characters (\\n\\n) to ensure proper visual separation, and provides thorough detail. "
+            f"The 'key_findings' should be a list of crucial facts, each as a separate string item. "
+            f"The 'viewpoints' should provide at least 2-3 distinct common arguments for and against the topic, or contrasting interpretations of the evidence, each as a separate string item. " # Enhanced instruction
+            f"The 'verified_sources' should be a list of objects, each with a 'name' and 'url' for the sources used.\n\n"
             f"Provide the output in JSON format with the following structure:"
         )
 
@@ -547,16 +535,14 @@ def search_debunked(query, gem_api_key, news_api_key):
                 "summary": {"type": "STRING"},
                 "category": {
                     "type": "STRING",
-                    "enum": [f"Label: {cat}" for cat in ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES] # Enforce "Label: Category" format
+                    "enum": ALLOWED_MISCONCEPTION_ISSUE_CATEGORIES
                 },
                 "full_content": {
                     "type": "OBJECT",
                     "properties": {
                         "summary_detail": {"type": "STRING"},
                         "key_findings": {"type": "ARRAY", "items": {"type": "STRING"}},
-                        "multiple_perspectives": {"type": "ARRAY", "items": {"type": "STRING"}},
-                        "different_viewpoints": {"type": "ARRAY", "items": {"type": "STRING"}},
-                        "verification_process": {"type": "STRING"},
+                        "viewpoints": {"type": "ARRAY", "items": {"type": "STRING"}},
                         "verified_sources": {"type": "ARRAY", "items": {"type": "OBJECT", "properties": {"name": {"type": "STRING"}, "url": {"type": "STRING"}}}}
                     }
                 }
@@ -568,20 +554,18 @@ def search_debunked(query, gem_api_key, news_api_key):
         generated_data = call_gemini_api_with_json_schema(prompt_text, response_schema, gem_api_key)
 
         if generated_data and not generated_data.get("error"):
-            title = generated_data.get("title", f"Fact-Check: {query}")
+            title = generated_data.get("title", f"Fact-Check: {query}") # Prioritize AI-generated title
             summary = generated_data.get("summary", "")
-            category = generated_data.get("category", "Label: General")
+            category = generated_data.get("category", "General")
             full_content = generated_data.get("full_content", {})
 
             full_content.setdefault("summary_detail", "")
             full_content.setdefault("key_findings", [])
-            full_content.setdefault("multiple_perspectives", [])
-            full_content.setdefault("different_viewpoints", [])
-            full_content.setdefault("verification_process", "AI-generated fact-check based on general knowledge and AI training data.")
+            full_content.setdefault("viewpoints", [])
             full_content.setdefault("verified_sources", [])
 
             article_id = f"debunkd-search-general-{uuid.uuid4()}"
-            clean_category_for_image = category.replace('Label: ', '').replace(' ', '+')
+            clean_category_for_image = category.replace(' ', '+')
             image_url = f"https://placehold.co/300x200/5C6BC0/FFFFFF?text={clean_category_for_image}"
 
             article_obj = {
@@ -656,8 +640,9 @@ def search_debunked(query, gem_api_key, news_api_key):
         if generated_news_article:
             # Override URL with original source if available, otherwise use generated one
             generated_news_article['url'] = articles_for_source[0].url if articles_for_source else generated_news_article['url']
-            # Override the title to indicate it's a search result
-            generated_news_article['title'] = f"News Report: {query}"
+            # Prioritize AI-generated title, only fallback to query-based if AI didn't provide one
+            if not generated_news_article.get('title'):
+                generated_news_article['title'] = f"News Report: {query}"
             print(f"DEBUG: Generated Search (News) Article: Title='{generated_news_article['title']}', Category='{generated_news_article['category']}'") # Added print
             return generated_news_article
         else:

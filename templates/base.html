@@ -38,6 +38,10 @@
     <main class="container">
         {% block content %}{% endblock %}
     </main>
+
+    {# CRITICAL FIX: Include the profile modal here, outside of content blocks #}
+    {% include 'profile_modal.html' %}
+
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>
