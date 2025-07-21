@@ -6,6 +6,7 @@ body {
     background-color: #f8f8f8; /* Very light grey background for the whole page */
     color: #333;
     line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
 }
 
 .container {
@@ -21,6 +22,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
 }
 
 .header-top-row { /* Logo and Profile row */
@@ -29,6 +31,7 @@ header {
     align-items: center;
     padding: 25px 0; /* Increased vertical padding */
     background-color: #fff; /* Ensure white background */
+    transition: background-color 0.3s ease; /* Smooth transition */
 }
 
 .logo-link {
@@ -38,12 +41,12 @@ header {
     color: #333;
     font-size: 24px;
     font-weight: bold;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .logo-img {
     height: 40px; /* Adjust as needed */
     margin-right: 10px;
-    /* No border-radius here, keeping original shape */
 }
 
 .profile-pic-container {
@@ -55,6 +58,13 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Added subtle shadow for depth */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effect */
+}
+
+.profile-pic-container:hover {
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
 }
 
 .profile-pic {
@@ -69,6 +79,7 @@ header {
     background-color: #ccc; /* Grey line */
     width: 100vw; /* Span full width */
     margin-left: calc(50% - 50vw); /* Center it and make it full width */
+    transition: background-color 0.3s ease; /* Smooth transition */
 }
 
 .header-nav-row { /* Navigation tabs row */
@@ -77,12 +88,12 @@ header {
     display: flex;
     justify-content: flex-start; /* Align tabs to the left */
     align-items: center;
+    transition: background-color 0.3s ease; /* Smooth transition */
 }
 
 .header-divider.bottom-divider { /* Specific style for the divider below nav */
     margin-top: 0; /* No extra margin above this divider */
 }
-
 
 /* Navigation Styles */
 .main-nav ul {
@@ -105,7 +116,7 @@ header {
 .main-nav a {
     text-decoration: none;
     color: #333; /* Default black text */
-    font-weight: normal; /* REMOVED BOLD */
+    font-weight: normal;
     padding: 10px 0;
     position: relative;
     transition: color 0.3s ease;
@@ -147,17 +158,24 @@ main.container {
 .page-main-title {
     font-size: 2.5em;
     color: #333;
-    margin-bottom: 10px; /* Keep this */
+    margin-bottom: 10px;
     font-weight: bold;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .page-main-subtitle {
     font-size: 1.1em;
     color: #666;
-    margin-bottom: 20px; /* Reduced gap */
+    margin-bottom: 20px;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 /* Home Page Specific Styles */
+.home-page .page-main-title,
+.home-page .page-main-subtitle {
+    text-align: left; /* Ensure these are left-aligned on Home page */
+}
+
 .home-section-title {
     font-size: 1.8em;
     color: #000;
@@ -166,6 +184,7 @@ main.container {
     margin-bottom: 15px;
     display: flex;
     align-items: center;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .home-section-title .icon {
@@ -182,18 +201,19 @@ main.container {
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 10px;
-    padding: 20px 15px; /* Increased vertical padding, kept horizontal */
+    padding: 20px 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
     text-align: center;
     color: #555;
     font-style: italic;
-    min-height: 120px; /* Made taller */
-    max-width: 280px; /* Made skinnier horizontally */
-    margin: 20px 0 20px 0; /* Aligned to the left */
+    min-height: 120px;
+    max-width: 280px;
+    margin: 20px 0 20px 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.9em; /* Slightly smaller text */
+    font-size: 0.9em;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
 }
 
 .view-all-btn-container {
@@ -231,6 +251,7 @@ main.container {
     display: flex;
     align-items: center;
     position: relative;
+    transition: background-color 0.3s ease; /* Smooth transition */
 }
 
 .progress-bar-fill {
@@ -247,6 +268,7 @@ main.container {
     color: #333; /* Dark text for percentage */
     font-weight: bold;
     font-size: 0.9em;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .encouraging-message {
@@ -255,8 +277,8 @@ main.container {
     font-size: 1em;
     color: #666;
     font-style: italic;
+    transition: color 0.3s ease; /* Smooth transition */
 }
-
 
 /* Feed Section Styles (existing) */
 .feed-section {
@@ -275,6 +297,8 @@ main.container {
     color: #000; /* Bold black letters */
     font-weight: bold;
     margin: 0;
+    text-align: left; /* Explicitly left-align h1 */
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .more-link {
@@ -285,7 +309,7 @@ main.container {
     padding: 8px 15px;
     border-radius: 20px; /* Rounded corners for the button */
     font-weight: bold;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* Smooth transition */
 }
 
 .more-link:hover {
@@ -307,7 +331,7 @@ main.container {
     border-radius: 10px; /* Rounded corners */
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -340,6 +364,7 @@ main.container {
     font-weight: bold;
     margin-bottom: 7px;
     text-transform: capitalize;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
 }
 
 /* Category Tag Colors */
@@ -395,7 +420,6 @@ main.container {
     color: #d32f2f; /* Deeper red */
 }
 
-
 .article-card h3 {
     font-size: 1.2em;
     font-weight: bold;
@@ -409,6 +433,7 @@ main.container {
     -webkit-line-clamp: 3; /* Limit title to 3 lines */
     line-clamp: 3; /* Standard property for compatibility */
     -webkit-box-orient: vertical;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .article-card p {
@@ -421,6 +446,7 @@ main.container {
     -webkit-line-clamp: 4; /* Limit summary to 4 lines */
     line-clamp: 4; /* Standard property for compatibility */
     -webkit-box-orient: vertical;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 /* Refresh Button Styles */
@@ -441,7 +467,7 @@ main.container {
     font-size: 1em;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* Smooth transition */
 }
 
 .refresh-button-container .primary-btn:hover {
@@ -450,9 +476,8 @@ main.container {
 }
 
 .refresh-icon {
-    width: 20px;
+    width: 30px;
     height: 20px;
-    margin-right: 10px;
 }
 
 /* Loading Indicator */
@@ -478,12 +503,14 @@ main.container {
     text-align: center;
     margin-top: 20px;
     font-weight: bold;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .info-message {
     color: #555;
     text-align: center;
     margin-top: 20px;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 /* Article Detail Page (from previous code) */
@@ -498,6 +525,7 @@ main.container {
     color: #007bff;
     font-weight: bold;
     margin-bottom: 30px;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .back-button i {
@@ -509,6 +537,7 @@ main.container {
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
 }
 
 .article-detail-category-tag {
@@ -519,6 +548,7 @@ main.container {
     font-weight: bold;
     margin-bottom: 20px;
     text-transform: capitalize;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
 }
 
 .article-detail-title {
@@ -526,6 +556,7 @@ main.container {
     color: #333;
     margin-bottom: 15px;
     line-height: 1.2;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .article-detail-summary {
@@ -533,6 +564,7 @@ main.container {
     color: #000; /* Changed from #555 to black */
     margin-bottom: 30px;
     font-style: normal; /* Changed from italic to normal */
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .article-detail-section-title {
@@ -542,6 +574,7 @@ main.container {
     margin-bottom: 15px;
     border-bottom: 1px solid #eee;
     padding-bottom: 5px;
+    transition: color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
 }
 
 .article-detail-list {
@@ -553,6 +586,7 @@ main.container {
 .article-detail-list li {
     margin-bottom: 8px;
     color: #444;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .viewpoints-container {
@@ -567,13 +601,7 @@ main.container {
     border-radius: 5px;
     color: #000; /* Ensure text is black */
     font-style: normal; /* Ensure no italics */
-}
-
-/* You can remove this if it exists, as the strong tag is no longer used for labels */
-.article-detail-viewpoint strong {
-    color: #007bff;
-    display: block;
-    margin-bottom: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
 }
 
 .sources-container {
@@ -589,11 +617,13 @@ main.container {
     margin-right: 10px;
     margin-bottom: 10px;
     font-size: 0.9em;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
 }
 
 .article-detail-source-tag a {
     text-decoration: none;
     color: #333;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .article-detail-source-tag a:hover {
@@ -604,1238 +634,157 @@ main.container {
     margin-top: 30px;
     font-size: 0.95em;
     color: #666;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .article-detail-original-url a {
     color: #007bff;
     text-decoration: none;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .article-detail-original-url a:hover {
     text-decoration: underline;
 }
 
-/* Profile Modal (from previous code) */
-.profile-modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1001; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+/* NEW: Grey line below name and PFP */
+.profile-section-divider {
+    height: 1px;
+    background-color: #eee; /* Light grey line */
+    width: 100%;
+    margin: 20px 0; /* Space above and below the line */
 }
 
-.profile-modal-content {
+/* Ensure the theme section title is centered */
+.profile-section-title.text-center {
+    text-align: center;
+}
+
+/* NEW: Container for theme options (Light/Dark Mode previews) */
+.theme-options-container {
+    display: flex;
+    justify-content: center; /* Center the two preview boxes */
+    gap: 20px; /* Space between the light and dark mode boxes */
+    margin-top: 15px; /* Space below the "Theme" title */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+/* NEW: Label for each theme option (makes the whole box clickable) */
+.theme-option-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: #555; /* Default text color for labels */
+    transition: color 0.3s ease; /* Smooth transition for text color */
+}
+
+/* NEW: Container for the preview image and its border/outline */
+.theme-preview-box {
+    width: 190px; /* Fixed width for the preview box */
+    height: 110px; /* Fixed height for the preview box */
+    border: 2px solid #ddd; /* Light grey border */
+    border-radius: 8px; /* Rounded corners for the box */
+    overflow: hidden; /* Ensure image stays within bounds */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px; /* Space between box and label text */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for border/shadow */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+}
+
+/* NEW: Styling for the preview image itself */
+.theme-preview-image {
+    width: 100%; /* Make image fill the box */
+    height: 100%; /* Make image fill the box */
+    object-fit: cover; /* Cover the area, cropping if necessary */
+    border-radius: 6px; /* Slightly smaller rounded corners than the box */
+}
+
+/* NEW: Styling for the selected theme preview box */
+.theme-preview-box.selected {
+    border-color: transparent; /* Hide the default border when selected */
+    box-shadow: 0 0 0 3px #007bff; /* Blue outline (not touching) */
+}
+
+/* NEW: Hide the actual radio buttons */
+.hidden-radio {
+    display: none;
+}
+
+/* --- Dark Mode Specific Styles for the new elements --- */
+body.dark-theme .profile-section-divider {
+    background-color: #444; /* Darker grey line in dark mode */
+}
+
+body.dark-theme .profile-section-title.text-center {
+    color: #e0e0e0; /* Light text for title in dark mode */
+}
+
+body.dark-theme .theme-option-label {
+    color: #b0b0b0; /* Lighter grey text for labels in dark mode */
+}
+
+body.dark-theme .theme-preview-box {
+    background-color: #3a3a3a; /* Darker background for preview box */
+    border-color: #555; /* Darker border */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Stronger shadow in dark mode */
+}
+
+body.dark-theme .theme-preview-box.selected {
+    box-shadow: 0 0 0 3px #90caf9; /* Lighter blue outline in dark mode */
+}
+
+/* Profile Modal (from previous code) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-content {
     background-color: #fefefe;
     margin: auto;
     padding: 30px;
     border: 1px solid #888;
-    width: 80%; /* Could be responsive */
+    width: 90%;
     max-width: 500px;
     border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
     position: relative;
+    animation-name: animatemodal;
+    animation-duration: 0.4s;
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
 }
 
-.profile-modal-content h2 {
+.modal-content h2 {
     margin-top: 0;
     color: #333;
     font-size: 1.8em;
     margin-bottom: 20px;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
-.profile-modal-content .close-btn {
-    color: #aaa;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.profile-modal-content .close-btn:hover,
-.profile-modal-content .close-btn:focus {
-    color: #333;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.profile-modal-content label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
-    color: #555;
-}
-
-.profile-modal-content input[type="checkbox"] {
-    margin-right: 10px;
-}
-
-.profile-modal-content .input-group {
-    margin-bottom: 20px;
-}
-
-.profile-modal-content input[type="text"] {
-    width: calc(100% - 22px); /* Account for padding and border */
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1em;
-}
-
-.profile-modal-content .btn {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-}
-
-.profile-modal-content .btn:hover {
-    background-color: #0056b3;
-}
-
-/* API Key Pop-up (from previous code) */
-.api-key-popup {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1002; /* Higher than profile modal */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.6); /* Darker overlay */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-}
-
-.api-key-popup-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 30px;
-    border: 1px solid #888;
-    width: 80%; /* Could be responsive */
-    max-width: 450px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    text-align: center;
-}
-
-.api-key-popup-content h2 {
-    margin-top: 0;
-    color: #333;
-    font-size: 1.6em;
-    margin-bottom: 15px;
-}
-
-.api-key-popup-content p {
-    color: #666;
-    margin-bottom: 20px;
-}
-
-.api-key-popup-content .input-group {
-    margin-bottom: 15px;
-    text-align: left;
-}
-
-.api-key-popup-content label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
-}
-
-.api-key-popup-content input[type="text"] {
-    width: calc(100% - 22px);
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1em;
-}
-
-.api-key-popup-content .btn {
-    background-color: #28a745; /* Green for submit */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-    margin-top: 15px;
-}
-
-.api-key-popup-content .btn:hover {
-    background-color: #218838;
-}
-
-/* Footer Styles (REMOVED) */
-/* I am removing the footer CSS rules entirely as requested */
-/*
-footer {
-    background-color: #012a46;
-    color: #fff;
-    text-align: center;
-    padding: 15px 0;
-    margin-top: 40px;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    z-index: 999;
-}
-
-footer p {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-*/
-
-/* Search Page Specific Styles */
-.search-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Center items horizontally */
-    margin-top: 50px; /* Space from header */
-    padding: 0 20px; /* Add some horizontal padding for responsiveness */
-    flex-grow: 1; /* Allow search page content to take available space */
-}
-
-.search-page .page-main-title {
-    margin-bottom: 10px; /* Space between title and subtitle */
-}
-
-.search-page .page-main-subtitle {
-    margin-bottom: 40px; /* Space between subtitle and search bar */
-}
-
-.search-input-container {
-    display: flex; /* Use flexbox for input and button */
-    align-items: center; /* Vertically align items in the middle */
-    width: 100%;
-    max-width: 900px; /* Made even wider as requested */
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px; /* Rounded rectangle as requested */
-    padding: 4px 20px; /* Reduced vertical padding (shorter) as requested */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
-    position: relative; /* For positioning the search icon */
-    height: 45px; /* Made even shorter as requested */
-    margin-bottom: 40px; /* Space below search bar */
-}
-
-.search-input {
-    flex-grow: 1; /* Allow input to take up available space */
-    border: none; /* Remove default input border */
-    outline: none; /* Remove outline on focus */
-    padding: 0 10px 0 40px; /* Adjust padding for icon, then text, then button */
-    font-size: 1.1em; /* Bigger font size */
-    background-color: transparent; /* Transparent background */
-    height: 100%; /* Fill height of container */
-}
-
-/* Icon inside the search input */
-.search-input-container::before {
-    content: url('/static/img/search-icon.png');
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%) translateY(-5px); /* Moved up by 10px as requested */
-    width: 20px; /* Adjust icon size */
-    height: 20px;
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-
-
-.search-button {
-    background-color: #fb5718; /* New orange color as requested */
-    color: white;
-    border: none;
-    border-radius: 6px; /* Rounded rectangle as requested */
-    padding: 6px 10px; /* Reduced horizontal padding (less wide) as requested */
-    font-size: 1.1em; /* Keep text size */
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    flex-shrink: 0; /* Prevent button from shrinking */
-    margin-left: 10px; /* Space between input and button */
-}
-
-.search-button:hover {
-    background-color: #E64A19; /* Darker orange on hover */
-}
-
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    body {
-        /* No padding-bottom needed for mobile as footer is removed */
-        padding-bottom: 0;
-    }
-
-    /* Removed footer media query styles as footer is removed globally */
-    /*
-    footer {
-        padding: 10px 0;
-    }
-    */
-
-    .header-container {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .main-nav ul {
-        flex-direction: column;
-        margin-top: 15px;
-    }
-
-    .main-nav li {
-        margin: 5px 0;
-    }
-
-    .profile-pic-container {
-        margin-top: 15px;
-    }
-
-    .article-grid {
-        grid-template-columns: 1fr; /* Stack cards on small screens */
-    }
-
-    .article-card {
-        padding: 15px;
-    }
-
-    .article-card h3 {
-        font-size: 1.1em;
-    }
-
-    .article-card p {
-        font-size: 0.85em;
-    }
-
-    .page-main-title {
-        font-size: 2em;
-    }
-
-    .page-main-subtitle {
-        font-size: 1em;
-    }
-
-    .feed-section h1 {
-        font-size: 1.5em;
-    }
-
-    .search-input-container {
-        flex-direction: column; /* Stack input and button on small screens */
-        height: auto; /* Auto height for stacked elements */
-        padding: 15px;
-        border-radius: 10px; /* Less rounded for small screens */
-    }
-
-    .search-input {
-        width: 100%;
-        margin-bottom: 10px; /* Space between input and button */
-        padding: 10px; /* Adjust padding for smaller screens */
-    }
-
-    .search-input-container::before {
-        left: 10px; /* Adjust icon position */
-    }
-
-    .search-button {
-        width: 100%;
-        margin-left: 0; /* Remove left margin when stacked */
-    }
-}
-
-.learn-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Center content horizontally */
-    padding-top: 20px; /* Padding below header */
-    padding-bottom: 40px; /* Padding above bottom of page */
-}
-
-.tab-selection-container {
-    display: flex;
-    width: 100%;
-    max-width: 1200px; /* Adjust as needed */
-    background-color: #f0f0f0; /* MODIFIED: Lighter grey background */
-    border-radius: 10px; /* Rounded corners for the grey box */
-    overflow: hidden; /* Ensures inner white box respects rounded corners */
-    margin-top: 30px; /* Space below subtitle */
-    height: 40px; /* Short and wide */
-    padding: 2px; /* MODIFIED: Less space between edge and active tab */
-    box-sizing: border-box; /* Include padding in width/height calculation */
-}
-
-.tab-item {
-    flex: 1; /* Each tab takes half the width */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    font-size: 0.95em; /* MODIFIED: Smaller font size */
-    font-weight: normal; /* MODIFIED: Not bold */
-    color: #666; /* MODIFIED: Grey text for inactive tabs */
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 8px; /* Rounded corners for individual tab items */
-    padding: 10px 0; /* Vertical padding for content inside tab */
-}
-
-.tab-item.active {
-    border-radius: 8px; /* Keep rounded corners for active tab on mobile */
-    margin: 0; /* Remove margin to fit better on mobile */
-    /* Ensure background-color and color are also set for active state */
-    background-color: #fff; /* White background for active tab */
-    color: #000000; /* Black text for active tab */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow for active tab */
-}
-
-/*.tab-item.active {
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    color: #333;
-}
-*/
-
-/* MODIFIED: Made tab icons wider */
-.tab-icon {
-    width: 45px; /* Increased width for tab icons */
-    height: 24px; /* Kept height, aspect ratio might change slightly or adjust as needed */
-    margin-right: 8px; /* Space between icon and text */
-}
-
-/* Chatbot Container (Main Big Box) */
-.chatbot-container {
-    width: 100%;
-    max-width: 1200px; /* Same width as tab container */
-    background-color: #fff; /* White interior */
-    border: 1px solid #ccc; /* Grey outline */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
-    margin-top: 20px; /* Space below tab selection */
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; /* Ensures inner content respects border-radius */
-}
-
-/* MODIFIED: Chatbot Header Info (Orange Bar) - Added justify-content for clear button */
-.chatbot-header-info {
-    display: flex;
-    align-items: center;
-    background-color: #FFDDC1; /* Light orange */
-    padding: 15px 20px;
-    border-bottom: 1px solid #ddd; /* Subtle line at bottom of header */
-    justify-content: space-between; /* ADDED: Distributes space between items */
-}
-
-.robot-profile-pic {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%; /* Circular */
-    object-fit: cover;
-    margin-right: 15px;
-}
-
-.chatbot-header-info .header-text {
-    display: flex;
-    flex-direction: column;
-    /* ADDED: Allow header text to take available space, pushing clear button right */
-    flex-grow: 1;
-}
-
-.chatbot-header-info .bold-text {
-    font-weight: bold;
-    color: #333;
-    font-size: 1.1em;
-}
-
-.chatbot-header-info .grey-text {
-    color: #666;
-    font-size: 0.9em;
-}
-
-
-.clear-chat-btn {
-    background-color: #fff; /* White interior */
-    border: 1px solid #ccc; /* Grey outline */
-    color: #333; /* Black text */
-    padding: 8px 15px;
-    border-radius: 20px; /* Rounded corners */
-    cursor: pointer;
-    font-weight: bold;
-    display: inline-flex;
-    align-items: center;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-    /* ADDED: Ensure it doesn't shrink and has proper margin */
-    flex-shrink: 0;
-    margin-left: 15px; /* Space between header text and button */
-}
-
-.clear-chat-btn:hover {
-    background-color: #f0f0f0;
-    border-color: #999;
-}
-
-.clear-icon {
-    width: 30px;
-    height: 18px;
-}
-
-.chat-divider {
-    height: 1px;
-    background-color: #ccc; /* Grey line */
-    width: calc(100% - 40px); /* Span most of the width with side margins */
-    margin: 0 auto; /* Center the divider */
-}
-
-/* MODIFIED: Chat Messages Area - Increased max-height for more blank space */
-.chat-messages {
-    flex-grow: 1; /* Allows chat area to expand */
-    padding: 20px;
-    overflow-y: auto; /* Enable scrolling for messages */
-    height: 275px; /* Increased height for more blank space */
-    max-height: 400px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px; /* Space between messages */
-    background-color: #f9f9f9; /* Slightly off-white for chat background */
-}
-
-.message-bubble {
-    display: flex;
-    align-items: flex-start; /* Align content to top of bubble */
-    max-width: 80%; /* Limit bubble width */
-}
-
-.message-profile-pic {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0; /* Prevent shrinking */
-}
-
-.message-content {
-    padding: 10px 15px;
-    border-radius: 15px; /* Rounded corners for bubbles */
-    word-wrap: break-word; /* Ensure long words wrap */
-}
-
-.bot-message {
-    justify-content: flex-start; /* Align bot message to left */
-}
-
-.bot-message .message-profile-pic {
-    margin-right: 10px;
-}
-
-.bot-content {
-    background-color: #e0e0e0; /* Grey background for bot message */
-    color: #333; /* Black text */
-}
-
-.user-message {
-    justify-content: flex-end; /* Align user message to right */
-    margin-left: auto; /* Push user message to the right */
-}
-
-.user-message .message-profile-pic {
-    order: 2; /* Move profile pic to the right of the message */
-    margin-left: 10px;
-}
-
-.user-content {
-    background-color: #007bff; /* Blue background for user message */
-    color: #fff; /* White text */
-    order: 1; /* Ensure message content comes before profile pic */
-}
-
-/* Chat Input Area */
-.chat-input-area {
-    display: flex;
-    align-items: center;
-    padding: 15px 20px;
-    background-color: #fff; /* White background */
-    border-top: 1px solid #ddd; /* Subtle line above input area */
-}
-
-#chat-input {
-    flex-grow: 1; /* Takes most of the space */
-    padding: 10px 15px;
-    border: 1px solid #ddd; /* Light grey border */
-    border-radius: 20px; /* Rounded corners */
-    outline: none; /* Remove outline on focus */
-    font-size: 1em;
-    margin-right: 10px; /* Space before send button */
-}
-
-#chat-input::placeholder {
-    color: #aaa; /* Grey placeholder text */
-}
-
-.send-button {
-    background-color: #FF5722; /* Orange button */
-    border: none;
-    border-radius: 8px;
-    width: 40px; /* Square button, will become circular with border-radius */
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    flex-shrink: 0; /* Prevent shrinking */
-}
-
-/* ADDED: Ensure send icon is displayed correctly */
-.send-icon {
-    width: 20px;
-    height: 20px;
-}
-
-.send-button:hover {
-    background-color: #E64A19; /* Darker orange on hover */
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    /* ... (rest of your media queries remain unchanged) ... */
-    .tab-selection-container {
-        display: flex;
-        width: 100%;
-        max-width: 1200px; /* Adjust as needed */
-        background-color: #f0f0f0; /* MODIFIED: Lighter grey background */
-        border-radius: 10px; /* Rounded corners for the grey box */
-        overflow: hidden; /* Ensures inner white box respects rounded corners */
-        margin-top: 30px; /* Space below subtitle */
-        height: 40px; /* Short and wide */
-        padding: 2px; /* MODIFIED: Less space between edge and active tab */
-        box-sizing: border-box; /* Include padding in width/height calculation */
-    }
-
-    .tab-item {
-        flex: 1; /* Each tab takes half the width */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        font-size: 0.95em; /* MODIFIED: Smaller font size */
-        font-weight: normal; /* MODIFIED: Not bold */
-        color: #666; /* MODIFIED: Grey text for inactive tabs */
-        transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-        border-radius: 8px; /* Rounded corners for individual tab items */
-        padding: 10px 0; /* Vertical padding for content inside tab */
-    }
-
-    .tab-item:first-child {
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-    }
-
-    .tab-item:last-child {
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
-    }
-
-    .tab-item.active {
-        border-radius: 0; /* Active tab also loses individual rounded corners */
-        margin: 5px; /* Add margin to show grey background around active tab */
-    }
-
-    .chatbot-header-info {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .robot-profile-pic {
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
-
-    .chat-messages {
-        max-height: 300px; /* Reduce chat height on small screens */
-    }
-}
-
-.message-bubble {
-    display: flex;
-    align-items: flex-start; /* Align content to top of bubble */
-    max-width: 80%; /* Limit bubble width */
-}
-
-.message-profile-pic {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0; /* Prevent shrinking */
-}
-
-.message-content {
-    padding: 10px 15px;
-    border-radius: 15px; /* Rounded corners for bubbles */
-    word-wrap: break-word; /* Ensure long words wrap */
-}
-
-.bot-message {
-    justify-content: flex-start; /* Align bot message to left */
-}
-
-.bot-message .message-profile-pic {
-    margin-right: 10px;
-}
-
-.bot-content {
-    background-color: #e0e0e0; /* Grey background for bot message */
-    color: #333; /* Black text */
-}
-
-.user-message {
-    justify-content: flex-end; /* Align user message to right */
-    margin-left: auto; /* Push user message to the right */
-}
-
-.user-message .message-profile-pic {
-    order: 2; /* Move profile pic to the right of the message */
-    margin-left: 10px;
-}
-
-.user-content {
-    background-color: #007bff; /* Blue background for user message */
-    color: #fff; /* White text */
-    order: 1; /* Ensure message content comes before profile pic */
-}
-
-/* Chat Input Area */
-.chat-input-area {
-    display: flex;
-    align-items: center;
-    padding: 15px 20px;
-    background-color: #fff; /* White background */
-    border-top: 1px solid #ddd; /* Subtle line above input area */
-}
-
-#chat-input {
-    flex-grow: 1; /* Takes most of the space */
-    padding: 10px 15px;
-    border: 1px solid #ddd; /* Light grey border */
-    border-radius: 20px; /* Rounded corners */
-    outline: none; /* Remove outline on focus */
-    font-size: 1em;
-    margin-right: 10px; /* Space before send button */
-}
-
-#chat-input::placeholder {
-    color: #aaa; /* Grey placeholder text */
-}
-
-.send-button {
-    background-color: #FF5722; /* Orange button */
-    border: none;
-    border-radius: 8px; /* Circular button */
-    width: 40px; /* Square button, will become circular with border-radius */
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    flex-shrink: 0; /* Prevent shrinking */
-}
-
-.send-button:hover {
-    background-color: #E64A19; /* Darker orange on hover */
-}
-
-.send-icon {
-    width: 40px;
-    height: 20px;
-    filter: brightness(0) invert(1); /* Makes icon white */
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    body {
-        /* No padding-bottom needed for mobile as footer is removed */
-        padding-bottom: 0;
-    }
-
-    .header-container {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .main-nav ul {
-        flex-direction: column;
-        margin-top: 15px;
-    }
-
-    .main-nav li {
-        margin: 5px 0;
-    }
-
-    .profile-pic-container {
-        margin-top: 15px;
-    }
-
-    .article-grid {
-        grid-template-columns: 1fr; /* Stack cards on small screens */
-    }
-
-    .article-card {
-        padding: 15px;
-    }
-
-    .article-card h3 {
-        font-size: 1.1em;
-    }
-
-    .article-card p {
-        font-size: 0.85em;
-    }
-
-    .page-main-title {
-        font-size: 2em;
-    }
-
-    .page-main-subtitle {
-        font-size: 1em;
-    }
-
-    .feed-section h1 {
-        font-size: 1.5em;
-    }
-
-    .search-input-container {
-        flex-direction: column; /* Stack input and button on small screens */
-        height: auto; /* Auto height for stacked elements */
-        padding: 15px;
-        border-radius: 10px; /* Less rounded for small screens */
-    }
-
-    .search-input {
-        width: 100%;
-        margin-bottom: 10px; /* Space between input and button */
-        padding: 10px; /* Adjust padding for smaller screens */
-    }
-
-    .search-input-container::before {
-        left: 10px; /* Adjust icon position */
-    }
-
-    .search-button {
-        width: 100%;
-        margin-left: 0; /* Remove left margin when stacked */
-    }
-
-    /* Learn Page Responsive Adjustments */
-    .tab-selection-container {
-        display: flex;
-        width: 100%;
-        max-width: 1200px; /* Adjust as needed */
-        background-color: #f0f0f0; /* MODIFIED: Lighter grey background */
-        border-radius: 10px; /* Rounded corners for the grey box */
-        overflow: hidden; /* Ensures inner white box respects rounded corners */
-        margin-top: 30px; /* Space below subtitle */
-        height: 40px; /* Short and wide */
-        padding: 2px; /* MODIFIED: Less space between edge and active tab */
-        box-sizing: border-box; /* Include padding in width/height calculation */
-    }
-
-    .tab-item {
-        flex: 1; /* Each tab takes half the width */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        font-size: 0.95em; /* MODIFIED: Smaller font size */
-        font-weight: normal; /* MODIFIED: Not bold */
-        color: #666; /* MODIFIED: Grey text for inactive tabs */
-        transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-        border-radius: 8px; /* Rounded corners for individual tab items */
-        padding: 10px 0; /* Vertical padding for content inside tab */
-    }
-
-    .tab-item:first-child {
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-    }
-
-    .tab-item:last-child {
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
-    }
-
-    .tab-item.active {
-        border-radius: 0; /* Active tab also loses individual rounded corners */
-        margin: 5px; /* Add margin to show grey background around active tab */
-    }
-
-    .chatbot-header-info {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .robot-profile-pic {
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
-
-    .chat-messages {
-        max-height: 300px; /* Reduce chat height on small screens */
-    }
-}
-
-/* Knowledge Hub Specific Styles */
-.knowledge-hub-container {
-    width: 100%;
-    max-width: 1200px; /* Keep max-width at 1200px */
-    margin: 20px auto; /* Keep centered */
-    padding: 0; /* MODIFIED: Remove padding from the main container */
-    /* Removed background-color, border, and box-shadow */
-    border-radius: 10px; /* Keep border-radius for consistency */
-    margin-top: 20px;
-    /* display: none; will be set by JS */
-}
-
-.knowledge-hub-main-title {
-    font-size: 1.8em; /* Smaller than page-main-title */
-    color: #333;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 5px;
-}
-
-.knowledge-hub-main-subtitle {
-    font-size: 0.95em;
-    color: #666;
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.learn-units-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px; /* Space between unit dropdowns */
-}
-
-.unit-dropdown-container {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    overflow: hidden; /* Ensures rounded corners are respected */
-    /* Removed transition from here, handled by max-height on lessons-container */
-}
-
-.unit-header {
-    display: flex;
-    align-items: center;
-    padding: 15px 20px;
-    cursor: pointer;
-    background-color: #fff; /* Ensure header background is white */
-    border-bottom: none; /* MODIFIED: Completely remove border-bottom */
-    transition: none; /* MODIFIED: Remove transition on border-bottom as it's no longer needed */
-}
-
-.unit-icon-square {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px; /* Rounded corners for the square */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 15px;
-    flex-shrink: 0; /* Prevent shrinking */
-}
-
-.unit-icon-square img {
-    width: 40px; /* Adjusted to fit better */
-    height: 24px; /* Adjusted to fit better */
-}
-
-.unit-text-content {
-    flex-grow: 1;
-}
-
-.unit-title-row {
-    display: flex;
-    align-items: center; /* Align title and lesson count horizontally */
-    margin-bottom: 5px; /* Space between title row and subtitle */
-}
-
-.unit-title {
-    font-size: 1.1em;
-    font-weight: bold;
-    color: #000;
-    margin: 0;
-    line-height: 1.2;
-    margin-right: 10px; /* Space between title and lesson count */
-}
-
-.unit-subtitle {
-    font-size: 0.85em;
-    color: #666;
-    margin: 0; /* Removed top margin, controlled by unit-title-row margin-bottom */
-    line-height: 1.3;
-}
-
-.unit-lesson-count {
-    background-color: #eee; /* Grey oval */
-    color: #000000;
-    padding: 5px 10px;
-    border-radius: 15px; /* Oval shape */
-    font-size: 0.8em;
-    font-weight: normal;
-    white-space: nowrap; /* Prevent text wrap */
-    flex-shrink: 0; /* Prevent shrinking */
-}
-
-.unit-arrow-icon {
-    width: 15px;
-    height: 9px;
-    margin-left: 20px;
-    transition: transform 0.2s ease-out; /* Smooth transition for rotation */
-    flex-shrink: 0; /* Prevent shrinking */
-}
-
-.unit-arrow-icon.rotated {
-    transform: rotate(180deg); /* Rotate 180 degrees when 'rotated' class is present */
-}
-
-/* Unit Icon Square Colors (same as before) */
-.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(227, 242, 253)"] { /* Unit 1 Blue */
-    background-color: #e3f2fd;
-}
-.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(232, 245, 233)"] { /* Unit 2 Green */
-    background-color: #e8f5e9;
-}
-.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(255, 243, 224)"] { /* Unit 3 Yellow */
-    background-color: #fff3e0;
-}
-.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(237, 231, 246)"] { /* Unit 4 Purple */
-    background-color: #ede7f6;
-}
-.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(255, 235, 238)"] { /* Unit 5 Red */
-    background-color: #ffebee;
-}
-.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(224, 242, 247)"] { /* Unit 6 Blue-Green */
-    background-color: #e0f2f7;
-}
-.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(237, 231, 246)"] { /* Unit 7 Pink-Purple */
-    background-color: #ede7f6;
-}
-
-
-/* Lessons Container and Lesson Cards */
-.lessons-container {
-    padding: 0 20px 25px; /* MODIFIED: Increased bottom padding from 15px to 25px */
-    transition: max-height 0.2s ease-out, padding 0.2s ease-out;
-    overflow: hidden;
-}
-
-.lesson-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* Space out title and start indicator */
-    padding: 12px 15px;
-    border-radius: 8px;
-    margin-bottom: 10px; /* Space between lesson cards */
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    color: #333; /* Default text color for lesson card */
-    text-decoration: none; /* Ensure no underline for the whole card */
-}
-
-.lesson-card:last-child {
-    margin-bottom: 15px; /* MODIFIED: Add space below the last lesson card */
-}
-
-.lesson-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-}
-
-.lesson-title {
-    font-size: 0.95em;
-    font-weight: 500; /* Medium weight */
-    flex-grow: 1; /* Allow title to take most space */
-    margin-right: 15px; /* Space between title and start indicator */
-}
-
-.lesson-start-indicator {
-    display: flex;
-    align-items: center;
-    color: #555; /* Grey text for "Start" */
-    font-size: 0.85em;
-    font-weight: bold;
-    white-space: nowrap;
-}
-
-.lesson-start-indicator .start-icon {
-    height: 14px;
-    margin-left: 5px;
-}
-
-.total-articles-count {
-    font-size: 0.9em;
-    color: #777;
-    margin-top: 25px;
-    text-align: center; /* Ensure it's centered */
-}
-
-.lessons-container:not(.expanded) {
-    max-height: 0;
-    overflow: hidden;
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .knowledge-hub-container {
-        padding: 15px;
-        margin-top: 15px;
-    }
-
-    .knowledge-hub-main-title {
-        font-size: 1.6em;
-    }
-
-    .knowledge-hub-main-subtitle {
-        font-size: 0.9em;
-        margin-bottom: 20px;
-    }
-
-    .unit-header {
-        flex-wrap: wrap; /* Allow header content to wrap */
-        padding: 10px 15px;
-    }
-
-    .unit-icon-square {
-        width: 35px;
-        height: 35px;
-        margin-right: 10px;
-    }
-
-    .unit-icon-square img {
-        width: 24px; /* Match the default size for better scaling */
-        height: 24px;
-    }
-
-    .unit-title-row {
-        flex-direction: column; /* Stack title and count on small screens */
-        align-items: flex-start;
-        margin-bottom: 0; /* Adjust as needed */
-    }
-
-    .unit-title {
-        font-size: 1em;
-        margin-right: 0; /* Remove horizontal margin */
-        margin-bottom: 5px; /* Add vertical space */
-    }
-
-    .unit-subtitle {
-        font-size: 0.8em;
-        width: 100%; /* Make subtitle take full width below title */
-    }
-
-    .unit-lesson-count {
-        margin-left: 0; /* Remove auto margin */
-        margin-top: 0; /* Remove top margin */
-    }
-
-    .unit-arrow-icon {
-        margin-left: 10px;
-        width: 15px;
-        height: 9px;
-    }
-
-    .lessons-container {
-        padding: 0 20px 25px;
-    }
-
-    .lesson-card {
-        flex-direction: row; /* Keep row layout for lesson cards */
-        align-items: center;
-        padding: 10px 12px;
-    }
-
-    .lesson-title {
-        margin-right: 10px; /* Add some space from start indicator on mobile */
-    }
-
-    .lesson-start-indicator {
-        margin-left: auto; /* Push to right */
-    }
-}
-
-/* NEW: Style for the main content (summary_detail) */
-.article-main-content {
-    font-size: 1.1em; /* Slightly larger text for readability */
-    color: #000; /* Explicitly black text */
-    line-height: 1.8; /* Increased line height for better readability */
-    margin-bottom: 30px; /* Space below the main content */
-    white-space: pre-wrap; /* Preserve whitespace and wrap text for paragraph breaks */
-    font-style: normal; /* Ensure no italics */
-}
-
-/* The Modal (background) */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1000; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
-    justify-content: center; /* Center content horizontally */
-    align-items: center; /* Center content vertically */
-    padding: 20px; /* Add some padding around the modal content */
-}
-
-/* Modal Content/Box */
-.modal-content {
-    background-color: #fefefe;
-    margin: auto; /* Centered */
-    padding: 30px; /* Increased padding */
-    border: 1px solid #888;
-    width: 90%; /* Responsive width */
-    max-width: 500px; /* Max width for larger screens */
-    border-radius: 10px; /* Rounded corners */
-    position: relative; /* For close button positioning */
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-    animation-name: animatemodal;
-    animation-duration: 0.4s
-}
-
-/* The Close Button */
 .close-button {
     color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    position: absolute; /* Position relative to modal-content */
+    position: absolute;
     top: 10px;
     right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .close-button:hover,
@@ -1845,40 +794,59 @@ footer p {
     cursor: pointer;
 }
 
-/* Add animation (optional) */
 @keyframes animatemodal {
     from {opacity: 0; transform: translateY(-50px);}
     to {opacity: 1; transform: translateY(0);}
 }
 
-/* Basic styling for profile sections within modal */
 .profile-section {
     margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 1px solid #eee;
+    transition: border-color 0.3s ease; /* Smooth transition */
 }
+
+.profile-section label.toggle-switch { /* Target the label specifically */
+    display: flex; /* Make it a flex container */
+    align-items: center; /* Vertically align items (toggle and text) */
+    margin-bottom: 15px; /* Space below the toggle switch */
+    color: #333; /* Default text color for the toggle label */
+    font-weight: normal; /* Ensure it's not bold unless desired */
+    font-size: 1em; /* Adjust font size if needed */
+    /* Remove any width or max-width here, let flexbox handle it */
+    transition: color 0.3s ease; /* Smooth transition for text color */
+}
+
 .profile-section:last-child {
     border-bottom: none;
     margin-bottom: 0;
     padding-bottom: 0;
 }
+
 .profile-section h3 {
     font-size: 1.2em;
     font-weight: bold;
     margin-bottom: 10px;
     color: #333;
+    transition: color 0.3s ease;
 }
+
 .theme-options label {
     display: block;
     margin-bottom: 5px;
+    color: #333; /* Ensure label text color transitions */
+    transition: color 0.3s ease; /* Smooth transition */
 }
+
 .toggle-switch {
     position: relative;
-    display: inline-block;
+    /* display: inline-block; REMOVED - parent flex handles this */
     width: 60px;
     height: 34px;
-    margin-right: 10px;
+    margin-right: 10px; /* MOVED HERE: Space between the slider and the text */
+    flex-shrink: 0; /* Prevent the toggle itself from shrinking */
 }
+
 .toggle-switch input {
     opacity: 0;
     width: 0;
@@ -1919,26 +887,34 @@ input:checked + .slider:before {
     -ms-transform: translateX(26px);
     transform: translateX(26px);
 }
-/* Rounded sliders */
+
 .slider.round {
     border-radius: 34px;
 }
+
 .slider.round:before {
     border-radius: 50%;
 }
+
 .api-key-fields label {
-    display: block;
-    margin-bottom: 5px;
+    /* Remove 'display: block;' if it's here, as the new flex container will manage display */
+    /* margin-bottom: 5px; -- This will be overridden by .api-key-field-group label */
     font-weight: bold;
+    color: #333; /* Ensure label text color transitions */
+    transition: color 0.3s ease; /* Smooth transition */
 }
+
 .api-key-fields input[type="password"] {
-    width: 100%;
+    flex-grow: 1;
     padding: 8px;
-    margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    box-sizing: border-box; /* Include padding in width */
+    box-sizing: border-box;
+    background-color: #fff;
+    color: #333;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
+
 .btn {
     padding: 10px 15px;
     border: none;
@@ -1962,442 +938,6 @@ input:checked + .slider:before {
     background-color: #5a6268;
 }
 
-/* Profile Picture Display Area */
-.profile-pic-display-area {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px; /* Space below the profile picture area */
-}
-
-.current-profile-pic-wrapper {
-    position: relative;
-    width: 120px; /* Size of the circular profile picture */
-    height: 120px;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    transition: box-shadow 0.3s ease;
-}
-
-.current-profile-pic-wrapper:hover {
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-.current-profile-pic {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%; /* Ensure image is circular */
-    transition: filter 0.3s ease; /* Smooth transition for darkening */
-}
-
-.profile-pic-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0); /* Initially transparent */
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0; /* Initially hidden */
-    transition: background-color 0.3s ease, opacity 0.3s ease;
-}
-
-.current-profile-pic-wrapper:hover .profile-pic-overlay {
-    background-color: rgba(0, 0, 0, 0.4); /* Darken on hover */
-    opacity: 1; /* Show overlay */
-}
-
-.profile-pic-edit-icon {
-    color: white;
-    font-size: 2em; /* Size of the pencil icon */
-    opacity: 0; /* Initially hidden */
-    transition: opacity 0.3s ease;
-}
-
-.current-profile-pic-wrapper:hover .profile-pic-edit-icon {
-    opacity: 1; /* Show pencil icon on hover */
-}
-
-/* Profile Picture Options View */
-.profile-pic-options-view {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 20px; /* Space from the top of the modal content */
-}
-
-.back-button-modal {
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ccc;
-    padding: 8px 15px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    margin-bottom: 25px; /* Space below back button */
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.back-button-modal:hover {
-    background-color: #e0e0e0;
-    border-color: #bbb;
-}
-
-.back-button-modal i {
-    margin-right: 8px;
-}
-
-.avatar-options-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); /* Responsive grid for avatars */
-    gap: 15px; /* Space between avatar options */
-    width: 100%;
-    max-width: 400px; /* Limit grid width */
-    margin-top: 20px; /* Space below "Choose Your Avatar" title */
-    justify-content: center; /* Center grid items if they don't fill the row */
-}
-
-.avatar-option {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    border: 3px solid transparent; /* Transparent border for non-selected */
-    transition: border-color 0.2s ease, transform 0.1s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.avatar-option:hover {
-    transform: scale(1.05); /* Slightly enlarge on hover */
-}
-
-.avatar-option.selected {
-    border-color: #007bff; /* Blue outline for selected avatar */
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); /* Blue glow around the border */
-}
-
-.avatar-option img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%; /* Ensure image is circular within its container */
-}
-
-/* Responsive adjustments for modal content */
-@media (max-width: 600px) {
-    .modal-content {
-        width: 95%; /* Wider on smaller screens */
-        padding: 20px;
-    }
-
-    .profile-pic-display-area {
-        margin-bottom: 20px;
-    }
-
-    .current-profile-pic-wrapper {
-        width: 100px;
-        height: 100px;
-    }
-
-    .profile-pic-edit-icon {
-        font-size: 1.8em;
-    }
-
-    .back-button-modal {
-        margin-bottom: 20px;
-        padding: 6px 12px;
-        font-size: 0.9em;
-    }
-
-    .avatar-options-grid {
-        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Smaller avatars on small screens */
-        gap: 10px;
-        max-width: 300px;
-    }
-
-    .avatar-option {
-        width: 50px;
-        height: 50px;
-    }
-}
-
-/* Profile Modal Redesign Styles */
-
-/* Profile Modal Redesign Styles - CONTINUED */
-
-/* Profile Picture Display Area */
-.profile-pic-display-area {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px; /* Space below the profile picture area */
-}
-
-.current-profile-pic-wrapper {
-    position: relative;
-    width: 150px; /* Increased from 120px to 150px */
-    height: 150px; /* Increased from 120px to 150px */
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    transition: box-shadow 0.3s ease;
-}
-
-.current-profile-pic-wrapper:hover {
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-.current-profile-pic {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%; /* Ensure image is circular */
-    transition: filter 0.3s ease; /* Smooth transition for darkening */
-}
-
-.profile-pic-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0); /* Initially transparent */
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0; /* Initially hidden */
-    transition: background-color 0.3s ease, opacity 0.3s ease;
-}
-
-.current-profile-pic-wrapper:hover .profile-pic-overlay {
-    background-color: rgba(0, 0, 0, 0.4); /* Darken on hover */
-    opacity: 1; /* Show overlay */
-}
-
-/* Styling for the SVG pencil icon */
-.profile-pic-edit-icon {
-    width: 40px; /* Size of the pencil icon */
-    height: 40px;
-    filter: brightness(0) invert(1); /* Makes the SVG white */
-    opacity: 0; /* Initially hidden */
-    transition: opacity 0.3s ease;
-}
-
-.current-profile-pic-wrapper:hover .profile-pic-edit-icon {
-    opacity: 1; /* Show pencil icon on hover */
-}
-
-/* Username Area Styles */
-.username-area {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Center username and icon */
-    margin-bottom: 25px; /* Space below username, above settings */
-    position: relative; /* For positioning the icon on hover */
-    cursor: pointer; /* Indicate it's clickable */
-    padding: 5px 10px; /* Add some padding for hover area */
-    border-radius: 8px; /* Subtle rounded corners for hover effect */
-    transition: background-color 0.2s ease;
-}
-
-.username-area:hover {
-    background-color: #f5f5f5; /* Light background on hover */
-}
-
-.username-text {
-    font-size: 1.8em; /* Large font for username */
-    font-weight: bold;
-    color: #333;
-    margin-right: 10px; /* Space between text and icon */
-    white-space: nowrap; /* Prevent wrapping */
-    overflow: hidden; /* Hide overflow if text is too long */
-    text-overflow: ellipsis; /* Add ellipsis for overflow */
-    max-width: 200px; /* Limit width to prevent text from pushing icon too far */
-}
-
-.username-edit-icon {
-    width: 24px; /* Smaller pencil icon for username */
-    height: 24px;
-    filter: brightness(0) invert(0.5); /* Greyish color for username pencil */
-    opacity: 0; /* Hidden by default */
-    transition: opacity 0.2s ease;
-}
-
-.username-area:hover .username-edit-icon {
-    opacity: 1; /* Show on hover */
-}
-
-.username-input {
-    font-size: 1.8em; /* Match text size */
-    font-weight: bold;
-    color: #333;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 5px 10px;
-    width: 200px; /* Fixed width for input */
-    box-sizing: border-box; /* Include padding in width */
-    text-align: center; /* Center input text */
-}
-
-
-/* Profile Picture Options View */
-.profile-pic-options-view {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 20px; /* Space from the top of the modal content */
-    position: relative; /* CRITICAL: For absolute positioning of back button */
-    padding-bottom: 20px; /* Ensure space at the bottom */
-}
-
-/* Back Button - positioned absolutely within this view */
-.back-button-modal {
-    background-color: #f0f0f0;
-    color: #333;
-    border: none; /* REMOVED OUTLINE */
-    outline: none; /* REMOVED FOCUS OUTLINE */
-    padding: 8px 15px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    transition: background-color 0.2s ease;
-    position: absolute; /* CRITICAL: Absolute positioning */
-    top: 15px; /* Distance from top of modal-content */
-    left: 20px; /* Distance from left of modal-content */
-    z-index: 10; /* Ensure it's above other content */
-}
-
-.back-button-modal:hover {
-    background-color: #e0e0e0;
-}
-
-.back-button-modal i {
-    margin-right: 8px;
-}
-
-/* Selected PFP at the top of the options view */
-.selected-pfp-top-display {
-    margin-bottom: 25px; /* Space below the top selected PFP */
-    display: flex;
-    justify-content: center;
-    width: 100%; /* Take full width to center its content */
-}
-
-.selected-pfp-top {
-    width: 100px; /* Increased from 80px to 100px */
-    height: 100px; /* Increased from 80px to 100px */
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-
-.avatar-options-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); /* Responsive grid for avatars */
-    gap: 15px; /* Space between avatar options */
-    width: 100%;
-    max-width: 400px; /* Limit grid width */
-    margin-top: 20px; /* Space below "Choose Your Avatar" title */
-    justify-content: center; /* Center grid items if they don't fill the row */
-}
-
-.avatar-option {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    border: 3px solid transparent; /* Transparent border for non-selected */
-    transition: border-color 0.2s ease, transform 0.1s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.avatar-option:hover {
-    transform: scale(1.05); /* Slightly enlarge on hover */
-}
-
-.avatar-option.selected {
-    border-color: #007bff; /* Blue outline for selected avatar */
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); /* Blue glow around the border */
-}
-
-.avatar-option img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%; /* Ensure image is circular within its container */
-}
-
-/* Responsive adjustments for modal content */
-@media (max-width: 600px) {
-    .modal-content {
-        width: 95%; /* Wider on smaller screens */
-        padding: 20px;
-    }
-
-    .profile-pic-display-area {
-        margin-bottom: 20px;
-    }
-
-    .current-profile-pic-wrapper {
-        width: 120px; /* Adjusted for mobile */
-        height: 120px; /* Adjusted for mobile */
-    }
-
-    .profile-pic-edit-icon {
-        width: 35px; /* Adjust size for mobile */
-        height: 35px;
-    }
-
-    .username-area {
-        margin-bottom: 20px;
-    }
-
-    .username-text, .username-input {
-        font-size: 1.5em; /* Smaller font on mobile */
-    }
-
-    .username-edit-icon {
-        width: 20px;
-        height: 20px;
-    }
-
-    .back-button-modal {
-        margin-bottom: 20px;
-        padding: 6px 12px;
-        font-size: 0.9em;
-        top: 10px; /* Adjust for smaller screens */
-        left: 10px; /* Adjust for smaller screens */
-    }
-
-    .selected-pfp-top {
-        width: 80px; /* Adjusted for mobile */
-        height: 80px;
-    }
-
-    .avatar-options-grid {
-        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Smaller avatars on small screens */
-        gap: 10px;
-        max-width: 300px;
-    }
-
-    .avatar-option {
-        width: 50px;
-        height: 50px;
-    }
-}
 /* Profile Picture Display Area */
 .profile-pic-display-area {
     display: flex;
@@ -2488,6 +1028,7 @@ input:checked + .slider:before {
     overflow: hidden; /* Hide overflow if text is too long */
     text-overflow: ellipsis; /* Add ellipsis for overflow */
     max-width: 200px; /* Limit width to prevent text from pushing icon too far */
+    transition: color 0.3s ease; /* Smooth transition */
 }
 
 .username-edit-icon {
@@ -2495,7 +1036,7 @@ input:checked + .slider:before {
     height: 24px;
     filter: brightness(0) invert(0.5); /* Greyish color for username pencil */
     opacity: 0; /* Hidden by default */
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease, filter 0.3s ease; /* Smooth transition */
 }
 
 .username-area:hover .username-edit-icon {
@@ -2512,64 +1053,1636 @@ input:checked + .slider:before {
     width: 200px; /* Fixed width for input */
     box-sizing: border-box; /* Include padding in width */
     text-align: center; /* Center input text */
+    background-color: #fff; /* Ensure input background transitions */
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* Smooth transition */
 }
 
-/* Responsive adjustments for modal content */
-@media (max-width: 600px) {
-    .modal-content {
-        width: 95%; /* Wider on smaller screens */
-        padding: 20px;
+/* Profile Picture Options View */
+.profile-pic-options-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px; /* Space from the top of the modal content */
+    position: relative; /* CRITICAL: For absolute positioning of back button */
+    padding-bottom: 20px; /* Ensure space at the bottom */
+}
+
+/* Back Button - positioned absolutely within this view */
+.back-button-modal {
+    background-color: #f0f0f0;
+    color: #333;
+    border: none;
+    outline: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease, color 0.3s ease; /* Smooth transition */
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    z-index: 10;
+}
+
+.back-button-modal:hover {
+    background-color: #e0e0e0;
+}
+
+.selected-pfp-top-display {
+    margin-bottom: 25px; /* Space below the top selected PFP */
+    display: flex;
+    justify-content: center;
+    width: 100%; /* Take full width to center its content */
+}
+
+.selected-pfp-top {
+    width: 100px; /* Increased from 80px to 100px */
+    height: 100px; /* Increased from 80px to 100px */
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.avatar-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); /* Responsive grid for avatars */
+    gap: 15px; /* Space between avatar options */
+    width: 100%;
+    max-width: 400px; /* Limit grid width */
+    margin-top: 20px; /* Space below "Choose Your Avatar" title */
+    justify-content: center; /* Center grid items if they don't fill the row */
+}
+
+.avatar-option {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid transparent; /* Transparent border for non-selected */
+    transition: border-color 0.2s ease, transform 0.1s ease, box-shadow 0.3s ease; /* Smooth transition */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-option:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.avatar-option.selected {
+    border-color: #007bff; /* Blue outline for selected avatar */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); /* Blue glow around the border */
+}
+
+.avatar-option img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%; /* Ensure image is circular within its container */
+}
+
+/* Search Page Specific Styles */
+.search-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items horizontally */
+    margin-top: 50px; /* Space from header */
+    padding: 0 20px; /* Add some horizontal padding for responsiveness */
+    flex-grow: 1; /* Allow search page content to take available space */
+}
+
+.search-page .page-main-title {
+    margin-bottom: 10px; /* Space between title and subtitle */
+}
+
+.search-page .page-main-subtitle {
+    margin-bottom: 40px; /* Space between subtitle and search bar */
+}
+
+.search-input-container {
+    display: flex; /* Use flexbox for input and button */
+    align-items: center; /* CRITICAL: Vertically align items in the middle */
+    width: 100%;
+    max-width: 900px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 4px 20px; /* Reduced vertical padding (shorter) */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    position: relative;
+    height: 45px; /* Ensure a consistent height */
+    margin-bottom: 40px;
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    /* Adjust padding-left to make space for the icon */
+    padding: 0 10px 0 40px; /* Space for icon (20px icon + 15px left + 5px extra) */
+    font-size: 1.1em;
+    background-color: transparent;
+    height: 100%; /* Fill height of container */
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+/* Icon inside the search input */
+.search-input-container::before {
+    content: ''; /* IMPORTANT: Must be empty when using background-image */
+    position: absolute;
+    left: 15px; /* Position from the left edge */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Adjust for half of its own height */
+    width: 28px; /* Explicit width for the icon area */
+    height: 28px; /* Explicit height for the icon area */
+    background-image: url('/static/img/search-icon.png'); /* NEW: Use background-image */
+    background-size: cover; /* Scale image down to fit */
+    background-repeat: no-repeat; /* Prevent repeating */
+    background-position: center; /* Center the image within its 20x20px area */
+    filter: brightness(1);
+    transition: filter 0.3s ease;
+}
+
+.search-button {
+    background-color: #fb5718;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 15px; /* Increased padding for a slightly larger button */
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+    margin-left: 10px;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-button:hover {
+    background-color: #E64A19; /* Darker orange on hover */
+}
+
+/* Learn Page Specific Styles (from your provided file) */
+.learn-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+    padding-top: 20px; /* Padding below header */
+    padding-bottom: 40px; /* Padding above bottom of page */
+}
+
+.tab-selection-container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px; /* Adjust as needed */
+    background-color: #f0f0f0; /* MODIFIED: Lighter grey background */
+    border-radius: 10px; /* Rounded corners for the grey box */
+    overflow: hidden; /* Ensures inner white box respects rounded corners */
+    margin-top: 30px; /* Space below subtitle */
+    height: 40px; /* Short and wide */
+    padding: 2px; /* MODIFIED: Less space between edge and active tab */
+    box-sizing: border-box; /* Include padding in width/height calculation */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.tab-item {
+    flex: 1; /* Each tab takes half the width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.95em; /* MODIFIED: Smaller font size */
+    font-weight: normal; /* MODIFIED: Not bold */
+    color: #666; /* MODIFIED: Grey text for inactive tabs */
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+    border-radius: 8px; /* Rounded corners for individual tab items */
+    padding: 10px 0; /* Vertical padding for content inside tab */
+}
+
+.tab-item.active {
+    border-radius: 8px; /* Keep rounded corners for active tab on mobile */
+    margin: 0; /* Remove margin to fit better on mobile */
+    /* Ensure background-color and color are also set for active state */
+    background-color: #fff; /* White background for active tab */
+    color: #000000; /* Black text for active tab */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow for active tab */
+}
+
+.tab-icon {
+    width: 45px; /* Increased width for tab icons */
+    height: 24px; /* Kept height, aspect ratio might change slightly or adjust as needed */
+    margin-right: 8px; /* Space between icon and text */
+}
+
+/* Chatbot Container (Main Big Box) */
+.chatbot-container {
+    width: 100%;
+    max-width: 1200px; /* Same width as tab container */
+    background-color: #fff; /* White interior */
+    border: 1px solid #ccc; /* Grey outline */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    margin-top: 20px; /* Space below tab selection */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Ensures inner content respects border-radius */
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+/* MODIFIED: Chatbot Header Info (Orange Bar) - Added justify-content for clear button */
+.chatbot-header-info {
+    display: flex;
+    align-items: center;
+    background-color: #FFDDC1; /* Light orange */
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd; /* Subtle line at bottom of header */
+    justify-content: space-between; /* ADDED: Distributes space between items */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+}
+
+.robot-profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Circular */
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.chatbot-header-info .header-text {
+    display: flex;
+    flex-direction: column;
+    /* ADDED: Allow header text to take available space, pushing clear button right */
+    flex-grow: 1;
+}
+
+.chatbot-header-info .bold-text {
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1em;
+    transition: color 0.3s ease; /* Smooth transition */
+}
+
+.chatbot-header-info .grey-text {
+    color: #666;
+    font-size: 0.9em;
+    transition: color 0.3s ease; /* Smooth transition */
+}
+
+.clear-chat-btn {
+    background-color: #fff; /* White interior */
+    border: 1px solid #ccc; /* Grey outline */
+    color: #333; /* Black text */
+    padding: 8px 15px;
+    border-radius: 20px; /* Rounded corners */
+    cursor: pointer;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+    flex-shrink: 0;
+    margin-left: 15px; /* Space between header text and button */
+}
+
+.clear-chat-btn:hover {
+    background-color: #f0f0f0;
+    border-color: #999;
+}
+
+.clear-icon {
+    width: 30px;
+    height: 18px;
+}
+
+.chat-divider {
+    height: 1px;
+    background-color: #ccc; /* Grey line */
+    width: calc(100% - 40px); /* Span most of the width with side margins */
+    margin: 0 auto; /* Center the divider */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+/* MODIFIED: Chat Messages Area - Increased max-height for more blank space */
+.chat-messages {
+    flex-grow: 1; /* Allows chat area to expand */
+    padding: 20px;
+    overflow-y: auto; /* Enable scrolling for messages */
+    height: 275px; /* Increased height for more blank space */
+    max-height: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between messages */
+    background-color: #f9f9f9; /* Slightly off-white for chat background */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.message-bubble {
+    display: flex;
+    align-items: flex-start; /* Align content to top of bubble */
+    max-width: 80%; /* Limit bubble width */
+}
+
+.message-profile-pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%; /* Circular */
+    object-fit: cover;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.message-content {
+    padding: 10px 15px;
+    border-radius: 15px; /* Rounded corners for bubbles */
+    word-wrap: break-word; /* Ensure long words wrap */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.bot-message {
+    justify-content: flex-start; /* Align bot message to left */
+}
+
+.bot-message .message-profile-pic {
+    margin-right: 10px;
+}
+
+.bot-content {
+    background-color: #e0e0e0; /* Grey background for bot message */
+    color: #333; /* Black text */
+}
+
+.user-message {
+    justify-content: flex-end; /* Align user message to right */
+    margin-left: auto; /* Push user message to the right */
+}
+
+.user-message .message-profile-pic {
+    order: 2; /* Move profile pic to the right of the message */
+    margin-left: 10px;
+}
+
+.user-content {
+    background-color: #007bff; /* Blue background for user message */
+    color: #fff; /* White text */
+}
+
+/* Chat Input Area */
+.chat-input-area {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #fff; /* White background */
+    border-top: 1px solid #ddd; /* Subtle line above input area */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+}
+
+#chat-input {
+    flex-grow: 1; /* Takes most of the space */
+    padding: 10px 15px;
+    border: 1px solid #ddd; /* Light grey border */
+    border-radius: 20px; /* Rounded corners */
+    outline: none; /* Remove outline on focus */
+    font-size: 1em;
+    margin-right: 10px; /* Space before send button */
+    background-color: #fff; /* Ensure input background transitions */
+    color: #333; /* Ensure input text color transitions */
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+#chat-input::placeholder {
+    color: #aaa; /* Grey placeholder text */
+    transition: color 0.3s ease; /* Smooth transition */
+}
+
+.send-button {
+    background-color: #FF5722; /* Orange button */
+    border: none;
+    border-radius: 8px; /* Circular button */
+    width: 40px; /* Square button, will become circular with border-radius */
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.send-button:hover {
+    background-color: #E64A19; /* Darker orange on hover */
+}
+
+.send-icon {
+    width: 20px; /* Adjusted to original size */
+    height: 20px; /* Adjusted to original size */
+    filter: brightness(0) invert(1); /* Makes icon white */
+}
+
+/* Knowledge Hub Specific Styles */
+.knowledge-hub-container {
+    width: 100%;
+    max-width: 1200px; /* Keep max-width at 1200px */
+    margin: 20px auto; /* Keep centered */
+    padding: 0; /* MODIFIED: Remove padding from the main container */
+    border-radius: 10px; /* Keep border-radius for consistency */
+    margin-top: 20px;
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+.knowledge-hub-main-title {
+    font-size: 1.8em; /* Smaller than page-main-title */
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px;
+    transition: color 0.3s ease; /* Smooth transition */
+}
+
+.knowledge-hub-main-subtitle {
+    font-size: 0.95em;
+    color: #666;
+    text-align: center;
+    margin-bottom: 30px;
+    transition: color 0.3s ease; /* Smooth transition */
+}
+
+.learn-units-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between unit dropdowns */
+}
+
+.unit-dropdown-container {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    overflow: hidden; /* Ensures rounded corners are respected */
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+.unit-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    cursor: pointer;
+    background-color: #fff; /* Ensure header background is white */
+    border-bottom: none; /* MODIFIED: Completely remove border-bottom */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+}
+
+.unit-icon-square {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px; /* Rounded corners for the square */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    flex-shrink: 0; /* Prevent shrinking */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.unit-icon-square img {
+    width: 40px; /* Adjusted to fit better */
+    height: 24px; /* Adjusted to fit better */
+}
+
+.unit-text-content {
+    flex-grow: 1;
+}
+
+.unit-title-row {
+    display: flex;
+    align-items: center; /* Align title and lesson count horizontally */
+    margin-bottom: 5px; /* Space between title row and subtitle */
+}
+
+.unit-title {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #000;
+    margin: 0;
+    line-height: 1.2;
+    margin-right: 10px; /* Space between title and lesson count */
+    transition: color 0.3s ease; /* Smooth transition */
+}
+
+.unit-subtitle {
+    font-size: 0.85em;
+    color: #666;
+    margin: 0; /* Removed top margin, controlled by unit-title-row margin-bottom */
+    line-height: 1.3;
+    transition: color 0.3s ease; /* Smooth transition */
+}
+
+.unit-lesson-count {
+    background-color: #eee; /* Grey oval */
+    color: #000000;
+    padding: 5px 10px;
+    border-radius: 15px; /* Oval shape */
+    font-size: 0.8em;
+    font-weight: normal;
+    white-space: nowrap; /* Prevent text wrap */
+    flex-shrink: 0; /* Prevent shrinking */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.unit-arrow-icon {
+    width: 15px;
+    height: 9px;
+    margin-left: 20px;
+    transition: transform 0.2s ease-out; /* Smooth transition for rotation */
+    filter: brightness(1); /* Ensure icon is visible in light mode */
+    transition: filter 0.3s ease; /* Smooth transition */
+}
+
+.unit-arrow-icon.rotated {
+    transform: rotate(180deg); /* Rotate 180 degrees when 'rotated' class is present */
+}
+
+/* Unit Icon Square Colors (same as before) */
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(227, 242, 253)"] { /* Unit 1 Blue */
+    background-color: #e3f2fd;
+}
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(232, 245, 233)"] { /* Unit 2 Green */
+    background-color: #e8f5e9;
+}
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(255, 243, 224)"] { /* Unit 3 Yellow */
+    background-color: #fff3e0;
+}
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(237, 231, 246)"] { /* Unit 4 Purple */
+    background-color: #ede7f6;
+}
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(255, 235, 238)"] { /* Unit 5 Red */
+    background-color: #ffebee;
+}
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(224, 242, 247)"] { /* Unit 6 Blue-Green */
+    background-color: #e0f2f7;
+}
+.unit-dropdown-container .unit-icon-square[style*="background-color: rgb(237, 231, 246)"] { /* Unit 7 Pink-Purple */
+    background-color: #ede7f6;
+}
+
+/* Lessons Container and Lesson Cards */
+.lessons-container {
+    padding: 0 20px 25px; /* MODIFIED: Increased bottom padding from 15px to 25px */
+    transition: max-height 0.2s ease-out, padding 0.2s ease-out;
+    overflow: hidden;
+}
+
+.lesson-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space out title and start indicator */
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px; /* Space between lesson cards */
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+    color: #333; /* Default text color for lesson card */
+    text-decoration: none; /* Ensure no underline for the whole card */
+}
+
+.lesson-card:last-child {
+    margin-bottom: 15px; /* MODIFIED: Add space below the last lesson card */
+}
+
+.lesson-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.lesson-title {
+    font-size: 0.95em;
+    font-weight: 500; /* Medium weight */
+    flex-grow: 1; /* Allow title to take most space */
+    margin-right: 15px; /* Space between title and start indicator */
+    transition: color 0.3s ease; /* Smooth transition */
+}
+
+.lesson-start-indicator {
+    display: flex;
+    align-items: center;
+    color: #555; /* Grey text for "Start" */
+    font-size: 0.85em;
+    font-weight: bold;
+    white-space: nowrap;
+    transition: color 0.3s ease; /* Smooth transition */
+}
+
+.lesson-start-indicator .start-icon {
+    height: 14px;
+    margin-left: 5px;
+}
+
+.total-articles-count {
+    font-size: 0.9em;
+    color: #777;
+    margin-top: 25px;
+    text-align: center; /* Ensure it's centered */
+    transition: color 0.3s ease; /* Smooth transition */
+}
+
+.lessons-container:not(.expanded) {
+    max-height: 0;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* --- DARK MODE STYLES --- */
+body.dark-theme {
+    background-color: #1a1a1a; /* Dark background */
+    color: #e0e0e0; /* Light text */
+}
+
+body.dark-theme header {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .header-top-row {
+    background-color: #2a2a2a;
+}
+
+body.dark-theme .logo-link {
+    color: #e0e0e0;
+}
+
+body.dark-theme .header-divider {
+    background-color: #444;
+}
+
+body.dark-theme .header-nav-row {
+    background-color: #2a2a2a;
+}
+
+body.dark-theme .main-nav a {
+    color: #b0b0b0;
+}
+
+body.dark-theme .main-nav a.active {
+    color: #FF7043; /* Brighter orange for active tab in dark mode */
+}
+
+body.dark-theme .main-nav a.active::after {
+    background-color: #FF7043; /* Brighter orange underline */
+}
+
+body.dark-theme .main-nav a:not(.active):hover::after {
+    background-color: #777; /* Darker grey underline on hover */
+}
+
+body.dark-theme .page-main-title {
+    color: #e0e0e0;
+}
+
+body.dark-theme .page-main-subtitle {
+    color: #b0b0b0;
+}
+
+body.dark-theme .home-section-title {
+    color: #e0e0e0;
+}
+
+body.dark-theme .no-articles-card {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #b0b0b0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .progress-bar-container {
+    background-color: #333;
+}
+
+body.dark-theme .progress-percentage {
+    color: #e0e0e0;
+}
+
+body.dark-theme .encouraging-message {
+    color: #b0b0b0;
+}
+
+body.dark-theme .feed-section h1 {
+    color: #e0e0e0;
+}
+
+body.dark-theme .more-link {
+    background-color: #3a3a3a;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+body.dark-theme .more-link:hover {
+    background-color: #4a4a4a;
+    border-color: #777;
+}
+
+body.dark-theme .article-card {
+    background-color: #2a2a2a;
+    border-color: #444;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .article-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-theme .article-card h3 {
+    color: #e0e0e0;
+}
+
+body.dark-theme .article-card p {
+    color: #b0b0b0;
+}
+
+body.dark-theme .refresh-button-container .primary-btn {
+    background-color: #3a3a3a;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+body.dark-theme .refresh-button-container .primary-btn:hover {
+    background-color: #4a4a4a;
+    border-color: #777;
+}
+
+body.dark-theme .error-message {
+    color: #ff8a80; /* Lighter red for dark mode */
+}
+
+body.dark-theme .info-message {
+    color: #b0b0b0;
+}
+
+body.dark-theme .back-button {
+    color: #90caf9; /* Lighter blue for dark mode */
+}
+
+body.dark-theme .article-content-wrapper {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .article-detail-title {
+    color: #e0e0e0;
+}
+
+body.dark-theme .article-detail-summary {
+    color: #e0e0e0;
+}
+
+body.dark-theme .article-detail-section-title {
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.dark-theme .article-detail-list li {
+    color: #b0b0b0;
+}
+
+body.dark-theme .article-detail-viewpoint {
+    background-color: #333;
+    border-left-color: #90caf9; /* Lighter blue bar */
+    color: #e0e0e0;
+}
+
+body.dark-theme .article-detail-source-tag {
+    background-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-theme .article-detail-source-tag a {
+    color: #e0e0e0;
+}
+
+body.dark-theme .article-detail-original-url {
+    color: #b0b0b0;
+}
+
+body.dark-theme .article-detail-original-url a {
+    color: #90caf9; /* Lighter blue for dark mode */
+}
+
+body.dark-theme .modal-content {
+    background-color: #2a2a2a;
+    border-color: #444;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.4), 0 6px 20px 0 rgba(0,0,0,0.3);
+}
+
+body.dark-theme .modal-content h2 {
+    color: #e0e0e0;
+}
+
+body.dark-theme .close-button {
+    color: #b0b0b0;
+}
+
+body.dark-theme .close-button:hover,
+body.dark-theme .close-button:focus {
+    color: #fff;
+}
+
+body.dark-theme .profile-section {
+    border-color: #444;
+}
+
+body.dark-theme .profile-section h3 {
+    color: #e0e0e0;
+}
+
+body.dark-theme .theme-options label {
+    color: #e0e0e0;
+}
+
+body.dark-theme .api-key-fields label {
+    color: #e0e0e0;
+}
+
+body.dark-theme .api-key-fields input[type="password"] {
+    background-color: #3a3a3a;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+body.dark-theme .api-key-fields input[type="password"]::placeholder {
+    color: #888;
+}
+
+body.dark-theme .username-area:hover {
+    background-color: #3a3a3a;
+}
+
+body.dark-theme .username-text {
+    color: #e0e0e0;
+}
+
+body.dark-theme .username-edit-icon {
+    filter: brightness(0) invert(0.8); /* Lighter grey for dark mode pencil */
+}
+
+body.dark-theme .username-input {
+    background-color: #3a3a3a;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+body.dark-theme .back-button-modal {
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .back-button-modal:hover {
+    background-color: #4a4a4a;
+}
+
+body.dark-theme .avatar-option {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .avatar-option.selected {
+    border-color: #90caf9; /* Lighter blue outline */
+    box-shadow: 0 0 0 3px rgba(144, 202, 249, 0.5); /* Lighter blue glow */
+}
+
+body.dark-theme .search-input-container {
+    background-color: #2a2a2a;
+    border-color: #444;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .search-input {
+    color: #e0e0e0;
+}
+
+body.dark-theme .search-input::placeholder {
+    color: #b0b0b0;
+}
+
+body.dark-theme .search-input-container::before {
+    filter: brightness(0) invert(1); /* Makes search icon white in dark mode */
+}
+
+body.dark-theme .tab-selection-container {
+    background-color: #2a2a2a;
+}
+
+body.dark-theme .tab-item {
+    color: #b0b0b0;
+}
+
+body.dark-theme .tab-item.active {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .chatbot-container {
+    background-color: #2a2a2a;
+    border-color: #444;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .chatbot-header-info {
+    background-color: #3a3a3a; /* Darker orange tone for header */
+    border-color: #555;
+}
+
+body.dark-theme .chatbot-header-info .bold-text {
+    color: #e0e0e0;
+}
+
+body.dark-theme .chatbot-header-info .grey-text {
+    color: #b0b0b0;
+}
+
+body.dark-theme .clear-chat-btn {
+    background-color: #3a3a3a;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+body.dark-theme .clear-chat-btn:hover {
+    background-color: #4a4a4a;
+    border-color: #777;
+}
+
+body.dark-theme .clear-icon {
+    filter: brightness(0) invert(1); /* Keep clear icon white */
+}
+
+body.dark-theme .chat-divider {
+    background-color: #444;
+}
+
+body.dark-theme .chat-messages {
+    background-color: #1f1f1f; /* Slightly lighter than body background */
+}
+
+body.dark-theme .bot-content {
+    background-color: #333; /* Darker grey for bot message */
+    color: #e0e0e0;
+}
+
+body.dark-theme .user-content {
+    background-color: #0056b3; /* Darker blue for user message */
+    color: #fff;
+}
+
+body.dark-theme .chat-input-area {
+    background-color: #2a2a2a;
+    border-color: #444;
+}
+
+body.dark-theme #chat-input {
+    background-color: #3a3a3a;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+body.dark-theme #chat-input::placeholder {
+    color: #888;
+}
+
+body.dark-theme .send-icon {
+    filter: brightness(0) invert(1); /* Keep send icon white */
+}
+
+body.dark-theme .knowledge-hub-container {
+    background-color: #1a1a1a; /* Match body background for container */
+    border-color: transparent; /* No border for main container */
+    box-shadow: none; /* No shadow for main container */
+}
+
+body.dark-theme .unit-dropdown-container {
+    background-color: #2a2a2a;
+    border-color: #444;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .unit-header {
+    background-color: #2a2a2a;
+    border-color: #444;
+}
+
+/* Dark mode adjustments for unit icon square colors */
+body.dark-theme .unit-dropdown-container .unit-icon-square[style*="background-color: rgb(227, 242, 253)"] { /* Unit 1 Blue */
+    background-color: #1a3a5a; /* Darker blue */
+}
+body.dark-theme .unit-dropdown-container .unit-icon-square[style*="background-color: rgb(232, 245, 233)"] { /* Unit 2 Green */
+    background-color: #2a4a2a; /* Darker green */
+}
+body.dark-theme .unit-dropdown-container .unit-icon-square[style*="background-color: rgb(255, 243, 224)"] { /* Unit 3 Yellow */
+    background-color: #5a4a1a; /* Darker yellow */
+}
+body.dark-theme .unit-dropdown-container .unit-icon-square[style*="background-color: rgb(237, 231, 246)"] { /* Unit 4 Purple */
+    background-color: #3a2a4a; /* Darker purple */
+}
+body.dark-theme .unit-dropdown-container .unit-icon-square[style*="background-color: rgb(255, 235, 238)"] { /* Unit 5 Red */
+    background-color: #4a2a2a; /* Darker red */
+}
+body.dark-theme .unit-dropdown-container .unit-icon-square[style*="background-color: rgb(224, 242, 247)"] { /* Unit 6 Blue-Green */
+    background-color: #1a4a4a; /* Darker blue-green */
+}
+body.dark-theme .unit-dropdown-container .unit-icon-square[style*="background-color: rgb(237, 231, 246)"] { /* Unit 7 Pink-Purple */
+    background-color: #3a2a4a; /* Darker pink-purple */
+}
+
+
+body.dark-theme .unit-title {
+    color: #e0e0e0;
+}
+
+body.dark-theme .unit-subtitle {
+    color: #b0b0b0;
+}
+
+body.dark-theme .unit-lesson-count {
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .unit-arrow-icon {
+    filter: brightness(0) invert(1); /* Makes arrow icon white in dark mode */
+}
+
+body.dark-theme .lesson-card {
+    background-color: #1f1f1f; /* Slightly lighter than unit container */
+    border-color: #333;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    color: #e0e0e0;
+}
+
+body.dark-theme .lesson-card:hover {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-theme .lesson-title {
+    color: #e0e0e0;
+}
+
+body.dark-theme .lesson-start-indicator {
+    color: #b0b0b0;
+}
+
+body.dark-theme .total-articles-count {
+    color: #b0b0b0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .knowledge-hub-container {
+        padding: 15px;
+        margin-top: 15px;
     }
 
-    .profile-pic-display-area {
-        margin-bottom: 10px; /* Adjusted for mobile */
+    .knowledge-hub-main-title {
+        font-size: 1.6em;
     }
 
-    .current-profile-pic-wrapper {
-        width: 120px; /* Adjusted for mobile */
-        height: 120px; /* Adjusted for mobile */
-    }
-
-    .profile-pic-edit-icon {
-        width: 35px; /* Adjust size for mobile */
-        height: 35px;
-    }
-
-    .username-area {
-        margin-bottom: 20px;
-        margin-left: 0; /* Reset margin on mobile for centering */
-    }
-
-    .username-text, .username-input {
-        font-size: 1.5em; /* Smaller font on mobile */
-    }
-
-    .username-edit-icon {
-        width: 20px;
-        height: 20px;
-    }
-
-    .back-button-modal {
-        margin-bottom: 20px;
-        padding: 6px 12px;
+    .knowledge-hub-main-subtitle {
         font-size: 0.9em;
-        top: 10px; /* Adjust for smaller screens */
-        left: 10px; /* Adjust for smaller screens */
+        margin-bottom: 20px;
     }
 
-    .selected-pfp-top {
-        width: 80px; /* Adjusted for mobile */
-        height: 80px;
+    .unit-header {
+        flex-wrap: wrap; /* Allow header content to wrap */
+        padding: 10px 15px;
     }
 
-    .avatar-options-grid {
-        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Smaller avatars on small screens */
-        gap: 10px;
-        max-width: 300px;
+    .unit-icon-square {
+        width: 35px;
+        height: 35px;
+        margin-right: 10px;
     }
 
-    .avatar-option {
-        width: 50px;
-        height: 50px;
+    .unit-icon-square img {
+        width: 24px; /* Match the default size for better scaling */
+        height: 24px;
     }
+
+    .unit-title-row {
+        flex-direction: column; /* Stack title and count on small screens */
+        align-items: flex-start;
+        margin-bottom: 0; /* Adjust as needed */
+    }
+
+    .unit-title {
+        font-size: 1em;
+        margin-right: 0; /* Remove horizontal margin */
+        margin-bottom: 5px; /* Add vertical space */
+    }
+
+    .unit-subtitle {
+        font-size: 0.8em;
+        width: 100%; /* Make subtitle take full width below title */
+    }
+
+    .unit-lesson-count {
+        margin-left: 0; /* Remove auto margin */
+        margin-top: 0; /* Remove top margin */
+    }
+
+    .unit-arrow-icon {
+        margin-left: 10px;
+        width: 15px;
+        height: 9px;
+    }
+
+    .lessons-container {
+        padding: 0 20px 25px;
+    }
+
+    .lesson-card {
+        flex-direction: row; /* Keep row layout for lesson cards */
+        align-items: center;
+        padding: 10px 12px;
+    }
+
+    .lesson-title {
+        margin-right: 10px; /* Add some space from start indicator on mobile */
+    }
+
+    .lesson-start-indicator {
+        margin-left: auto; /* Push to right */
+    }
+}
+
+/* NEW: Container for each label-input pair */
+.api-key-field-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+/* NEW: Styling for the label within the field group */
+.api-key-field-group label {
+    flex-shrink: 0;
+    width: 110px;
+    text-align: right;
+    margin-bottom: 0;
+}
+
+.toggle-text {
+    flex-grow: 1; /* Allow the text to take up remaining space */
+    white-space: nowrap; /* Force text onto a single line */
+    text-overflow: ellipsis; /* Add ellipsis (...) if text is truncated */
+    /* Ensure no extra margins/paddings that could cause issues */
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-right: 0px;
+    padding-left: 60px;
+    margin: 0;
+}
+
+.hidden-api-keys {
+    display: none;
+}
+
+/* NEW: Class to show the API key input container */
+.show-api-keys {
+    display: block; /* Use block to stack the field groups vertically */
+}
+
+/* Save Article Button/Icon */
+.save-article-btn {
+    cursor: pointer;
+    font-size: 1.2em; /* Adjust size as needed */
+    color: #ccc; /* Default grey for unsaved */
+    transition: color 0.2s ease, transform 0.1s ease;
+    margin-left: auto; /* Pushes it to the right within its flex container */
+    flex-shrink: 0; /* Prevent it from shrinking */
+}
+
+.save-article-btn:hover {
+    color: #999; /* Slightly darker grey on hover */
+    transform: scale(1.1); /* Slight enlarge on hover */
+}
+
+.save-article-btn.saved {
+    color: #FF5722; /* Orange for saved state */
+}
+
+.save-article-btn.saved:hover {
+    color: #E64A19; /* Darker orange on hover when saved */
+}
+
+/* For the detail page save button */
+.article-detail-save-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: #007bff; /* Blue button */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.article-detail-save-btn:hover {
+    background-color: #0056b3;
+}
+
+.article-detail-save-btn i {
+    margin-right: 8px;
+}
+
+.article-detail-save-btn.saved {
+    background-color: #28a745; /* Green when saved */
+}
+
+.article-detail-save-btn.saved:hover {
+    background-color: #218838; /* Darker green when saved and hovered */
+}
+
+/* --- Dark Mode Specific Styles for Save Feature --- */
+body.dark-theme .save-article-btn {
+    color: #666; /* Darker grey for unsaved in dark mode */
+}
+
+body.dark-theme .save-article-btn:hover {
+    color: #999;
+}
+
+body.dark-theme .save-article-btn.saved {
+    color: #FF7043; /* Brighter orange for saved in dark mode */
+}
+
+body.dark-theme .save-article-btn.saved:hover {
+    color: #FF8A65; /* Even brighter orange on hover */
+}
+
+body.dark-theme .article-detail-save-btn {
+    background-color: #90caf9; /* Lighter blue for dark mode */
+    color: #333; /* Dark text for button in dark mode */
+}
+
+body.dark-theme .article-detail-save-btn:hover {
+    background-color: #64b5f6; /* Darker blue on hover */
+}
+
+body.dark-theme .article-detail-save-btn.saved {
+    background-color: #81c784; /* Lighter green for saved in dark mode */
+}
+
+body.dark-theme .article-detail-save-btn.saved:hover {
+    background-color: #66bb6a; /* Darker green on hover */
+}
+
+body.dark-theme .health {
+    background-color: #4CAF50; /* Darker green */
+    color: #C8E6C9; /* Lighter green text */
+}
+body.dark-theme .environment {
+    background-color: #2196F3; /* Darker blue */
+    color: #BBDEFB; /* Lighter blue text */
+}
+body.dark-theme .science {
+    background-color: #FF9800; /* Darker orange */
+    color: #FFE0B2; /* Lighter orange text */
+}
+body.dark-theme .technology {
+    background-color: #673AB7; /* Darker purple */
+    color: #D1C4E9; /* Lighter purple text */
+}
+body.dark-theme .business {
+    background-color: #FFC107; /* Darker yellow */
+    color: #FFF9C4; /* Lighter yellow text */
+}
+body.dark-theme .politics {
+    background-color: #F44336; /* Darker red */
+    color: #FFCDD2; /* Lighter red text */
+}
+body.dark-theme .society {
+    background-color: #757575; /* Darker grey */
+    color: #E0E0E0; /* Lighter grey text */
+}
+body.dark-theme .education {
+    background-color: #00BCD4; /* Darker cyan */
+    color: #B2EBF2; /* Lighter cyan text */
+}
+body.dark-theme .general {
+    background-color: #555555; /* Darker grey */
+    color: #DDDDDD; /* Lighter grey text */
+}
+body.dark-theme .events {
+    background-color: #EF5350; /* Darker red-orange */
+    color: #FFCDD2; /* Lighter red-orange text */
+}
+
+/* Article Detail Page Styles */
+.article-detail-page {
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.article-detail-page .back-button {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+    margin-bottom: 25px;
+    transition: color 0.2s ease;
+}
+
+.article-detail-page .back-button:hover {
+    color: #0056b3;
+}
+
+.article-detail-page .back-button i {
+    margin-right: 8px;
+}
+
+/* NEW: Flex container for category tag and save button */
+.article-header-row {
+    display: flex;
+    justify-content: space-between; /* Pushes items to ends */
+    align-items: center; /* Vertically aligns items */
+    margin-bottom: 15px; /* Space below this row */
+}
+
+.article-detail-category-tag {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.85em;
+    font-weight: bold;
+    text-transform: uppercase;
+    /* margin-bottom: 15px; REMOVED - now controlled by .article-header-row */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.article-detail-title {
+    font-size: 2.2em;
+    color: #333;
+    margin-bottom: 15px;
+    line-height: 1.3;
+    transition: color 0.3s ease;
+}
+
+/* NEW: Style for the full detailed summary */
+.article-detail-summary-detail {
+    font-size: 1.1em;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 30px;
+    transition: color 0.3s ease;
+}
+
+.article-detail-section-title {
+    font-size: 1.5em;
+    color: #333;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 5px;
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.article-detail-list {
+    list-style: disc;
+    margin-left: 25px;
+    margin-bottom: 20px;
+    color: #555;
+    transition: color 0.3s ease;
+}
+
+.article-detail-list li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+.viewpoints-container {
+    margin-bottom: 20px;
+}
+
+.article-detail-viewpoint {
+    background-color: #f9f9f9;
+    border-left: 4px solid #007bff;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.article-detail-viewpoint p {
+    margin: 0;
+    color: #555;
+    line-height: 1.6;
+    transition: color 0.3s ease;
+}
+
+.sources-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.article-detail-source-tag {
+    display: inline-block;
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.article-detail-source-tag a {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.article-detail-source-tag a:hover {
+    text-decoration: underline;
+    color: #007bff;
+}
+
+.article-detail-original-url {
+    font-size: 0.9em;
+    color: #777;
+    margin-top: 20px;
+    word-break: break-all; /* Ensures long URLs wrap */
+    transition: color 0.3s ease;
+}
+
+.article-detail-original-url a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.article-detail-original-url a:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+/* MODIFIED: Save Article Button (smaller, aligned) */
+.article-detail-save-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: #007bff;
+    color: white;
+    padding: 6px 12px; /* MODIFIED: Smaller padding */
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9em; /* MODIFIED: Smaller font size */
+    font-weight: bold;
+    margin-left: auto; /* Pushes it to the far right in .article-header-row */
+    transition: background-color 0.3s ease;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.article-detail-save-btn:hover {
+    background-color: #0056b3;
+}
+
+.article-detail-save-btn i {
+    margin-right: 5px; /* MODIFIED: Smaller margin for icon */
+    font-size: 1em; /* Ensure icon size is proportional */
+}
+
+.article-detail-save-btn.saved {
+    background-color: #28a745; /* Green when saved */
+}
+
+.article-detail-save-btn.saved:hover {
+    background-color: #218838; /* Darker green when saved and hovered */
+}
+
+/* NEW: Feedback Message Box */
+.feedback-message-box {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #fff;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    opacity: 0; /* Start hidden */
+    visibility: hidden; /* Hide from screen readers */
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+.feedback-message-box.fade-out {
+    animation: fadeOutAnimation 2.5s forwards; /* Animation duration */
+}
+
+@keyframes fadeOutAnimation {
+    0% { opacity: 1; visibility: visible; }
+    80% { opacity: 1; visibility: visible; } /* Hold visible for most of the duration */
+    100% { opacity: 0; visibility: hidden; }
+}
+
+
+/* --- Dark Mode Overrides for Article Detail --- */
+body.dark-theme .article-detail-page {
+    background-color: #2a2a2a;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-theme .article-detail-page .back-button {
+    color: #90caf9;
+}
+body.dark-theme .article-detail-page .back-button:hover {
+    color: #64b5f6;
+}
+
+body.dark-theme .article-detail-title {
+    color: #e0e0e0;
+}
+
+body.dark-theme .article-detail-summary-detail {
+    color: #b0b0b0;
+}
+
+body.dark-theme .article-detail-section-title {
+    color: #e0e0e0;
+    border-bottom-color: #444;
+}
+
+body.dark-theme .article-detail-list {
+    color: #b0b0b0;
+}
+
+body.dark-theme .article-detail-viewpoint {
+    background-color: #333;
+    border-left-color: #90caf9;
+}
+
+body.dark-theme .article-detail-viewpoint p {
+    color: #b0b0b0;
+}
+
+body.dark-theme .article-detail-source-tag {
+    background-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-theme .article-detail-source-tag a {
+    color: #e0e0e0;
+}
+
+body.dark-theme .article-detail-source-tag a:hover {
+    color: #90caf9;
+}
+
+body.dark-theme .article-detail-original-url {
+    color: #b0b0b0;
+}
+
+body.dark-theme .article-detail-original-url a {
+    color: #90caf9;
+}
+
+body.dark-theme .article-detail-original-url a:hover {
+    color: #64b5f6;
+}
+
+body.dark-theme .article-detail-save-btn {
+    background-color: #90caf9;
+    color: #333;
+}
+
+body.dark-theme .article-detail-save-btn:hover {
+    background-color: #64b5f6;
+}
+
+body.dark-theme .article-detail-save-btn.saved {
+    background-color: #81c784;
+}
+
+body.dark-theme .article-detail-save-btn.saved:hover {
+    background-color: #66bb6a;
+}
+
+body.dark-theme .feedback-message-box {
+    background-color: #333;
+    color: #e0e0e0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }

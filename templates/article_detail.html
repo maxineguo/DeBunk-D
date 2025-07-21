@@ -1,65 +1,150 @@
+{# Assuming this is your article_detail.html file #}
 {% extends "base.html" %}
 
 {% block content %}
 <div class="article-detail-page">
-    <a href="javascript:history.back()" class="back-button">
-        <i class="fas fa-arrow-left"></i> Back to Feed
-    </a>
+    {# MODIFIED: Back button dynamic text and href #}
+    <a href="{{ back_link }}" class="back-button"><i class="fas fa-arrow-left"></i> Back to {{ back_text }}</a>
 
     <div class="article-content-wrapper">
-        {% if article.category %}
-        <span class="article-detail-category-tag {{ article.category | lower | replace(' ', '-') }}">
-            {{ article.category }}
-        </span>
-        {% endif %}
+        <div class="article-header-row"> {# NEW: Flex container for tag and button #}
+            <span class="article-detail-category-tag {{ article.category | lower | replace(' ', '-') }}">
+                {{ article.category }}
+            </span>
+            {# MOVED & MODIFIED: Save button #}
+            <button id="article-detail-save-btn" class="article-detail-save-btn" data-article-id="{{ article.id }}">
+                <i class="far fa-bookmark"></i> Save Article
+            </button>
+        </div>
 
         <h1 class="article-detail-title">{{ article.title }}</h1>
-        {# The main content from summary_detail, now in a div for specific styling #}
-        <div class="article-main-content">
-            {{ article.full_content.summary_detail }}
-        </div>
+        {# MODIFIED: Display full_summary (summary_detail) #}
+        <p class="article-detail-summary-detail">{{ article.summary_detail | default(article.summary) }}</p> {# Fallback to summary if detail is missing #}
 
-        {% if article.full_content.key_findings %}
-        <h2 class="article-detail-section-title">Key Findings</h2>
+        <h2 class="article-detail-section-title">Key Insights</h2>
         <ul class="article-detail-list">
-            {% for finding in article.full_content.key_findings %}
-            <li>{{ finding }}</li>
+            {% for insight in article.key_insights %}
+                <li>{{ insight }}</li>
             {% endfor %}
+            {% if not article.key_insights %}
+                <li>No key insights available for this article.</li>
+            {% endif %}
         </ul>
-        {% endif %}
 
-        {# Consolidated viewpoints section: now displays content from article.full_content.viewpoints #}
-        {% if article.full_content.viewpoints %}
         <h2 class="article-detail-section-title">Viewpoints</h2>
         <div class="viewpoints-container">
-            {% for viewpoint_text in article.full_content.viewpoints %}
-            <div class="article-detail-viewpoint">
-                <p>{{ viewpoint_text }}</p>
-            </div>
+            {% for viewpoint in article.viewpoints %}
+                <div class="article-detail-viewpoint">
+                    <p>{{ viewpoint }}</p> {# Removed '<strong>{{ viewpoint.source }}:</strong>' as LLM output is just text #}
+                </div>
             {% endfor %}
+            {% if not article.viewpoints %}
+                <div class="article-detail-viewpoint">
+                    <p>No distinct viewpoints available for this article.</p>
+                </div>
+            {% endif %}
         </div>
-        {% endif %}
 
-        {% if article.full_content.verified_sources %}
-        <h2 class="article-detail-section-title">Verified Sources</h2>
+        <h2 class="article-detail-section-title">Sources</h2>
         <div class="sources-container">
-            {% for source in article.full_content.verified_sources %}
-            <span class="article-detail-source-tag">
-                {% if source.url and source.url != '' and source.url != 'N/A' and source.url != '#' %}
-                    <a href="{{ source.url }}" target="_blank">{{ source.name }}</a>
-                {% else %}
-                    {{ source.name }}
-                {% endif %}
-            </span>
+            {% for source in article.sources %}
+                <span class="article-detail-source-tag">
+                    <a href="{{ source.url }}" target="_blank" rel="noopener noreferrer">{{ source.name | default('Unknown Source') }}</a>
+                </span>
             {% endfor %}
+            {% if not article.sources %}
+                <span class="article-detail-source-tag">No specific sources provided.</span>
+            {% endif %}
         </div>
-        {% endif %}
 
-        {% if article.url and article.url != '#' and not article.url.startswith('debunkd-') %}
         <p class="article-detail-original-url">
-            Original Source: <a href="{{ article.url }}" target="_blank">View Original Article</a>
+            Original Article: <a href="{{ article.original_url }}" target="_blank" rel="noopener noreferrer">{{ article.original_url | default('N/A') }}</a>
         </p>
-        {% endif %}
     </div>
 </div>
+
+{# NEW: Feedback message box #}
+<div id="feedback-message" class="feedback-message-box" style="display: none;">
+    Article saved!
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const articleDetailSaveBtn = document.getElementById('article-detail-save-btn');
+        const articleId = articleDetailSaveBtn ? articleDetailSaveBtn.dataset.articleId : null;
+        const SAVED_ARTICLES_KEY = 'debunkd_saved_articles';
+        const feedbackMessageBox = document.getElementById('feedback-message');
+
+        // Helper to get saved articles from localStorage as a map
+        function getSavedArticlesMap() {
+            try {
+                const saved = localStorage.getItem(SAVED_ARTICLES_KEY);
+                return saved ? JSON.parse(saved) : {};
+            } catch (e) {
+                console.error("Error parsing saved articles map from localStorage:", e);
+                return {};
+            }
+        }
+
+        // Function to show feedback message
+        function showFeedbackMessage(message) {
+            if (feedbackMessageBox) {
+                feedbackMessageBox.textContent = message;
+                feedbackMessageBox.style.display = 'block';
+                feedbackMessageBox.classList.remove('fade-out'); // Reset animation
+                void feedbackMessageBox.offsetWidth; // Trigger reflow to restart animation
+                feedbackMessageBox.classList.add('fade-out'); // Start fade out animation
+
+                // Hide after animation (or a fixed duration if animation is not reliable)
+                setTimeout(() => {
+                    feedbackMessageBox.style.display = 'none';
+                }, 3000); // 3 seconds
+            }
+        }
+
+        // Function to update the button's state
+        function updateSaveButtonState() {
+            if (!articleDetailSaveBtn || !articleId) return;
+
+            const savedArticles = getSavedArticlesMap();
+            if (savedArticles[articleId]) {
+                articleDetailSaveBtn.classList.add('saved');
+                articleDetailSaveBtn.querySelector('i').classList.remove('far');
+                articleDetailSaveBtn.querySelector('i').classList.add('fas');
+                articleDetailSaveBtn.innerHTML = '<i class="fas fa-bookmark"></i> Saved';
+            } else {
+                articleDetailSaveBtn.classList.remove('saved');
+                articleDetailSaveBtn.querySelector('i').classList.remove('fas');
+                articleDetailSaveBtn.querySelector('i').classList.add('far');
+                articleDetailSaveBtn.innerHTML = '<i class="far fa-bookmark"></i> Save Article';
+            }
+        }
+
+        // Event listener for the save button on the detail page
+        if (articleDetailSaveBtn) {
+            articleDetailSaveBtn.addEventListener('click', () => {
+                const savedArticles = getSavedArticlesMap();
+                const isSaved = !!savedArticles[articleId];
+
+                if (isSaved) {
+                    delete savedArticles[articleId];
+                    showFeedbackMessage('Article removed!');
+                } else {
+                    // Pass the entire 'article' object from Flask to localStorage
+                    const articleToSave = JSON.parse('{{ article | tojson }}');
+                    savedArticles[articleToSave.id] = articleToSave;
+                    showFeedbackMessage('Article saved!');
+                }
+                localStorage.setItem(SAVED_ARTICLES_KEY, JSON.stringify(savedArticles));
+                updateSaveButtonState(); // Update button visual
+            });
+        }
+
+        // Initial state update when page loads
+        updateSaveButtonState();
+    });
+</script>
 {% endblock %}
