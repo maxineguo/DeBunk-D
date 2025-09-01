@@ -324,24 +324,22 @@ main.container {
     gap: 25px;
 }
 
-/* Article Card Styles (used on feed and home) */
 .article-card {
-    background-color: #fff; /* White interior */
-    border: 1px solid #ddd; /* Grey outline */
-    border-radius: 10px; /* Rounded corners */
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
-    cursor: pointer;
+    background-color: var(--card-bg-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Pushes content and summary apart */
-    height: 100%; /* Ensure cards in a row have similar height */
+    text-decoration: none; /* Remove underline from links */
+    color: inherit;
+    height: 100%; /* Ensure all cards in the grid have the same height */
 }
 
 .article-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .article-card-image {
@@ -398,11 +396,27 @@ main.container {
     color: #c62828; /* Darker red */
 }
 
-.society, .education, .general {
+.society {
     background-color: #eeeeee;
     color: #616161;
 }
 
+.education {
+    background-color: #e0f2f7;
+    color: #006064;
+}
+
+.general {
+    background-color: #f0f0f0;
+    color: #424242;
+}
+
+.events {
+    background-color: #fde0dc; /* Lighter red */
+    color: #d32f2f; /* Deeper red */
+}
+
+/* Specific for search results if needed, though categories should cover most */
 .fact-check, .news-report { /* Keep these, but news-report won't be used as a primary label */
     background-color: #e3f2fd;
     color: #1565c0;
@@ -412,12 +426,6 @@ main.container {
     background-color: #ffebee;
     color: #c62828;
     border: 1px solid #ef9a9a;
-}
-
-/* NEW: Events Category (Red) */
-.events {
-    background-color: #fde0dc; /* Lighter red */
-    color: #d32f2f; /* Deeper red */
 }
 
 .article-card h3 {
@@ -515,56 +523,67 @@ main.container {
 
 /* Article Detail Page (from previous code) */
 .article-detail-page {
-    padding: 30px 0;
+    padding: 40px 20px; /* Adjusted padding */
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.back-button {
+.article-detail-page .back-button {
     display: inline-flex;
     align-items: center;
     text-decoration: none;
     color: #007bff;
     font-weight: bold;
-    margin-bottom: 30px;
-    transition: color 0.3s ease; /* Smooth transition */
+    margin-bottom: 25px; /* Adjusted margin */
+    transition: color 0.2s ease;
 }
 
-.back-button i {
+.article-detail-page .back-button:hover {
+    color: #0056b3;
+}
+
+.article-detail-page .back-button i {
     margin-right: 8px;
 }
 
-.article-content-wrapper {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+/* NEW: Flex container for category tag and save button */
+.article-header-row {
+    display: flex;
+    justify-content: space-between; /* Pushes items to ends */
+    align-items: center; /* Vertically aligns items */
+    margin-bottom: 15px; /* Space below this row */
 }
 
 .article-detail-category-tag {
     display: inline-block;
-    padding: 6px 15px;
-    border-radius: 18px;
-    font-size: 0.9em;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.85em;
     font-weight: bold;
-    margin-bottom: 20px;
-    text-transform: capitalize;
-    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 .article-detail-title {
     font-size: 2.2em;
     color: #333;
     margin-bottom: 15px;
-    line-height: 1.2;
-    transition: color 0.3s ease; /* Smooth transition */
+    line-height: 1.3;
+    transition: color 0.3s ease;
 }
 
-.article-detail-summary {
+/* MODIFIED: Style for the full detailed summary (renamed from .article-detail-summary) */
+.article-detail-summary-detail {
     font-size: 1.1em;
-    color: #000; /* Changed from #555 to black */
+    line-height: 1.8;
+    color: #555;
     margin-bottom: 30px;
-    font-style: normal; /* Changed from italic to normal */
-    transition: color 0.3s ease; /* Smooth transition */
+    transition: color 0.3s ease;
 }
 
 .article-detail-section-title {
@@ -572,21 +591,22 @@ main.container {
     color: #333;
     margin-top: 30px;
     margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 2px solid #eee; /* Changed from 1px to 2px */
     padding-bottom: 5px;
-    transition: color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+    transition: color 0.3s ease, border-color 0.3s ease;
 }
 
 .article-detail-list {
     list-style: disc;
-    margin-left: 20px;
+    margin-left: 25px; /* Adjusted margin */
     margin-bottom: 20px;
+    color: #555; /* Adjusted color */
+    transition: color 0.3s ease;
 }
 
 .article-detail-list li {
     margin-bottom: 8px;
-    color: #444;
-    transition: color 0.3s ease; /* Smooth transition */
+    line-height: 1.6; /* Adjusted line-height */
 }
 
 .viewpoints-container {
@@ -595,17 +615,28 @@ main.container {
 
 .article-detail-viewpoint {
     background-color: #f9f9f9;
-    border-left: 4px solid #007bff; /* The blue bar on the left */
+    border-left: 4px solid #007bff;
     padding: 15px;
-    margin-bottom: 15px; /* Space between boxes */
+    margin-bottom: 15px;
     border-radius: 5px;
-    color: #000; /* Ensure text is black */
-    font-style: normal; /* Ensure no italics */
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+    color: #555; /* Adjusted color */
+    font-style: normal; /* Ensured normal style */
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.article-detail-viewpoint p {
+    margin: 0;
+    color: #555; /* Adjusted color */
+    line-height: 1.6;
+    transition: color 0.3s ease;
 }
 
 .sources-container {
+    margin-top: 20px;
     margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .article-detail-source-tag {
@@ -614,38 +645,102 @@ main.container {
     color: #333;
     padding: 5px 10px;
     border-radius: 5px;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin-right: 0px; /* Adjusted margin */
+    margin-bottom: 0px; /* Adjusted margin */
     font-size: 0.9em;
-    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .article-detail-source-tag a {
     text-decoration: none;
     color: #333;
-    transition: color 0.3s ease; /* Smooth transition */
+    transition: color 0.3s ease;
 }
 
 .article-detail-source-tag a:hover {
     text-decoration: underline;
+    color: #007bff; /* Adjusted hover color */
 }
 
 .article-detail-original-url {
-    margin-top: 30px;
-    font-size: 0.95em;
-    color: #666;
-    transition: color 0.3s ease; /* Smooth transition */
+    font-size: 0.9em; /* Adjusted font-size */
+    color: #777;
+    margin-top: 20px; /* Adjusted margin */
+    word-break: break-all; /* Ensures long URLs wrap */
+    transition: color 0.3s ease;
 }
 
 .article-detail-original-url a {
     color: #007bff;
     text-decoration: none;
-    transition: color 0.3s ease; /* Smooth transition */
+    transition: color 0.2s ease; /* Adjusted transition */
 }
 
 .article-detail-original-url a:hover {
     text-decoration: underline;
+    color: #0056b3; /* Adjusted hover color */
 }
+
+/* MODIFIED: Save Article Button (smaller, aligned) */
+.article-detail-save-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: #007bff;
+    color: white;
+    padding: 6px 12px; /* MODIFIED: Smaller padding */
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9em; /* MODIFIED: Smaller font size */
+    font-weight: bold;
+    margin-left: auto; /* Pushes it to the far right in .article-header-row */
+    transition: background-color 0.3s ease;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.article-detail-save-btn:hover {
+    background-color: #0056b3;
+}
+
+.article-detail-save-btn i {
+    margin-right: 5px; /* MODIFIED: Smaller margin for icon */
+    font-size: 1em; /* Ensure icon size is proportional */
+}
+
+.article-detail-save-btn.saved {
+    background-color: #28a745; /* Green when saved */
+}
+
+.article-detail-save-btn.saved:hover {
+    background-color: #218838; /* Darker green when saved and hovered */
+}
+
+/* NEW: Feedback Message Box */
+.feedback-message-box {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #fff;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    opacity: 0; /* Start hidden */
+    visibility: hidden; /* Hide from screen readers */
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+.feedback-message-box.fade-out {
+    animation: fadeOutAnimation 2.5s forwards; /* Animation duration */
+}
+
+@keyframes fadeOutAnimation {
+    0% { opacity: 1; visibility: visible; }
+    80% { opacity: 1; visibility: visible; } /* Hold visible for most of the duration */
+    100% { opacity: 0; visibility: hidden; }
+}
+
 
 /* NEW: Grey line below name and PFP */
 .profile-section-divider {
@@ -712,29 +807,6 @@ main.container {
 /* NEW: Hide the actual radio buttons */
 .hidden-radio {
     display: none;
-}
-
-/* --- Dark Mode Specific Styles for the new elements --- */
-body.dark-theme .profile-section-divider {
-    background-color: #444; /* Darker grey line in dark mode */
-}
-
-body.dark-theme .profile-section-title.text-center {
-    color: #e0e0e0; /* Light text for title in dark mode */
-}
-
-body.dark-theme .theme-option-label {
-    color: #b0b0b0; /* Lighter grey text for labels in dark mode */
-}
-
-body.dark-theme .theme-preview-box {
-    background-color: #3a3a3a; /* Darker background for preview box */
-    border-color: #555; /* Darker border */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Stronger shadow in dark mode */
-}
-
-body.dark-theme .theme-preview-box.selected {
-    box-shadow: 0 0 0 3px #90caf9; /* Lighter blue outline in dark mode */
 }
 
 /* Profile Modal (from previous code) */
@@ -1103,6 +1175,11 @@ input:checked + .slider:before {
     border-radius: 50%;
     object-fit: cover;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: box-shadow 0.3s ease;
+}
+
+.selected-pfp-top:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
 .avatar-options-grid {
@@ -1388,11 +1465,16 @@ input:checked + .slider:before {
 }
 
 .message-profile-pic {
-    width: 30px;
-    height: 30px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%; /* Circular */
     object-fit: cover;
     flex-shrink: 0; /* Prevent shrinking */
+}
+
+.user-message .message-profile-pic {
+    width: 45px;
+    height: 45px;
 }
 
 .message-content {
@@ -1477,7 +1559,7 @@ input:checked + .slider:before {
 }
 
 .send-icon {
-    width: 20px; /* Adjusted to original size */
+    width: 30px; /* Adjusted to original size */
     height: 20px; /* Adjusted to original size */
     filter: brightness(0) invert(1); /* Makes icon white */
 }
@@ -1835,8 +1917,9 @@ body.dark-theme .article-detail-title {
     color: #e0e0e0;
 }
 
-body.dark-theme .article-detail-summary {
-    color: #e0e0e0;
+/* MODIFIED: Dark Mode for the full detailed summary */
+body.dark-theme .article-detail-summary-detail {
+    color: #e0e0e0; /* Ensured light text in dark mode */
 }
 
 body.dark-theme .article-detail-section-title {
@@ -1851,7 +1934,7 @@ body.dark-theme .article-detail-list li {
 body.dark-theme .article-detail-viewpoint {
     background-color: #333;
     border-left-color: #90caf9; /* Lighter blue bar */
-    color: #e0e0e0;
+    color: #e0e0e0; /* Ensured light text in dark mode */
 }
 
 body.dark-theme .article-detail-source-tag {
@@ -2061,6 +2144,14 @@ body.dark-theme .knowledge-hub-container {
     box-shadow: none; /* No shadow for main container */
 }
 
+body.dark-theme .knowledge-hub-main-title {
+    color: #e0e0e0;
+}
+
+body.dark-theme .knowledge-hub-main-subtitle {
+    color: #b0b0b0;
+}
+
 body.dark-theme .unit-dropdown-container {
     background-color: #2a2a2a;
     border-color: #444;
@@ -2113,11 +2204,12 @@ body.dark-theme .unit-arrow-icon {
     filter: brightness(0) invert(1); /* Makes arrow icon white in dark mode */
 }
 
+/* MODIFIED: Dark Mode for Lesson Cards */
 body.dark-theme .lesson-card {
-    background-color: #1f1f1f; /* Slightly lighter than unit container */
-    border-color: #333;
+    background-color: #1f1f1f; /* Darker background for individual lesson cards */
+    border-color: #333; /* Darker border */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    color: #e0e0e0;
+    color: #e0e0e0; /* Light text for main card content */
 }
 
 body.dark-theme .lesson-card:hover {
@@ -2125,11 +2217,11 @@ body.dark-theme .lesson-card:hover {
 }
 
 body.dark-theme .lesson-title {
-    color: #e0e0e0;
+    color: #e0e0e0; /* Light text for lesson title */
 }
 
 body.dark-theme .lesson-start-indicator {
-    color: #b0b0b0;
+    color: #90caf9; /* Lighter blue for "Start" text */
 }
 
 body.dark-theme .total-articles-count {
@@ -2281,14 +2373,15 @@ body.dark-theme .total-articles-count {
     align-items: center;
     background-color: #007bff; /* Blue button */
     color: white;
-    padding: 10px 20px;
+    padding: 6px 12px; /* MODIFIED: Smaller padding */
     border-radius: 5px;
     border: none;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.9em; /* MODIFIED: Smaller font size */
     font-weight: bold;
-    margin-top: 20px;
+    margin-left: auto; /* Pushes it to the far right in .article-header-row */
     transition: background-color 0.3s ease;
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 .article-detail-save-btn:hover {
@@ -2296,7 +2389,8 @@ body.dark-theme .total-articles-count {
 }
 
 .article-detail-save-btn i {
-    margin-right: 8px;
+    margin-right: 5px; /* MODIFIED: Smaller margin for icon */
+    font-size: 1em; /* Ensure icon size is proportional */
 }
 
 .article-detail-save-btn.saved {
@@ -2341,348 +2435,476 @@ body.dark-theme .article-detail-save-btn.saved:hover {
     background-color: #66bb6a; /* Darker green on hover */
 }
 
+/* Dark Mode Category Tag Colors (Overrides existing light mode ones in dark theme) */
 body.dark-theme .health {
-    background-color: #4CAF50; /* Darker green */
-    color: #C8E6C9; /* Lighter green text */
+    background-color: #2e7d32; /* Darker green */
+    color: #e8f5e9; /* Lighter green text */
 }
 body.dark-theme .environment {
-    background-color: #2196F3; /* Darker blue */
-    color: #BBDEFB; /* Lighter blue text */
+    background-color: #1565c0; /* Darker blue */
+    color: #e3f2fd; /* Lighter blue text */
 }
 body.dark-theme .science {
-    background-color: #FF9800; /* Darker orange */
-    color: #FFE0B2; /* Lighter orange text */
+    background-color: #e65100; /* Darker orange */
+    color: #ffe0b2; /* Lighter orange text */
 }
 body.dark-theme .technology {
-    background-color: #673AB7; /* Darker purple */
-    color: #D1C4E9; /* Lighter purple text */
+    background-color: #673ab7; /* Darker purple */
+    color: #ede7f6; /* Lighter purple text */
 }
 body.dark-theme .business {
-    background-color: #FFC107; /* Darker yellow */
-    color: #FFF9C4; /* Lighter yellow text */
+    background-color: #fbc02d; /* Darker yellow */
+    color: #fffde7; /* Lighter yellow text */
 }
 body.dark-theme .politics {
-    background-color: #F44336; /* Darker red */
-    color: #FFCDD2; /* Lighter red text */
+    background-color: #c62828; /* Darker red */
+    color: #ffebee; /* Lighter red text */
 }
 body.dark-theme .society {
-    background-color: #757575; /* Darker grey */
-    color: #E0E0E0; /* Lighter grey text */
+    background-color: #616161; /* Darker grey */
+    color: #eeeeee; /* Lighter grey text */
 }
 body.dark-theme .education {
-    background-color: #00BCD4; /* Darker cyan */
-    color: #B2EBF2; /* Lighter cyan text */
+    background-color: #006064; /* Darker cyan */
+    color: #e0f2f7; /* Lighter cyan text */
 }
 body.dark-theme .general {
-    background-color: #555555; /* Darker grey */
-    color: #DDDDDD; /* Lighter grey text */
+    background-color: #424242; /* Darker grey */
+    color: #f0f0f0; /* Lighter grey text */
 }
 body.dark-theme .events {
-    background-color: #EF5350; /* Darker red-orange */
-    color: #FFCDD2; /* Lighter red-orange text */
+    background-color: #d32f2f; /* Darker red-orange */
+    color: #fde0dc; /* Lighter red-orange text */
+}
+/* No specific dark mode overrides for .fact-check, .news-report, .error as they are handled by general .article-card dark mode */
+
+/* Responsive adjustments for modal content */
+@media (max-width: 600px) {
+    .modal-content {
+        width: 95%; /* Wider on smaller screens */
+        padding: 20px;
+    }
+
+    .profile-pic-display-area {
+        margin-bottom: 10px; /* Adjusted for mobile */
+    }
+
+    .current-profile-pic-wrapper {
+        width: 120px; /* Adjusted for mobile */
+        height: 120px; /* Adjusted for mobile */
+    }
+
+    .profile-pic-edit-icon {
+        width: 35px; /* Adjust size for mobile */
+        height: 35px;
+    }
+
+    .username-area {
+        margin-bottom: 20px;
+        margin-left: 0; /* Reset margin on mobile for centering */
+    }
+
+    .username-text, .username-input {
+        font-size: 1.5em; /* Smaller font on mobile */
+    }
+
+    .username-edit-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .back-button-modal {
+        margin-bottom: 20px;
+        padding: 6px 12px;
+        font-size: 0.9em;
+        top: 10px; /* Adjust for smaller screens */
+        left: 10px; /* Adjust for smaller screens */
+    }
+
+    .selected-pfp-top {
+        width: 80px; /* Smaller on mobile */
+        height: 80px; /* Smaller on mobile */
+    }
+
+    .avatar-options-grid {
+        gap: 10px; /* Smaller gap on mobile */
+    }
+
+    .avatar-option {
+        width: 50px; /* Smaller avatars on mobile */
+        height: 50px; /* Smaller avatars on mobile */
+    }
+
+    .theme-preview-box {
+        width: 150px; /* Smaller preview boxes on mobile */
+        height: 90px;
+    }
+
+    .api-key-field-group {
+        flex-direction: column; /* Stack label and input vertically */
+        align-items: flex-start; /* Align items to the start */
+        gap: 5px; /* Smaller gap */
+    }
+
+    .api-key-field-group label {
+        width: auto; /* Allow label to take natural width */
+        text-align: left; /* Align label text to left */
+    }
+
+    .toggle-switch {
+        margin-right: 0; /* Remove margin on mobile */
+    }
+
+    .toggle-text {
+        padding-left: 0; /* Remove padding on mobile */
+    }
+
+    /* Responsive adjustments for main content layout */
+    .container {
+        padding: 0 15px; /* Reduced horizontal padding on smaller screens */
+    }
+
+    .header-top-row, .header-nav-row {
+        padding: 15px 15px; /* Adjust header padding */
+    }
+
+    .main-nav li {
+        margin: 0 8px; /* Reduce spacing between nav items */
+    }
+
+    .main-nav a {
+        font-size: 0.9em; /* Smaller nav font */
+        padding: 8px 0;
+    }
+
+    .page-main-title {
+        font-size: 2em; /* Smaller main title */
+    }
+
+    .page-main-subtitle {
+        font-size: 1em; /* Smaller subtitle */
+    }
+
+    .home-section-title {
+        font-size: 1.5em; /* Smaller section titles */
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .article-grid {
+        grid-template-columns: 1fr; /* Single column on small screens */
+        gap: 20px;
+    }
+
+    .article-card {
+        padding: 15px;
+    }
+
+    .article-card-image {
+        height: 150px; /* Smaller image height */
+    }
+
+    .article-card h3 {
+        font-size: 1.1em;
+    }
+
+    .article-card p {
+        font-size: 0.85em;
+    }
+
+    .refresh-button-container {
+        margin-top: 30px;
+        margin-bottom: 15px;
+    }
+
+    .refresh-button-container .primary-btn {
+        padding: 8px 20px;
+        font-size: 0.9em;
+    }
+
+    .article-detail-page {
+        padding: 20px 15px;
+        margin: 15px auto;
+    }
+
+    .article-detail-page .back-button {
+        margin-bottom: 15px;
+        font-size: 0.95em;
+    }
+
+    .article-detail-title {
+        font-size: 1.8em;
+    }
+
+    .article-detail-summary-detail {
+        font-size: 1em;
+        margin-bottom: 20px;
+    }
+
+    .article-detail-section-title {
+        font-size: 1.3em;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .article-detail-list {
+        margin-left: 20px;
+        font-size: 0.9em;
+    }
+
+    .article-detail-viewpoint {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+
+    .article-detail-viewpoint p {
+        font-size: 0.9em;
+    }
+
+    .article-detail-source-tag {
+        font-size: 0.8em;
+        padding: 4px 8px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+
+    .article-detail-original-url {
+        font-size: 0.85em;
+        margin-top: 15px;
+    }
+
+    .article-detail-save-btn {
+        padding: 5px 10px;
+        font-size: 0.8em;
+    }
+
+    .article-detail-save-btn i {
+        margin-right: 3px;
+    }
+
+    .feedback-message-box {
+        bottom: 10px;
+        left: 10px;
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+
+    .search-page {
+        margin-top: 30px;
+    }
+
+    .search-page .page-main-title {
+        font-size: 2em;
+    }
+
+    .search-page .page-main-subtitle {
+        font-size: 1em;
+        margin-bottom: 30px;
+    }
+
+    .search-input-container {
+        padding: 2px 15px;
+        height: 40px;
+        margin-bottom: 30px;
+    }
+
+    .search-input {
+        font-size: 1em;
+        padding: 0 10px 0 35px;
+    }
+
+    .search-input-container::before {
+        left: 10px;
+        width: 24px;
+        height: 24px;
+    }
+
+    .search-button {
+        padding: 6px 12px;
+        font-size: 1em;
+    }
+
+    .learn-page {
+        padding-top: 15px;
+        padding-bottom: 30px;
+    }
+
+    .tab-selection-container {
+        margin-top: 20px;
+        height: 35px;
+    }
+
+    .tab-item {
+        font-size: 0.9em;
+        padding: 8px 0;
+    }
+
+    .tab-icon {
+        width: 35px;
+        margin-right: 5px;
+    }
+
+    .chatbot-container {
+        margin-top: 15px;
+    }
+
+    .chatbot-header-info {
+        padding: 12px 15px;
+    }
+
+    .robot-profile-pic {
+        width: 35px;
+        height: 35px;
+        margin-right: 10px;
+    }
+
+    .chatbot-header-info .bold-text {
+        font-size: 1em;
+    }
+
+    .chatbot-header-info .grey-text {
+        font-size: 0.8em;
+    }
+
+    .clear-chat-btn {
+        padding: 6px 12px;
+        font-size: 0.9em;
+    }
+
+    .clear-icon {
+        width: 25px;
+        height: 15px;
+    }
+
+    .chat-messages {
+        padding: 15px;
+        height: 200px; /* Adjusted height */
+    }
+
+    .message-bubble {
+        max-width: 90%;
+    }
+
+    .message-profile-pic {
+        width: 45px;
+        height: 45px;
+    }
+
+    .message-content {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+
+    .chat-input-area {
+        padding: 12px 15px;
+    }
+
+    #chat-input {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+
+    .send-button {
+        width: 35px;
+        height: 35px;
+    }
+
+    .send-icon {
+        width: 18px;
+        height: 18px;
+    }
 }
 
-/* Article Detail Page Styles */
-.article-detail-page {
-    padding: 40px 20px;
-    max-width: 900px;
-    margin: 20px auto;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
+/* Add these new styles to your existing style.css file */
 
-.article-detail-page .back-button {
-    display: inline-flex;
-    align-items: center;
-    text-decoration: none;
-    color: #007bff;
-    font-weight: bold;
-    margin-bottom: 25px;
-    transition: color 0.2s ease;
-}
-
-.article-detail-page .back-button:hover {
-    color: #0056b3;
-}
-
-.article-detail-page .back-button i {
-    margin-right: 8px;
-}
-
-/* NEW: Flex container for category tag and save button */
-.article-header-row {
+/* Styles for the container of the image and title within a lesson card */
+.lesson-card-left {
     display: flex;
-    justify-content: space-between; /* Pushes items to ends */
-    align-items: center; /* Vertically aligns items */
-    margin-bottom: 15px; /* Space below this row */
+    align-items: center; /* Vertically align image and text */
+    flex-grow: 1; /* Allow this section to take available space */
 }
 
-.article-detail-category-tag {
-    display: inline-block;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.85em;
-    font-weight: bold;
-    text-transform: uppercase;
-    /* margin-bottom: 15px; REMOVED - now controlled by .article-header-row */
-    transition: background-color 0.3s ease, color 0.3s ease;
-    flex-shrink: 0; /* Prevent shrinking */
+/* Styles for the lesson image itself */
+.lesson-image {
+    width: 60px; /* Fixed width for the image */
+    height: 60px; /* Fixed height for the image */
+    object-fit: cover; /* Ensures image covers the area without distortion, cropping if necessary */
+    border-radius: 8px; /* Slightly rounded corners for the image */
+    margin-right: 15px; /* Space between the image and the lesson title */
+    flex-shrink: 0; /* Prevent the image from shrinking on smaller screens */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* Subtle shadow for depth */
 }
 
-.article-detail-title {
-    font-size: 2.2em;
-    color: #333;
-    margin-bottom: 15px;
-    line-height: 1.3;
-    transition: color 0.3s ease;
+/* Responsive adjustments for lesson images */
+@media (max-width: 768px) {
+    .lesson-image {
+        width: 50px; /* Smaller image on mobile */
+        height: 50px;
+        margin-right: 10px; /* Reduced margin */
+    }
+
+    .lesson-card-left {
+        flex-direction: row; /* Keep image and title in a row on mobile */
+        align-items: center;
+    }
 }
 
-/* NEW: Style for the full detailed summary */
-.article-detail-summary-detail {
-    font-size: 1.1em;
-    line-height: 1.8;
-    color: #555;
-    margin-bottom: 30px;
-    transition: color 0.3s ease;
+/* Dark mode specific styles for lesson images */
+body.dark-theme .lesson-image {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Darker shadow in dark mode */
 }
 
-.article-detail-section-title {
-    font-size: 1.5em;
-    color: #333;
-    margin-top: 30px;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 5px;
-    transition: color 0.3s ease, border-color 0.3s ease;
+.feed-grid {
+    display: grid;
+    /* Use repeat() to create columns that automatically adjust to fit */
+    /* minmax() ensures a minimum width of 250px and a maximum of 1fr */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+    padding: 0;
 }
 
-.article-detail-list {
-    list-style: disc;
-    margin-left: 25px;
-    margin-bottom: 20px;
-    color: #555;
-    transition: color 0.3s ease;
-}
-
-.article-detail-list li {
-    margin-bottom: 8px;
-    line-height: 1.6;
-}
-
-.viewpoints-container {
-    margin-bottom: 20px;
-}
-
-.article-detail-viewpoint {
-    background-color: #f9f9f9;
-    border-left: 4px solid #007bff;
+.article-content {
     padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-.article-detail-viewpoint p {
-    margin: 0;
-    color: #555;
-    line-height: 1.6;
-    transition: color 0.3s ease;
-}
-
-.sources-container {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    flex-grow: 1; /* Allow content to fill available space */
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-direction: column;
 }
 
-.article-detail-source-tag {
-    display: inline-block;
-    background-color: #e0e0e0;
-    color: #333;
+.article-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.article-summary {
+    font-size: 0.9em;
+    color: var(--text-color-secondary);
+    line-height: 1.4;
+    /* The -webkit-line-clamp property is a non-standard CSS property
+       that allows you to limit the number of lines in a block of text. */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limit summary to 3 lines */
+    -webkit-box-orient: vertical;
+    flex-grow: 1; /* Pushes the category tag to the bottom */
+}
+
+.article-category-tag {
+    font-size: 0.8em;
+    font-weight: 600;
     padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.9em;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 15px;
+    color: #fff;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 10px;
+    align-self: flex-start; /* Align tag to the start of the flex container */
 }
 
-.article-detail-source-tag a {
-    text-decoration: none;
-    color: #333;
-    transition: color 0.3s ease;
-}
-
-.article-detail-source-tag a:hover {
-    text-decoration: underline;
-    color: #007bff;
-}
-
-.article-detail-original-url {
-    font-size: 0.9em;
-    color: #777;
-    margin-top: 20px;
-    word-break: break-all; /* Ensures long URLs wrap */
-    transition: color 0.3s ease;
-}
-
-.article-detail-original-url a {
-    color: #007bff;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.article-detail-original-url a:hover {
-    text-decoration: underline;
-    color: #0056b3;
-}
-
-/* MODIFIED: Save Article Button (smaller, aligned) */
-.article-detail-save-btn {
-    display: inline-flex;
-    align-items: center;
-    background-color: #007bff;
-    color: white;
-    padding: 6px 12px; /* MODIFIED: Smaller padding */
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    font-size: 0.9em; /* MODIFIED: Smaller font size */
-    font-weight: bold;
-    margin-left: auto; /* Pushes it to the far right in .article-header-row */
-    transition: background-color 0.3s ease;
-    flex-shrink: 0; /* Prevent shrinking */
-}
-
-.article-detail-save-btn:hover {
-    background-color: #0056b3;
-}
-
-.article-detail-save-btn i {
-    margin-right: 5px; /* MODIFIED: Smaller margin for icon */
-    font-size: 1em; /* Ensure icon size is proportional */
-}
-
-.article-detail-save-btn.saved {
-    background-color: #28a745; /* Green when saved */
-}
-
-.article-detail-save-btn.saved:hover {
-    background-color: #218838; /* Darker green when saved and hovered */
-}
-
-/* NEW: Feedback Message Box */
-.feedback-message-box {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    background-color: #fff;
-    color: #333;
-    padding: 10px 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    opacity: 0; /* Start hidden */
-    visibility: hidden; /* Hide from screen readers */
-    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
-}
-
-.feedback-message-box.fade-out {
-    animation: fadeOutAnimation 2.5s forwards; /* Animation duration */
-}
-
-@keyframes fadeOutAnimation {
-    0% { opacity: 1; visibility: visible; }
-    80% { opacity: 1; visibility: visible; } /* Hold visible for most of the duration */
-    100% { opacity: 0; visibility: hidden; }
-}
-
-
-/* --- Dark Mode Overrides for Article Detail --- */
-body.dark-theme .article-detail-page {
-    background-color: #2a2a2a;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-}
-
-body.dark-theme .article-detail-page .back-button {
-    color: #90caf9;
-}
-body.dark-theme .article-detail-page .back-button:hover {
-    color: #64b5f6;
-}
-
-body.dark-theme .article-detail-title {
-    color: #e0e0e0;
-}
-
-body.dark-theme .article-detail-summary-detail {
-    color: #b0b0b0;
-}
-
-body.dark-theme .article-detail-section-title {
-    color: #e0e0e0;
-    border-bottom-color: #444;
-}
-
-body.dark-theme .article-detail-list {
-    color: #b0b0b0;
-}
-
-body.dark-theme .article-detail-viewpoint {
-    background-color: #333;
-    border-left-color: #90caf9;
-}
-
-body.dark-theme .article-detail-viewpoint p {
-    color: #b0b0b0;
-}
-
-body.dark-theme .article-detail-source-tag {
-    background-color: #444;
-    color: #e0e0e0;
-}
-
-body.dark-theme .article-detail-source-tag a {
-    color: #e0e0e0;
-}
-
-body.dark-theme .article-detail-source-tag a:hover {
-    color: #90caf9;
-}
-
-body.dark-theme .article-detail-original-url {
-    color: #b0b0b0;
-}
-
-body.dark-theme .article-detail-original-url a {
-    color: #90caf9;
-}
-
-body.dark-theme .article-detail-original-url a:hover {
-    color: #64b5f6;
-}
-
-body.dark-theme .article-detail-save-btn {
-    background-color: #90caf9;
-    color: #333;
-}
-
-body.dark-theme .article-detail-save-btn:hover {
-    background-color: #64b5f6;
-}
-
-body.dark-theme .article-detail-save-btn.saved {
-    background-color: #81c784;
-}
-
-body.dark-theme .article-detail-save-btn.saved:hover {
-    background-color: #66bb6a;
-}
-
-body.dark-theme .feedback-message-box {
-    background-color: #333;
-    color: #e0e0e0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-}
+.latest-news { background-color: #007ACC; } /* Deep Sky Blue */
+.general-misconceptions { background-color: #34B06F; } /* Jade Green */
+.important-issues { background-color: #D9534F; } /* Sunset Red */

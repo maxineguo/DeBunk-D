@@ -12,209 +12,103 @@ document.addEventListener('DOMContentLoaded', () => {
     // Helper to get API keys from session storage or default to empty string
     function getUserApiKeys() {
         const useOwnApiKey = localStorage.getItem('useOwnApiKey') === 'true';
-        console.log("DEBUG: useOwnApiKey from localStorage:", useOwnApiKey);
+
         const newsApiKey = useOwnApiKey ? sessionStorage.getItem('userNewsApiKey') || '' : '';
         const geminiApiKey = useOwnApiKey ? sessionStorage.getItem('userGeminiApiKey') || '' : '';
-        console.log("DEBUG: Retrieved NewsAPI Key (first 5 chars):", newsApiKey.substring(0, 5));
-        console.log("DEBUG: Retrieved Gemini API Key (first 5 chars):", geminiApiKey.substring(0, 5));
-        return { newsApiKey, geminiApiKey };
+
+        return {
+            'x-newsapi-key': newsApiKey,
+            'x-gemini-api-key': geminiApiKey
+        };
     }
 
-    // Function to show messages below the refresh button
-    function showFeedMessage(message, isError = false, duration = 5000) { // Added duration parameter
+    // Helper function to show a temporary message
+    function showFeedMessage(message, isError = false, timeout = 3000) {
         if (feedMessage) {
             feedMessage.textContent = message;
+            feedMessage.className = `info-message ${isError ? 'error-message' : 'success-message'}`;
             feedMessage.style.display = 'block';
-            feedMessage.classList.remove('error-message', 'info-message');
-            feedMessage.classList.add(isError ? 'error-message' : 'info-message');
-            if (duration > 0) { // Only hide if duration is positive
-                setTimeout(() => {
-                    feedMessage.style.display = 'none';
-                    feedMessage.textContent = '';
-                }, duration);
-            }
+
+            clearTimeout(window.feedMessageTimeout);
+            window.feedMessageTimeout = setTimeout(() => {
+                feedMessage.style.display = 'none';
+            }, timeout);
         }
     }
 
-    // Helper to get saved articles from localStorage
-    function getSavedArticles() {
-        try {
-            const saved = localStorage.getItem(SAVED_ARTICLES_KEY);
-            const articlesMap = saved ? JSON.parse(saved) : {};
-            return Object.values(articlesMap);
-        } catch (e) {
-            console.error("Error parsing saved articles from localStorage in home.js:", e);
-            return [];
-        }
-    }
-
-    // Helper to save an article to localStorage
-    function saveArticle(article) {
-        const savedArticles = getSavedArticlesMap(); // Use getSavedArticlesMap to modify map directly
-        if (!savedArticles[article.id]) {
-            savedArticles[article.id] = article;
-            localStorage.setItem(SAVED_ARTICLES_KEY, JSON.stringify(savedArticles));
-            // showFeedMessage(`'${article.title}' saved!`); // This message is now handled by article_detail.html
-            return true;
-        }
-        return false;
-    }
-
-    // Helper to remove an article from localStorage
-    function removeArticle(articleId) {
-        const savedArticles = getSavedArticlesMap();
-        if (savedArticles[articleId]) {
-            delete savedArticles[articleId];
-            localStorage.setItem(SAVED_ARTICLES_KEY, JSON.stringify(savedArticles));
-            // showFeedMessage('Article removed from saved.'); // This message is now handled by article_detail.html
-            return true;
-        }
-        return false;
-    }
-
-    // Helper to get saved articles as a map (needed for removal logic)
-    function getSavedArticlesMap() {
-        try {
-            const saved = localStorage.getItem(SAVED_ARTICLES_KEY);
-            return saved ? JSON.parse(saved) : {};
-        } catch (e) {
-            console.error("Error parsing saved articles map from localStorage:", e);
-            return {};
-        }
-    }
-
-    // Function to create an article card HTML element
+    // Function to create an individual article card
     function createArticleCard(article) {
-        const articleCard = document.createElement('div');
+        if (!article || !article.id) {
+            console.error("ERROR: Invalid article data received.", article);
+            return null;
+        }
+
+        const articleCard = document.createElement('a');
+        articleCard.href = `/article/${article.id}`;
         articleCard.classList.add('article-card');
-        articleCard.dataset.id = article.id; // Store article ID on the card
 
-        // Determine category class and colors for styling
-        let categoryText = article.category || 'General';
-        let categoryKey = categoryText.toLowerCase().replace(' ', '-');
-        const categoryColors = {
-            'health': { bg: '#e8f5e9', text: '#2e7d32' },
-            'environment': { bg: '#e3f2fd', text: '#1565c0' },
-            'science': { bg: '#ffe0b2', text: '#e65100' },
-            'technology': { bg: '#ede7f6', text: '#673ab7' },
-            'business': { bg: '#fffde7', text: '#fbc02d' },
-            'politics': { bg: '#ffebee', text: '#c62828' },
-            'society': { bg: '#eeeeee', text: '#616161' },
-            'education': { bg: '#e0f2f7', text: '#006064' },
-            'general': { bg: '#f0f0f0', text: '#424242' },
-            'events': { bg: '#fde0dc', text: '#d32f2f' }
-        };
-        const colors = categoryColors[categoryKey] || categoryColors['general'];
+        const categoryClass = article.category ? article.category.toLowerCase().replace(' ', '-') : 'general';
 
-        const savedArticles = getSavedArticlesMap(); // Get the map to check if saved
-        const isSaved = !!savedArticles[article.id]; // Convert to boolean
-
-        articleCard.innerHTML = `
-            <img src="${article.image_url || 'https://placehold.co/600x400/e0e0e0/555555?text=No+Image'}" alt="${article.title}" class="article-card-image" onerror="this.onerror=null;this.src='https://placehold.co/600x400/e0e0e0/555555?text=No+Image';">
-            <div class="article-card-content">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span class="article-card-category-tag" style="background-color: ${colors.bg}; color: ${colors.text};">${categoryText}</span>
-                    <i class="far fa-bookmark save-article-btn ${isSaved ? 'saved fas' : ''}" data-article-id="${article.id}"></i>
-                </div>
-                <h3>${article.title}</h3>
-                <p>${article.summary}</p>
+        const cardContent = `
+            <div class="article-content">
+                <span class="article-category-tag ${categoryClass}">${article.category || 'General'}</span>
+                <h3 class="article-title">${article.title || 'No Title'}</h3>
+                <p class="article-summary">${article.summary || 'No summary available.'}</p>
             </div>
         `;
 
-        // Add event listener for the save button
-        const saveBtn = articleCard.querySelector('.save-article-btn');
-        if (saveBtn) {
-            saveBtn.addEventListener('click', (event) => {
-                event.stopPropagation(); // Prevent card click from triggering
-                const articleId = saveBtn.dataset.articleId;
-                if (saveBtn.classList.contains('saved')) {
-                    removeArticle(articleId);
-                    saveBtn.classList.remove('saved', 'fas');
-                    saveBtn.classList.add('far'); // Change to outline icon
-                    // showFeedMessage('Article removed from saved!', false, 2000); // Shorter duration
-                } else {
-                    saveArticle(article); // Pass the full article object
-                    saveBtn.classList.add('saved', 'fas'); // Change to solid icon
-                    saveBtn.classList.remove('far');
-                    // showFeedMessage('Article saved!', false, 2000); // Shorter duration
-                }
-            });
-        }
-
-        // Add event listener for clicking the card (to view full article)
-        articleCard.addEventListener('click', () => {
-            window.location.href = `/article/${article.id}`;
-        });
-
+        articleCard.innerHTML = cardContent;
         return articleCard;
     }
 
-    // Function to render articles into a grid
+    // Function to render articles into a specified container
     function renderArticles(articles, gridElement) {
+        if (!gridElement) {
+            console.error("ERROR: Grid element is null or undefined. Cannot render articles.");
+            return;
+        }
+
         gridElement.innerHTML = ''; // Clear existing articles
+
         if (articles && articles.length > 0) {
-            console.log(`DEBUG: Rendering ${articles.length} articles into ${gridElement.id}`);
             articles.forEach(article => {
-                gridElement.appendChild(createArticleCard(article));
+                const articleCard = createArticleCard(article);
+                if (articleCard) {
+                    gridElement.appendChild(articleCard);
+                }
             });
         } else {
-            console.log(`DEBUG: No articles to render for ${gridElement.id}. Displaying message.`);
-            gridElement.innerHTML = '<p class="info-message">No articles available in this section.</p>';
+            gridElement.innerHTML = '<p class="info-message">No articles available in this section yet. Please refresh or check back later.</p>';
         }
     }
 
-    // Function to fetch articles from the backend
-    async function fetchArticles(section = null, refresh = false) {
-        console.log(`DEBUG: fetchArticles called. Refresh: ${refresh}`);
-        if (loadingIndicator) loadingIndicator.style.display = 'inline-block';
-        if (refreshIcon) refreshIcon.style.display = 'none';
-        if (refreshFeedBtn) refreshFeedBtn.disabled = true; // Disable button during fetch
-
-        const { newsApiKey, geminiApiKey } = getUserApiKeys();
-
-        // Check if API keys are available for the initial fetch
-        if (!newsApiKey || !geminiApiKey) {
-            console.warn("WARNING: API keys missing. Cannot fetch articles from backend.");
-            showFeedMessage("Please enter your NewsAPI and Gemini API keys in Profile Settings to fetch articles.", true, 0); // Display indefinitely
-            if (loadingIndicator) loadingIndicator.style.display = 'none';
-            if (refreshIcon) refreshIcon.style.display = 'inline-block';
-            if (refreshFeedBtn) refreshFeedBtn.disabled = false;
-            return; // Stop execution if keys are missing
+    async function fetchArticles(section = null, isRefresh = false) {
+        if (isRefresh && refreshFeedBtn) {
+            refreshFeedBtn.disabled = true;
+            if (loadingIndicator) loadingIndicator.style.display = 'block';
+            if (refreshIcon) refreshIcon.style.display = 'none';
+            showFeedMessage("Fetching new stories...", false, 99999);
         } else {
-            // Clear any previous persistent error message if keys are now present
-            if (feedMessage && feedMessage.textContent.includes("API keys missing")) {
-                feedMessage.style.display = 'none';
-                feedMessage.textContent = '';
-            }
+            showFeedMessage("Loading news articles...", false, 99999);
         }
 
+        console.log("DEBUG: Attempting to fetch articles...");
+
         try {
-            const queryParams = new URLSearchParams();
-            if (refresh) {
-                queryParams.append('refresh', 'true');
-            }
+            const url = `/api/get_feed_articles`;
+            const headers = getUserApiKeys();
+            const response = await fetch(url, { headers: headers });
 
-            console.log("DEBUG: Fetching from /api/get_feed_articles with keys...");
-            const response = await fetch(`/api/get_feed_articles?${queryParams.toString()}`, {
-                headers: {
-                    'X-User-News-API-Key': newsApiKey,
-                    'X-User-Gemini-API-Key': geminiApiKey
-                }
-            });
-
-            const data = await response.json();
-            console.log("DEBUG: API Response Data:", data);
+            console.log("DEBUG: Fetch request complete. Response status:", response.status);
 
             if (!response.ok) {
-                if (response.status === 401 && data.error && data.error.includes("API keys not provided")) {
-                    showFeedMessage("API keys are missing or invalid. Please update them in your profile settings.", true, 0); // Display indefinitely
-                } else {
-                    showFeedMessage(data.error || 'Failed to fetch articles. Please try again.', true);
-                }
-                return;
+                const errorText = await response.text();
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
             }
 
-            // Render articles for each section
+            const data = await response.json();
+            console.log("DEBUG: Data received from API:", data);
+
             renderArticles(data.latest_news, latestNewsGrid);
             renderArticles(data.general_misconceptions, generalMisconceptionsGrid);
             renderArticles(data.important_issues, importantIssuesGrid);
@@ -243,15 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (refreshFeedBtn) {
         refreshFeedBtn.addEventListener('click', () => fetchArticles(null, true));
     }
-
-    // Event listeners for "More" links (if you still have them, they are not in your latest feed.html)
-    document.querySelectorAll('.more-link').forEach(link => {
-        link.addEventListener('click', async (event) => {
-            event.preventDefault();
-            const section = event.currentTarget.dataset.section;
-            fetchArticles(section, true); // This will trigger a full refresh of all sections
-        });
-    });
 
     // Initial fetch when the page loads
     fetchArticles();

@@ -57,7 +57,11 @@
 <script>
     // Define global JavaScript variables for avatar URLs, processed by Flask's Jinja2
     const BOT_AVATAR_URL = "{{ url_for('static', filename='img/robot.png') }}";
-    const USER_AVATAR_URL = "{{ url_for('static', filename='img/avatars/default_profile.jpeg') }}";
+    // Dynamically set USER_AVATAR_URL from localStorage if available, else use default
+    let USER_AVATAR_URL = localStorage.getItem('userProfilePic');
+    if (!USER_AVATAR_URL) {
+        USER_AVATAR_URL = "/static/img/avatars/default_profile.jpeg";
+    }
 </script>
 <script src="{{ url_for('static', filename='js/learn.js') }}"></script>
 {% endblock %}

@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "/static/img/avatars/singerpfp.png", "/static/img/avatars/spacepfp.png", "/static/img/avatars/wizardpfp.png",
         "/static/img/avatars/zombiepfp.png"
     ];
-    const defaultAvatarPath = "{{ url_for('static', filename='img/avatars/default_profile.jpeg') }}";
+    const defaultAvatarPath = "/static/img/avatars/default_profile.jpeg";
 
 
     // --- Page Scroll Lock Functions ---

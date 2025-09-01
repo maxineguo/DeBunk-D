@@ -49,19 +49,14 @@ knowledge_articles = {
                             Beyond just being a channel, media serves several fundamental purposes in our lives and in society. Understanding these functions helps us understand the intent behind a message.
 
                             **To Inform:** This is perhaps the most obvious function. Media keeps us updated on current events, from breaking news to scientific discoveries, weather forecasts, and public announcements. The goal is to provide facts and data.
-                            [Example: A news report on a new scientific study.]
 
                             **To Entertain:** Media is a huge source of enjoyment and leisure. From movies and TV shows to music, video games, and viral memes, entertainment media provides an escape, relaxation, and fun.
-                            [Example: A comedy show or a popular music video.]
 
                             **To Persuade:** Often, media aims to convince you of something. This is very common in advertising, where the goal is to get you to buy a product or service. Political campaigns use media to persuade you to vote for a candidate. Public service announcements persuade you to adopt certain behaviors (like recycling).
-                            [Example: A commercial for a new smartphone or a political advertisement.]
 
                             **To Educate:** Media can be a powerful tool for learning. Documentaries, educational programs, online tutorials, and even informative articles on websites all aim to teach you new skills or provide deeper knowledge about a subject.
-                            [Example: A YouTube tutorial on how to code, or a historical documentary.]
 
                             **To Connect:** In our increasingly digital world, media allows us to build and maintain relationships. Social media platforms, messaging apps, and online forums enable communication, sharing, and community building across distances.
-                            [Example: Video chatting with a friend who lives far away, or joining an online community for a hobby.]
                         """
                     },
                     {
@@ -84,7 +79,6 @@ knowledge_articles = {
                 "conclusion": """
                     Your Media Day Reflector:
                     Think about all the media you've consumed today. In the box below, list some examples. Then, click "Analyze My Day" to see a breakdown of the functions of the media you used. This helps you see how different types of media serve different purposes in your life.
-                    [Input field for the user to type in their media consumption. Example input: "Watched a funny cat video on TikTok, read headlines on a news app, called my grandma, listened to music on Spotify, saw an ad for shoes on Instagram."] [A "Analyze My Day" button.] [The space where a small, personalized pie chart will appear, labeled with categories like "Entertainment," "Information," "Connection," "Persuasion," "Education," based on analysis of user input. A brief textual summary of their media diet could also be displayed.]
                 """
             },
             "1.2": {
@@ -131,14 +125,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You see a headline that says, "Scientists Discover Cure for All Diseases!" What is the most media-literate first step you should take?]
-                    [A) Share it immediately with all your friends and family because it's amazing news!]
-                    [B) Check the source of the article, look for other news outlets reporting the same story, and see if the claims are backed by credible scientific studies.]
-                    [C) Assume it's true because it's on the internet.]
-                    [D) Wait for someone else to tell you if it's true or not.]
-                    [Answer: B) Check the source of the article, look for other news outlets reporting the same story, and see if the claims are backed by credible scientific studies.] [Explanation: A media-literate approach involves verifying information from multiple, reliable sources before accepting or sharing it, especially for extraordinary claims.]
-
                     By developing your media literacy skills, you become a more informed, critical, and responsible participant in the vast world of information. It's an essential skill for navigating modern life.
                 """
             },
@@ -177,14 +163,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You notice that a popular TV show consistently portrays a certain profession (e.g., scientists) as always eccentric and socially awkward. What media literacy concept does this relate to most directly?]
-                    [A) Media as entertainment]
-                    [B) Media's role in shaping stereotypes and representation]
-                    [C) Media as a source of information]
-                    [D) Media's function to persuade]
-                    [Answer: B) Media's role in shaping stereotypes and representation] [Explanation: Consistent portrayal can reinforce stereotypes, influencing how audiences perceive real-world groups.]
-
                     By understanding the profound ways media shapes both individuals and society, you become better equipped to critically engage with messages, challenge harmful narratives, and contribute positively to the information environment.
                 """
             },
@@ -239,14 +217,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You see a social media post claiming a new study proves a controversial health theory. It has many shares and likes. Which of the 5 key questions is most important to ask first?]
-                    [A) What techniques are used to attract my attention?]
-                    [B) Who created this message?]
-                    [C) How might different people understand this message differently?]
-                    [D) Why was this message sent?]
-                    [Answer: B) Who created this message?] [Explanation: Identifying the source (creator) and their credibility is often the most critical first step in evaluating information, especially for scientific or health claims.]
-
                     By consistently applying these critical thinking questions and habits, you can navigate the complex media landscape with confidence, making informed decisions and contributing to a more truthful information environment.
                 """
             }
@@ -304,14 +274,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: A political campaign creates a short, emotionally charged video for Instagram featuring quick cuts and popular music. What is the most likely primary purpose and target audience?]
-                    [A) Purpose: Inform; Audience: Older adults interested in detailed policy.]
-                    [B) Purpose: Entertain; Audience: Young children.]
-                    [C) Purpose: Persuade; Audience: Younger voters on social media.]
-                    [D) Purpose: Educate; Audience: Political science academics.]
-                    [Answer: C) Purpose: Persuade; Audience: Younger voters on social media.] [Explanation: Emotional appeals, short format, and platform choice (Instagram) strongly suggest persuasion targeting a younger, social media-savvy demographic.]
-
                     Understanding purpose and audience helps you become a more discerning media consumer, allowing you to identify manipulative tactics and evaluate messages based on their true intent.
                 """
             },
@@ -364,14 +326,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: A news headline reads, "Local Community Leaders Demand Action on City Budget." Another headline about the same event reads, "City Council Faces Public Outcry Over Budget Cuts." What framing technique is most evident here?]
-                    [A) Selection and Omission]
-                    [B) Tone and Word Choice]
-                    [C) Visuals]
-                    [D) Placement]
-                    [Answer: B) Tone and Word Choice] [Explanation: "Demand Action" versus "Faces Public Outcry" uses different language to convey a different tone and perspective on the same event.]
-
                     By becoming aware of the power of words and framing, you can more accurately interpret media messages and avoid being unknowingly swayed by a particular narrative.
                 """
             },
@@ -425,14 +379,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You see an image circulating online that shows a large crowd at a recent event. A reverse image search reveals the photo was actually taken five years ago at a different event. What type of visual deception is this?]
-                    [A) Image Manipulation]
-                    [B) Staging]
-                    [C) Decontextualization]
-                    [D) Misleading Caption]
-                    [Answer: C) Decontextualization] [Explanation: The image itself might be genuine, but it's used in a new context to mislead about a current event.]
-
                     By applying critical thinking to images, videos, and data visualizations, you can better discern truth from deception and avoid being misled by the powerful impact of visual media.
                 """
             },
@@ -500,14 +446,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: An advertisement features a famous athlete endorsing a new sports drink, saying, "I drink this every day, and it helps me win!" What type of persuasive appeal is primarily being used?]
-                    [A) Logos (Logic)]
-                    [B) Pathos (Emotion)]
-                    [C) Ethos (Credibility)]
-                    [D) Kairos (Timeliness)]
-                    [Answer: C) Ethos (Credibility)] [Explanation: The ad relies on the athlete's fame and perceived expertise/success to build trust and persuade the audience.]
-
                     By dissecting arguments into their claims, reasons, and evidence, and recognizing persuasive appeals, you can make more informed judgments about the media messages you encounter.
                 """
             }
@@ -573,14 +511,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: Your aunt shares a post on Facebook claiming that a common household cleaner can cure cancer. She genuinely believes it will help people. What is this an example of?]
-                    [A) Disinformation]
-                    [B) Misinformation]
-                    [C) Malinformation]
-                    [D) Propaganda]
-                    [Answer: B) Misinformation] [Explanation: The information is false, but your aunt's intent is not to deceive, but to help, making it misinformation.]
-
                     By learning to differentiate between misinformation, disinformation, and malinformation, you equip yourself with the precise tools needed to navigate the complex and often challenging information landscape.
                 """
             },
@@ -651,14 +581,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: A news channel spends an entire segment on a celebrity scandal, while a major international policy debate receives only a brief mention. What type of bias is most evident?]
-                    [A) Political Bias]
-                    [B) Personal Bias]
-                    [C) Commercial Bias (Sensationalism)]
-                    [D) Geographic Bias]
-                    [Answer: C) Commercial Bias (Sensationalism)] [Explanation: Prioritizing a celebrity scandal over more significant news is often done to attract more viewers and generate clicks/ratings, which aligns with commercial interests.]
-
                     By actively seeking out and identifying different types of bias, you can develop a more balanced and accurate understanding of the information you consume.
                 """
             },
@@ -705,14 +627,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: A political advertisement shows a candidate shaking hands with farmers and factory workers, emphasizing their humble beginnings and "common sense" approach. Which propaganda technique is most evident?]
-                    [A) Name-Calling]
-                    [B) Testimonial]
-                    [C) Plain Folks]
-                    [D) Bandwagon]
-                    [Answer: C) Plain Folks] [Explanation: The candidate is trying to appear as an "average person" to gain trust and relatability with the audience.]
-
                     By understanding these common propaganda and persuasive tactics, you can become a more discerning media consumer, less susceptible to manipulation and more capable of forming your own informed opinions.
                 """
             },
@@ -772,14 +686,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You notice that your social media feed primarily shows you news articles and opinions that perfectly align with your political views. You rarely see content from the opposing side. What is this phenomenon called?]
-                    [A) Confirmation Bias]
-                    [B) Echo Chamber]
-                    [C) Filter Bubble]
-                    [D) Propaganda]
-                    [Answer: C) Filter Bubble] [Explanation: A filter bubble is specifically the result of algorithms curating content based on your past behavior, leading to intellectual isolation.]
-
                     Breaking out of your bubble requires conscious effort, but it's essential for developing a truly comprehensive and nuanced understanding of the world.
                 """
             }
@@ -843,14 +749,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You read an article about a new diet trend on a website called "HealthGuruTips.com." The author is listed only as "Admin." What is the biggest red flag regarding authorship here?]
-                    [A) The website name is catchy.]
-                    [B) The author is anonymous and lacks clear expertise.]
-                    [C) The article is about a diet trend.]
-                    [D) It's on a website, not a book.]
-                    [Answer: B) The author is anonymous and lacks clear expertise.] [Explanation: Lack of a verifiable author and credentials makes it impossible to assess their expertise or potential biases, which is a major red flag for health information.]
-
                     By rigorously questioning "Who made this message?" and assessing their expertise, you take a critical step towards identifying reliable information and protecting yourself from misleading content.
                 """
             },
@@ -911,14 +809,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You receive a link to an article titled "Amazing New Energy Source Discovered!" The URL is "amazing-news-now.info." What is the biggest red flag about this source?]
-                    [A) The title is exciting.]
-                    [B) The ".info" domain suffix and generic, sensational name suggest low credibility.]
-                    [C) It's a website.]
-                    [D) It doesn't mention the author.]
-                    [Answer: B) The ".info" domain suffix and generic, sensational name suggest low credibility.] [Explanation: While other factors are important, a non-standard or generic domain combined with a sensational name is a strong initial indicator of a potentially unreliable source.]
-
                     By carefully examining where information comes from – the publisher, the platform, and the URL – you can quickly assess its potential reliability and avoid falling for deceptive content.
                 """
             },
@@ -972,14 +862,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You read a report praising the benefits of a new sugary drink. You then discover the report was funded by a major beverage industry association. What is the most likely concern about this report?]
-                    [A) It's probably entertainment, not information.]
-                    [B) The report is likely biased due to commercial funding.]
-                    [C) The authors are probably not experts.]
-                    [D) It's an example of political propaganda.]
-                    [Answer: B) The report is likely biased due to commercial funding.] [Explanation: Funding from an industry association creates a clear conflict of interest, making the report likely to favor the industry's products.]
-
                     By diligently following the money, you can uncover hidden influences and make more informed judgments about the credibility and potential biases of the information you consume.
                 """
             },
@@ -1041,14 +923,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You read an article claiming a new supplement dramatically boosts memory. The article cites a study published in "Journal of Amazing Discoveries," but you can't find any information about this journal or its peer-review process. What is the biggest red flag?]
-                    [A) The claim sounds too good to be true.]
-                    [B) The journal's credibility and peer-review status are unclear.]
-                    [C) The article doesn't include a picture of the supplement.]
-                    [D) It's about a supplement.]
-                    [Answer: B) The journal's credibility and peer-review status are unclear.] [Explanation: Lack of verifiable peer review for a scientific claim is a major red flag, as it means the findings haven't been rigorously vetted by other experts.]
-
                     By understanding the standards of expertise and the rigorous process of peer review, you can navigate complex scientific and academic information with greater confidence and discern genuine breakthroughs from unproven claims.
                 """
             },
@@ -1104,14 +978,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You're reading an article about a recent economic downturn. It uses phrases like "clearly a disastrous policy" and "our leaders have failed us." It's published in the "Commentary" section. Is this primarily news or opinion?]
-                    [A) News, because it's about a current event.]
-                    [B) Opinion, due to the loaded language and "Commentary" section label.]
-                    [C) Both, as it contains facts and opinions.]
-                    [D) Neither, it's probably misinformation.]
-                    [Answer: B) Opinion, due to the loaded language and "Commentary" section label.] [Explanation: The subjective, judgmental language and its placement in a commentary section are strong indicators that it's an opinion piece, even if it discusses factual events.]
-
                     By consciously distinguishing between news and opinion, you empower yourself to consume media more thoughtfully, appreciating factual reporting while critically engaging with diverse viewpoints.
                 """
             }
@@ -1171,14 +1037,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You want to find official government reports about air quality in your city, specifically PDFs published in the last year. Which search query would be most effective?]
-                    [A) "air quality reports city"]
-                    [B) `site:.gov "air quality" "your city" filetype:pdf after:2024-01-01`]
-                    [C) `air quality reports OR city` ]
-                    [D) `"air quality" -blog` ]
-                    [Answer: B) `site:.gov "air quality" "your city" filetype:pdf after:2024-01-01`] [Explanation: This query uses multiple operators to precisely target government (.gov) PDFs about air quality in your city, published after a specific date.]
-
                     Mastering smart searching techniques is a foundational skill for fact-checking and navigating the vast digital information landscape efficiently and effectively.
                 """
             },
@@ -1244,14 +1102,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You see a viral video on social media claiming to show a recent natural disaster. Before sharing, you perform a reverse image search on a key frame from the video. What are you hoping to discover?]
-                    [A) If the video is entertaining.]
-                    [B) If the video was professionally produced.]
-                    [C) If the video has appeared online before and in what original context/date.]
-                    [D) The names of the people in the video.]
-                    [Answer: C) If the video has appeared online before and in what original context/date.] [Explanation: Reverse image search helps determine if a video is old footage being presented as new, or if it's from a different event, which is a common form of misinformation.]
-
                     Lateral reading and reverse image search are powerful tools that move you beyond passively consuming information to actively verifying it, making you a much more effective fact-checker.
                 """
             },
@@ -1298,14 +1148,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: A social media post claims, "Our city's crime rate has skyrocketed by 50%!" You investigate and find that the rate went from 2 incidents last year to 3 incidents this year. What type of misleading statistic is this?]
-                    [A) Cherry-Picking Data]
-                    [B) Misleading Average]
-                    [C) Correlation vs. Causation]
-                    [D) Percentage Game (Misleading Magnitude)]
-                    [Answer: D) Percentage Game (Misleading Magnitude)] [Explanation: While technically a 50% increase, presenting a percentage increase for very small absolute numbers can create a false impression of a much larger, more significant change.]
-
                     By rigorously checking the numbers and understanding common statistical deceptions, you can move beyond surface-level claims and gain a more accurate understanding of data-driven information.
                 """
             },
@@ -1368,14 +1210,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You see a video of a politician giving a speech, but their mouth movements seem slightly out of sync with the audio, and their face looks unusually smooth. What is the most likely explanation?]
-                    [A) A poor internet connection.]
-                    [B) A deepfake video.]
-                    [C) A low-quality camera.]
-                    [D) A live broadcast error.]
-                    [Answer: B) A deepfake video.] [Explanation: Inconsistent mouth movements, unnatural facial features, and audio sync issues are classic signs of a deepfake.]
-
                     As AI technology advances, our media literacy skills must evolve. By staying vigilant and knowing what to look for, you can better protect yourself from the deceptive potential of AI-generated content.
                 """
             }
@@ -1432,14 +1266,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You see a friend being cyberbullied in a group chat. What is the most responsible digital citizen action to take?]
-                    [A) Join in the bullying to fit in.]
-                    [B) Ignore it, it's not your problem.]
-                    [C) Defend your friend and report the bullying to a trusted adult or the platform.]
-                    [D) Take a screenshot and share it with other friends.]
-                    [Answer: C) Defend your friend and report the bullying to a trusted adult or the platform.] [Explanation: A good digital citizen stands up against cyberbullying and takes appropriate steps to report harmful behavior.]
-
                     Being a good digital citizen means actively participating in creating a positive and safe online world, exercising your rights, and fulfilling your responsibilities.
                 """
             },
@@ -1493,14 +1319,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You receive an email that looks like it's from your bank, asking you to click a link to "verify your account details immediately" or your account will be suspended. What should you do?]
-                    [A) Click the link immediately to prevent suspension.]
-                    [B) Reply to the email asking for more information.]
-                    [C) Delete the email and, if concerned, go directly to your bank's official website or call them using a trusted number.]
-                    [D) Forward the email to all your contacts to warn them.]
-                    [Answer: C) Delete the email and, if concerned, go directly to your bank's official website or call them using a trusted number.] [Explanation: This is a classic phishing attempt. You should never click suspicious links in emails, especially those asking for sensitive information. Always go directly to the official source.]
-
                     Protecting your privacy and data security is an ongoing process. By being vigilant and proactive, you can significantly reduce your risks and maintain greater control over your digital life.
                 """
             },
@@ -1551,14 +1369,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You notice that after watching several videos about a niche hobby, your social media feed is now almost entirely filled with content related to that hobby, and you rarely see other topics. What is the primary reason for this?]
-                    [A) Your friends are suddenly all interested in that hobby.]
-                    [B) The social media algorithm is personalizing your feed based on your engagement.]
-                    [C) You accidentally subscribed to a hobby-specific channel.]
-                    [D) It's a coincidence.]
-                    [Answer: B) The social media algorithm is personalizing your feed based on your engagement.] [Explanation: Algorithms learn from your viewing habits and prioritize similar content to keep you engaged, leading to a filter bubble effect.]
-
                     Understanding social media algorithms empowers you to take control of your online experience, making it more diverse, healthier, and less susceptible to unintended negative consequences.
                 """
             },
@@ -1618,13 +1428,6 @@ knowledge_articles = {
                 ],
                 "conclusion": """
                     **Quick Check:**
-                    [Question 1: You see a post from your favorite social media influencer raving about a new "miracle weight loss tea." The post includes a discount code but no mention of it being a paid promotion. What is the biggest red flag?]
-                    [A) The tea sounds too good to be true.]
-                    [B) The influencer is not a health expert.]
-                    [C) Lack of clear disclosure that it's a sponsored post.]
-                    [D) They are offering a discount code.]
-                    [Answer: C) Lack of clear disclosure that it's a sponsored post.] [Explanation: Influencers are legally and ethically required to disclose paid promotions. Lack of disclosure is a major red flag that the content is a hidden advertisement.]
-
                     By developing a skeptical eye for tricky ads and common scam tactics, you can protect your personal information, your money, and your trust in the online world.
                 """
             },
@@ -1697,14 +1500,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You see a group of people making fun of someone in a public online forum. What is the most effective immediate action you can take as an upstander?]
-                    [A) Join in to make sure they stop.]
-                    [B) Report the comments to the forum moderators and send a private message of support to the person being targeted.]
-                    [C) Post a sarcastic comment to shame the bullies.]
-                    [D) Ignore it, hoping someone else will handle it.]
-                    [Answer: B) Report the comments to the forum moderators and send a private message of support to the person being targeted.] [Explanation: Reporting ensures the platform is aware, and a private message provides direct support to the victim without escalating the public confrontation.]
-
                     Being kind and standing up to cyberbullying online are essential acts of digital citizenship that help create a safer and more respectful environment for everyone.
                 """
             },
@@ -1766,14 +1561,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You're applying for a scholarship, and you know the committee often checks applicants' social media. You have some old posts from years ago that are a bit unprofessional. What is the best action to take?]
-                    [A) Delete all your social media accounts immediately.]
-                    [B) Make all your accounts private.]
-                    [C) Review your old posts, delete or archive any unprofessional content, and update privacy settings.]
-                    [D) Create new, professional social media accounts and ignore the old ones.]
-                    [Answer: C) Review your old posts, delete or archive any unprofessional content, and update privacy settings.] [Explanation: Proactively cleaning up your existing digital footprint is the most effective way to manage your online reputation for future opportunities.]
-
                     Your digital footprint is a reflection of you online. By understanding it and managing it thoughtfully, you can protect your privacy, enhance your reputation, and shape your online narrative.
                 """
             }
@@ -1834,14 +1621,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You're creating a short video for social media about a local issue. You find a compelling statistic online that supports your viewpoint, but you can't find its original source. What is the most ethical action to take?]
-                    [A) Use the statistic anyway, it sounds good.]
-                    [B) Use the statistic but add a disclaimer that you're not sure of the source.]
-                    [C) Omit the statistic, as you cannot verify its accuracy and original source.]
-                    [D) Search for a different statistic that supports your point, even if less compelling.]
-                    [Answer: C) Omit the statistic, as you cannot verify its accuracy and original source.] [Explanation: A key ethical principle for media creators is accuracy. If you cannot verify a fact, it's best not to include it to avoid spreading misinformation.]
-
                     By embracing ethical principles and best practices, you can become a responsible and influential media creator, contributing positively to the vast and dynamic digital landscape.
                 """
             },
@@ -1918,14 +1697,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You are making a non-profit educational video for your school project. You use a 10-second clip from a popular movie to illustrate a point you are making about film techniques. You do not monetize the video. Is this likely to be considered fair use?]
-                    [A) No, because you didn't get permission from the movie studio.]
-                    [B) Yes, because it's for non-profit educational purposes, a small portion, and transformative (commentary).]
-                    [C) Only if you get permission from the director.]
-                    [D) Only if the movie is in the public domain.]
-                    [Answer: B) Yes, because it's for non-profit educational purposes, a small portion, and transformative (commentary).] [Explanation: This scenario aligns well with the factors that favor fair use, particularly purpose (education/commentary) and amount used.]
-
                     Understanding copyright and fair use empowers you to create media responsibly, respecting the intellectual property of others while still leveraging existing works for legitimate purposes.
                 """
             },
@@ -1971,14 +1742,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You're scrolling through a news site and see an article about a breaking event. You notice the language is a bit generic and repetitive, and it lacks specific quotes or on-the-ground details. What might this suggest about the article's origin?]
-                    [A) It's likely a well-researched investigative piece.]
-                    [B) It might be an early draft by a human journalist.]
-                    [C) It could be AI-generated text, lacking human nuance and specific reporting.]
-                    [D) It's probably a satirical piece.]
-                    [Answer: C) It could be AI-generated text, lacking human nuance and specific reporting.] [Explanation: Generic language, repetition, and lack of specific details are common characteristics of text generated by large language models (AI).]
-
                     AI is a powerful tool, but like any tool, its impact depends on how it's used. By understanding its capabilities and limitations, you can leverage its benefits while protecting yourself from its risks in the evolving media landscape.
                 """
             },
@@ -2031,18 +1794,6 @@ knowledge_articles = {
                     }
                 ],
                 "conclusion": """
-                    **Quick Check:**
-                    [Question 1: You are in a VR news simulation that puts you "inside" a virtual crowd at a political rally. What is the most media-literate question to ask yourself?]
-                    [A) "How many people are in this virtual crowd?"]
-                    [B) "Is this a real crowd, or a simulated experience designed to evoke a feeling?"]
-                    [C) "What time of day is it in the virtual world?"]
-                    [Feedback: Correct! In VR, it's crucial to distinguish between simulated experiences and reality, especially when they aim to influence opinions.]
-                    Scenario 2:  [Text: "An AR app shows you virtual furniture in your home. The furniture looks great, but the app also asks for access to your exact location and microphone."]
-                    [A) "Does this furniture come in other colors?"]
-                    [B) "Why does a furniture app need my location and microphone? What data is it collecting?"]
-                    [C) "Is this app compatible with my phone?"]
-                    [Feedback: Correct! Questioning unnecessary data permissions is vital for protecting your privacy in AR and other apps.]
-
                     Your Future-Ready Media Literacy Superpower
                     Navigating the exciting world of VR, AR, and other emerging media requires a constantly evolving media literacy superpower. It empowers you to:
                     * **Distinguish reality from simulation:** Understand when you are in a digital world versus interacting with the real one.

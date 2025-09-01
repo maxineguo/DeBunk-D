@@ -114,10 +114,10 @@ CATEGORY_COLORS = {
 DEFAULT_CATEGORY_COLOR = CATEGORY_COLORS['general'] # Fallback if category not found
 
 def background_article_generation_worker(gemini_key, news_key):
-    """
+    """"
     Worker thread to generate and update articles in the cache.
     It performs initial generation and then continuous updates.
-    """
+"""
     global last_429_error_time
     print("DEBUG: Background article generation worker started.")
     
@@ -567,7 +567,8 @@ def learn_article_detail(article_id):
             break
     if not article_data:
         return "Article not found", 404
-    return render_template('learn_article_detail.html', article=article_data)
+    # Pass the correct back_link for Knowledge Hub
+    return render_template('learn_article_detail.html', article=article_data, back_link=url_for('learn'))
 # --- API Endpoints ---
 
 @app.route('/api/get_feed_articles', methods=['GET'])
@@ -586,11 +587,20 @@ def get_feed_articles_api():
         return jsonify({"error": "API keys not provided or configured. Please enter them in your profile settings.", "code": 401}), 401
 
     with cache_lock:
+        # Filter out None and also any non-dict objects for extra safety
         response_data = {
-            "latest_news": [a for a in feed_cache["latest_news"]["full_articles"] if a is not None][:MAX_ARTICLES_PER_SECTION],
-            "general_misconceptions": [a for a in feed_cache["general_misconceptions"]["full_articles"] if a is not None][:MAX_ARTICLES_PER_SECTION],
-            "important_issues": [a for a in feed_cache["important_issues"]["full_articles"] if a is not None][:MAX_ARTICLES_PER_SECTION]
+            "latest_news": [a for a in feed_cache["latest_news"]["full_articles"] if isinstance(a, dict)],
+            "general_misconceptions": [a for a in feed_cache["general_misconceptions"]["full_articles"] if isinstance(a, dict)],
+            "important_issues": [a for a in feed_cache["important_issues"]["full_articles"] if isinstance(a, dict)]
         }
+    # Debug: Print the lengths and maybe a sample title
+    print("DEBUG: Returning articles to frontend:")
+    print("  latest_news:", len(response_data["latest_news"]), 
+          [a.get("title") for a in response_data["latest_news"][:2]])
+    print("  general_misconceptions:", len(response_data["general_misconceptions"]), 
+          [a.get("title") for a in response_data["general_misconceptions"][:2]])
+    print("  important_issues:", len(response_data["important_issues"]), 
+          [a.get("title") for a in response_data["important_issues"][:2]])
         
     if request.args.get('refresh') == 'true':
         with worker_state_lock:

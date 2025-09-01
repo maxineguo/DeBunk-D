@@ -122,8 +122,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const avatar = document.createElement('img');
         avatar.classList.add('message-profile-pic');
-        avatar.src = sender === 'user' ? USER_AVATAR_URL : BOT_AVATAR_URL;
-        avatar.alt = sender === 'user' ? 'User Avatar' : 'Bot Avatar';
+        // Always get the latest user avatar from localStorage
+        if (sender === 'user') {
+            avatar.src = localStorage.getItem('userProfilePic') || "/static/img/avatars/default_profile.jpeg";
+            avatar.alt = 'User Avatar';
+        } else {
+            avatar.src = BOT_AVATAR_URL;
+            avatar.alt = 'Bot Avatar';
+        }
 
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message-content', `${sender}-content`);
@@ -413,6 +419,5 @@ document.addEventListener('DOMContentLoaded', () => {
             learnUnitsContainer.appendChild(createUnitDropdown(unit));
             totalLessons += unit.lessons.length;
         });
-        totalArticlesCountDisplay.textContent = `Explore ${totalLessons} lessons across ${learningUnitsData.length} learning units about media literacy`;
     }
 });
