@@ -1559,7 +1559,7 @@ input:checked + .slider:before {
 }
 
 .send-icon {
-    width: 30px; /* Adjusted to original size */
+    width: 45px; /* Adjusted to original size */
     height: 20px; /* Adjusted to original size */
     filter: brightness(0) invert(1); /* Makes icon white */
 }
@@ -2908,3 +2908,43 @@ body.dark-theme .lesson-image {
 .latest-news { background-color: #007ACC; } /* Deep Sky Blue */
 .general-misconceptions { background-color: #34B06F; } /* Jade Green */
 .important-issues { background-color: #D9534F; } /* Sunset Red */
+
+/* Modern API Key Input Styles */
+.api-key-input-group {
+    position: relative;
+    margin-bottom: 25px; /* Space between each input field */
+}
+
+.modern-input {
+    width: 100%;
+    padding: 15px; /* Increased padding for a larger touch area */
+    font-size: 1em;
+    border: 1px solid #ddd; /* Subtle grey border */
+    border-radius: 8px;
+    background-color: #f9f9f9; /* Light grey background */
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* Ensures padding doesn't affect the width */
+    color: #333; /* Dark text color for readability */
+}
+
+.modern-input:focus {
+    border-color: #007bff; /* Blue border on focus */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Subtle blue glow */
+    outline: none; /* Removes default outline */
+    background-color: #fff; /* White background on focus */
+}
+
+.input-label {
+    position: absolute;
+    top: -10px; /* Position the label above the input */
+    left: 10px;
+    font-size: 0.8em;
+    color: #666; /* Grey color for the label */
+    background-color: #fefefe; /* Matches the modal background */
+    padding: 0 5px; /* Padding to create a break in the border */
+    transition: all 0.3s ease;
+}
+
+.modern-input:focus + .input-label {
+    color: #007bff; /* Change label color on input focus */
+}

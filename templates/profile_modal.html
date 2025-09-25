@@ -52,16 +52,21 @@
                     <span class="slider round"></span> <span class="toggle-text">Use your own NewsAPI Key</span> {# MODIFIED: WRAPPED TEXT IN SPAN #}
                 </label>
                 <div id="news-api-key-input-container" style="margin-top: 15px;">
-                    <div class="api-key-field-group">
-                        <label for="news-api-key-input">NewsAPI Key:</label>
-                        <input type="password" id="news-api-key-input" placeholder="Enter NewsAPI Key">
+                    <div id="api-key-settings">
+                        <div class="profile-section-divider"></div>
+                        <div class="api-key-settings-container">
+                            <div class="api-key-input-group">
+                                <input type="password" id="news-api-key-input" placeholder="Enter NewsAPI Key" class="modern-input">
+                                <label for="news-api-key-input" class="input-label">NewsAPI Key</label>
+                            </div>
+                            <div class="api-key-input-group">
+                                <input type="password" id="gemini-api-key-input" placeholder="Enter Gemini API Key" class="modern-input">
+                                <label for="gemini-api-key-input" class="input-label">Gemini Key</label>
+                            </div>
+                            <button id="save-api-keys-btn" class="btn secondary-btn">Save Keys for Session</button>
+                            <p id="api-key-message" class="text-center text-sm mt-2" style="display: none;"></p>
+                        </div>
                     </div>
-                    <div class="api-key-field-group">
-                        <label for="gemini-api-key-input">Gemini Key:</label>
-                        <input type="password" id="gemini-api-key-input" placeholder="Enter Gemini Key">
-                    </div>
-                    <button id="save-api-keys-btn" class="btn secondary-btn">Save Keys for Session</button>
-                    <p id="api-key-message" class="text-center text-sm mt-2" style="display: none;"></p>
                 </div>
             </div>
         </div>
