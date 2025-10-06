@@ -117,7 +117,7 @@ def background_article_generation_worker(gemini_key, news_key):
     """"
     Worker thread to generate and update articles in the cache.
     It performs initial generation and then continuous updates.
-"""
+
     global last_429_error_time
     print("DEBUG: Background article generation worker started.")
     
@@ -512,7 +512,7 @@ def background_article_generation_worker(gemini_key, news_key):
                 print(f"DEBUG: Background: Encountered 429. Initiating backoff for {BACKOFF_DURATION_ON_429} seconds.")
             time.sleep(10)
 
-    print("DEBUG: Background article generation worker stopped.")
+    print("DEBUG: Background article generation worker stopped.")"""
 
 
 # --- Main Page Routes ---
