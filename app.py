@@ -9,7 +9,7 @@ import traceback
 import requests
 import json
 import markdown
-from news_backend.knowledge_hub_data import knowledge_articles
+#from news_backend.knowledge_hub_data import knowledge_articles
 
 # --- Explicitly load environment variables from .env file ---
 dotenv_path = find_dotenv()

@@ -7,3 +7,4 @@ static/img/.DS_Store
 static/img/avatars/.DS_Store
 .DS_Store
 /Video Materials
+news_backend/__pycache__/knowledge_hub_data.cpython-312.pyc
