@@ -9,7 +9,17 @@ import traceback
 import requests
 import json
 import markdown
-#from news_backend.knowledge_hub_data import knowledge_articles
+from news_backend.knowledge_hub_data import unit1_data, unit2_data, unit3_data, unit4_data, unit5_data, unit6_data, unit7_data
+
+knowledge_articles = {
+    **unit1_data,
+    **unit2_data,
+    **unit3_data,
+    **unit4_data,
+    **unit5_data,
+    **unit6_data,
+    **unit7_data
+}
 
 # --- Explicitly load environment variables from .env file ---
 dotenv_path = find_dotenv()
@@ -684,3 +694,102 @@ if __name__ == '__main__':
         print("WARNING: Background generation worker not started due to missing API keys.")
 
     app.run(debug=True, use_reloader=False)
+
+@app.route('/learn/<path:article_id>')
+def learn_article_detail(article_id):
+    article_data = None
+    unit_name = None
+    
+    # Search through all units to find the article
+    for unit_key, unit_info in knowledge_articles.items():
+        if article_id in unit_info["lessons"]:
+            article_data = unit_info["lessons"][article_id]
+            unit_name = unit_key
+            break
+    
+    if not article_data:
+        return "Article not found", 404
+    
+    return render_template('learn_article_detail.html', article=article_data, back_link=url_for('learn'))
+
+# Add new API endpoint for interactive activities
+@app.route('/api/analyze_bias', methods=['POST'])
+def analyze_bias_api():
+    """API endpoint for bias detection activity"""
+    article_text = request.json.get('text', '')
+    
+    user_gemini_api_key_from_header = request.headers.get('X-User-Gemini-API-Key')
+    gemini_api_key_to_use = user_gemini_api_key_from_header if user_gemini_api_key_from_header else GEMINI_API_KEY
+    
+    if not gemini_api_key_to_use:
+        return jsonify({"error": "Gemini API key is missing."}), 401
+    
+    try:
+        # Import the analysis function
+        from news_backend.interactive_activities import analyze_bias
+        result = analyze_bias(article_text, gemini_api_key_to_use)
+        return jsonify(result)
+    except Exception as e:
+        print(f"Error in analyze_bias_api: {e}")
+        traceback.print_exc()
+        return jsonify({"error": "Failed to analyze bias", "message": str(e)}), 500
+
+@app.route('/api/check_framing', methods=['POST'])
+def check_framing_api():
+    """API endpoint for framing analysis activity"""
+    headline = request.json.get('headline', '')
+    
+    user_gemini_api_key_from_header = request.headers.get('X-User-Gemini-API-Key')
+    gemini_api_key_to_use = user_gemini_api_key_from_header if user_gemini_api_key_from_header else GEMINI_API_KEY
+    
+    if not gemini_api_key_to_use:
+        return jsonify({"error": "Gemini API key is missing."}), 401
+    
+    try:
+        from news_backend.interactive_activities import analyze_framing
+        result = analyze_framing(headline, gemini_api_key_to_use)
+        return jsonify(result)
+    except Exception as e:
+        print(f"Error in check_framing_api: {e}")
+        traceback.print_exc()
+        return jsonify({"error": "Failed to analyze framing", "message": str(e)}), 500
+
+@app.route('/api/verify_source', methods=['POST'])
+def verify_source_api():
+    """API endpoint for source verification activity"""
+    source_url = request.json.get('url', '')
+    
+    user_gemini_api_key_from_header = request.headers.get('X-User-Gemini-API-Key')
+    gemini_api_key_to_use = user_gemini_api_key_from_header if user_gemini_api_key_from_header else GEMINI_API_KEY
+    
+    if not gemini_api_key_to_use:
+        return jsonify({"error": "Gemini API key is missing."}), 401
+    
+    try:
+        from news_backend.interactive_activities import verify_source
+        result = verify_source(source_url, gemini_api_key_to_use)
+        return jsonify(result)
+    except Exception as e:
+        print(f"Error in verify_source_api: {e}")
+        traceback.print_exc()
+        return jsonify({"error": "Failed to verify source", "message": str(e)}), 500
+
+@app.route('/api/detect_deepfake', methods=['POST'])
+def detect_deepfake_api():
+    """API endpoint for deepfake detection activity"""
+    description = request.json.get('description', '')
+    
+    user_gemini_api_key_from_header = request.headers.get('X-User-Gemini-API-Key')
+    gemini_api_key_to_use = user_gemini_api_key_from_header if user_gemini_api_key_from_header else GEMINI_API_KEY
+    
+    if not gemini_api_key_to_use:
+        return jsonify({"error": "Gemini API key is missing."}), 401
+    
+    try:
+        from news_backend.interactive_activities import analyze_deepfake_signs
+        result = analyze_deepfake_signs(description, gemini_api_key_to_use)
+        return jsonify(result)
+    except Exception as e:
+        print(f"Error in detect_deepfake_api: {e}")
+        traceback.print_exc()
+        return jsonify({"error": "Failed to analyze for deepfakes", "message": str(e)}), 500

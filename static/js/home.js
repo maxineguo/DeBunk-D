@@ -141,24 +141,73 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Function to update learning progress bar (random for now)
+    // Function to calculate and display learning progress
     function updateLearningProgress() {
-        const randomProgress = Math.floor(Math.random() * 101); // Random number between 0 and 100
-        learningProgressFill.style.width = `${randomProgress}%`;
-        learningProgressPercentage.textContent = `${randomProgress}%`;
+        const progressData = JSON.parse(localStorage.getItem('debunkd_quick_check_progress') || '{}');
+        const totalData = JSON.parse(localStorage.getItem('debunkd_quick_check_totals') || '{}');
+
+        let answered = 0;
+        let total = 0;
+
+        // Calculate total answered and total questions
+        for (const lessonId in totalData) {
+            total += totalData[lessonId] || 0;
+            answered += progressData[lessonId] || 0;
+        }
+
+        // Avoid division by zero
+        const percentage = total > 0 ? Math.min(Math.round((answered / total) * 100), 100) : 0;
+
+        // Update bar visuals
+        learningProgressFill.style.width = `${percentage}%`;
+        learningProgressPercentage.textContent = `${percentage}%`;
+
+        // Update message dynamically
+        const message = document.querySelector('.encouraging-message');
+        if (message) {
+            if (percentage === 0) {
+                message.textContent = "Let's get started! Try your first Quick Check.";
+            } else if (percentage < 50) {
+                message.textContent = "Nice work! Keep answering Quick Checks to boost your score.";
+            } else if (percentage < 100) {
+                message.textContent = "You're doing great! You're over halfway there!";
+            } else {
+                message.textContent = "Amazing! You've completed all Quick Checks!";
+            }
+        }
     }
 
-    // Event listener for "View All Saved" button (for future implementation)
-    if (viewAllSavedBtn) {
-        viewAllSavedBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            savedArticlesGrid.innerHTML = ''; // Clear current display
-            const allSaved = getSavedArticles();
-            allSaved.forEach(article => {
-                savedArticlesGrid.appendChild(createArticleCard(article));
-            });
-            viewAllSavedBtn.style.display = 'none'; // Hide button after showing all
-        });
+    function updateLearningProgress() {
+        const progressData = JSON.parse(localStorage.getItem('debunkd_quick_check_progress') || '{}');
+        const totalData = JSON.parse(localStorage.getItem('debunkd_quick_check_totals') || '{}');
+
+        let answered = 0;
+        let total = 0;
+
+        for (const lessonId in totalData) {
+            total += totalData[lessonId] || 0;
+            answered += progressData[lessonId] || 0;
+        }
+
+        const percentage = total > 0 ? Math.min(Math.round((answered / total) * 100), 100) : 0;
+
+        learningProgressFill.style.width = `${percentage}%`;
+        learningProgressPercentage.textContent = `${percentage}%`;
+
+        const message = document.querySelector('.encouraging-message');
+        if (message) {
+            if (percentage === 0) {
+                message.textContent = "Let's get started! Try your first Quick Check.";
+            } else if (percentage < 50) {
+                message.textContent = "Nice work! Keep answering Quick Checks to boost your score.";
+            } else if (percentage < 100) {
+                message.textContent = "You're doing great! You're over halfway there!";
+            } else {
+                message.textContent = "Amazing! You've completed all Quick Checks!";
+            }
+        }
     }
+
 
     // Initial render on page load
     renderSavedArticles();

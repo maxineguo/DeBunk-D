@@ -2,43 +2,118 @@
 
 {% block content %}
 <div class="article-detail-page bg-gray-50 min-h-screen py-8">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <!-- Back Button -->
-        <a href="javascript:history.back()" class="back-button flex items-center text-blue-600 hover:text-blue-800 mb-6 font-medium">
+        <a href="{{ back_link }}" class="back-button flex items-center text-blue-600 hover:text-blue-800 mb-6 font-medium">
             <i class="fas fa-arrow-left mr-2"></i> Back to Knowledge Hub
         </a>
 
         <div class="article-content-wrapper bg-white shadow-lg rounded-lg p-6 sm:p-8">
-            <!-- Category Tag (if available) -->
+            <!-- Category Tag -->
             {% if article.category %}
-            <span class="article-detail-category-tag inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full mb-2">
+            <span class="article-detail-category-tag inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full mb-4">
                 {{ article.category }}
             </span>
             {% endif %}
 
             <!-- Article Title -->
-            <h1 class="article-detail-title text-3xl sm:text-4xl font-bold text-gray-900 mb-2 leading-tight">
+            <h1 class="article-detail-title text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">
                 {{ article.title }}
             </h1>
 
             <!-- Introduction -->
             {% if article.introduction %}
-            <div class="article-detail-introduction text-lg text-gray-700 leading-tight" data-markdown-target="introduction"> {# Removed mb-3 here, as paragraphs inside will control spacing #}
-                {{ article.introduction }}
+            <div class="article-detail-introduction text-lg text-gray-700 mb-6 leading-relaxed bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                <p class="mb-0">{{ article.introduction }}</p>
             </div>
             {% endif %}
 
             <!-- Main Content Sections -->
             {% if article.sections %}
-            <div class="article-sections space-y-3"> {# This space-y will still apply between the article-section divs #}
+            <div class="article-sections space-y-8">
                 {% for section in article.sections %}
                 <div class="article-section">
-                    <h2 class="article-detail-section-heading text-2xl sm:text-3xl font-semibold text-gray-800 mb-1 mt-4"> {# mb-1 for minimal space below heading, mt-4 for space above #}
+                    <!-- Section Heading -->
+                    <h2 class="article-detail-section-heading text-2xl sm:text-3xl font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-gray-200">
                         {{ section.heading }}
                     </h2>
-                    <div class="article-detail-section-content text-base text-gray-700 leading-tight" data-markdown-target="section-content">
-                        {{ section.content }}
+                    
+                    <!-- Section Content -->
+                    <div class="article-detail-section-content text-base text-gray-700 leading-relaxed mb-4">
+                        <p>{{ section.content }}</p>
                     </div>
+
+                    <!-- Section Image (single) -->
+                    {% if section.image %}
+                    <div class="my-6 flex justify-center">
+                        <img src="{{ section.image }}" alt="{{ section.heading }}" class="rounded-lg shadow-md" style="max-width: 100%; max-height: 400px; height: auto; object-fit: contain;">
+                    </div>
+                    {% endif %}
+
+                    <!-- Multiple Section Images -->
+                    {% if section.images %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                        {% for img in section.images %}
+                        <div class="flex justify-center">
+                            <img src="{{ img }}" alt="{{ section.heading }}" class="rounded-lg shadow-md" style="max-width: 100%; max-height: 300px; height: auto; object-fit: contain;">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Quick Check Quiz -->
+                    {% if section.quick_check %}
+                    <div class="quick-check-container bg-gradient-to-br from-indigo-500 to-purple-600 p-8 my-8 rounded-2xl shadow-2xl transform hover:scale-102 transition-all duration-300">
+                        <!-- Header with animated icon -->
+                        <div class="flex items-center mb-6">
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-white rounded-full blur-xl opacity-50 animate-pulse"></div>
+                                <div class="relative bg-gradient-to-br from-yellow-300 to-orange-400 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-2xl font-black text-white mb-1">Quick Check</h3>
+                                <p class="text-indigo-100 text-sm font-medium">Test your understanding!</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Question -->
+                        <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 mb-6 border border-white border-opacity-20">
+                            <p class="font-bold text-white text-lg leading-relaxed">{{ section.quick_check.question|replace("'", "&#39;")|replace('"', "&quot;") }}</p>
+                        </div>
+                        
+                        <!-- Options -->
+                        <div class="space-y-3 mb-6">
+                            {% for option in section.quick_check.options %}
+                            <label class="quiz-option group relative flex items-start p-5 bg-white rounded-xl cursor-pointer transition-all duration-200 hover:shadow-xl hover:scale-102 border-2 border-transparent hover:border-indigo-300">
+                                <input type="radio" name="quick_check_{{ loop.index0 }}" value="{{ option[0] }}" class="peer sr-only">
+                                <!-- Custom Radio Button -->
+                                <div class="flex-shrink-0 w-5 h-5 rounded-full border-2 border-gray-300 mr-3 mt-0.5 relative peer-checked:border-indigo-600 peer-checked:bg-indigo-600 transition-all duration-200 group-hover:border-indigo-400">
+                                    <svg class="hidden peer-checked:block absolute inset-0 w-full h-full text-white p-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-gray-800 font-medium flex-1 group-hover:text-indigo-700 peer-checked:text-indigo-700 peer-checked:font-bold transition-colors">{{ option|replace("'", "&#39;")|replace('"', "&quot;") }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Check Button -->
+                        <button onclick="checkQuickAnswer('{{ section.quick_check.correct_answer }}', `{{ section.quick_check.explanation|replace("`", "\\`")|replace("'", "\\'")|replace('"', '\\"') }}`, {{ loop.index0 }})" 
+                                class="check-answer-btn w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-8 py-4 rounded-xl font-black text-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-200 flex items-center justify-center group">
+                            <svg class="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Check My Answer
+                        </button>
+                        
+                        <!-- Feedback Area -->
+                        <div id="quiz-feedback-{{ loop.index0 }}" class="quiz-feedback hidden mt-6"></div>
+                    </div>
+                    {% endif %}
                 </div>
                 {% endfor %}
             </div>
@@ -46,89 +121,1183 @@
 
             <!-- Conclusion -->
             {% if article.conclusion %}
-            <div class="article-conclusion mt-4 pt-2 border-t border-gray-200">
-                <h2 class="article-detail-section-heading text-2xl sm:text-3xl font-semibold text-gray-800 mb-1">
-                    Your Future-Ready Media Literacy Superpower
+            <div class="article-conclusion mt-8 pt-6 border-t-2 border-gray-200">
+                <h2 class="article-detail-section-heading text-2xl sm:text-3xl font-semibold text-gray-800 mb-4">
+                    Key Takeaways
                 </h2>
-                <div class="article-detail-conclusion-text text-lg text-gray-700 leading-tight" data-markdown-target="conclusion">
-                    {{ article.conclusion }}
+                <div class="article-detail-conclusion-text text-base text-gray-700 leading-relaxed bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                    <p>{{ article.conclusion }}</p>
                 </div>
             </div>
             {% endif %}
 
+            <!-- Interactive Activity Section -->
+            <div class="interactive-activity mt-12 pt-8 border-t-2 border-orange-300 bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-8 shadow-lg">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+                    <i class="fas fa-flask mr-3 text-orange-500"></i>
+                    Interactive Activity
+                </h2>
+                <p class="text-gray-600 mb-6">Put your knowledge into practice with this hands-on exercise!</p>
+                
+                <div id="activity-container">
+                    <div id="activity-content"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 flex flex-col items-center">
+        <div class="loading-spinner mb-4"></div>
+        <p class="text-gray-700 font-medium">Analyzing...</p>
+    </div>
+</div>
+
+<style>
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Modern Quiz Animations */
+@keyframes bounce-in {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.animate-bounce-in {
+    animation: bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.animate-shake {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.hover\:scale-102:hover {
+    transform: scale(1.02);
+}
+
+/* Peer-checked styling for custom radio */
+.quiz-option input[type="radio"]:checked ~ * {
+    color: #4f46e5;
+}
+
+/* Smooth transitions */
+.quiz-option {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quiz-option:hover {
+    transform: translateX(4px);
+}
+
+/* Hide default radio but keep it accessible */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.peer:checked ~ div svg {
+    display: block !important;
+}
+
+.peer:checked ~ div {
+    border-color: #4f46e5 !important;
+    background-color: #4f46e5 !important;
+}
+
+.border-3 {
+    border-width: 3px;
+}
+
+.analysis-result {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.activity-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.2s;
+}
+
+.activity-input:focus {
+    outline: none;
+    border-color: #f97316;
+}
+
+.activity-button {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px rgba(249, 115, 22, 0.3);
+}
+
+.activity-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(249, 115, 22, 0.4);
+}
+
+.activity-button:active {
+    transform: translateY(0);
+}
+
+/* Backdrop blur support */
+.backdrop-blur-sm {
+    backdrop-filter: blur(4px);
+}
+
+/* Gradient text effects */
+.bg-clip-text {
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+</style>
 {% endblock %}
 
 {% block scripts %}
-    {{ super() }} {# This ensures any scripts from base.html are included #}
-    <script>
-        // Function to render markdown (copied from learn.js, enhanced for paragraphs)
-        function renderMarkdown(text) {
-            if (!text) return '';
-
-            let html = text;
-
-            // 1. Handle paragraphs: Blocks of text separated by two or more newlines
-            // Replace multiple newlines with a unique placeholder, then split by it
-            html = html.replace(/\n{2,}/g, 'PARAGRAPH_BREAK_PLACEHOLDER');
-            let paragraphs = html.split('PARAGRAPH_BREAK_PLACEHOLDER');
-
-            // Process each paragraph
-            let processedParagraphs = paragraphs.map(p => {
-                // Trim leading/trailing whitespace from each paragraph
-                p = p.trim();
-                if (p === '') return ''; // Skip empty paragraphs
-
-                // Convert single newlines within a paragraph to <br>
-                p = p.replace(/\n/g, '<br>');
-
-                // Bold: **text** to <strong>text</strong>
-                p = p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                // Italic: *text* to <em>text</em>
-                p = p.replace(/\*(.*?)\*/g, '<em>$1</em>');
-
-                // Handle bullet points: - item to <ul><li>item</li></ul>
-                // This regex now works on the paragraph 'p' and handles multiple list items
-                // It finds lines starting with '-' (after an optional <br> or at the start of 'p')
-                // and converts them to <li> tags with tight margins.
-                p = p.replace(/(?:<br>\s*|^)\s*-\s*(.*?)(?=<br>|$)/g, '<li class="mb-0.5">$1</li>');
-                // Then, wrap consecutive <li> tags in a <ul> with tight margins
-                p = p.replace(/(<li.*?<\/li>)+/g, '<ul class="list-disc pl-5 my-0.5">$&</ul>');
-
-                // Remove any remaining stray asterisks or hyphens
-                p = p.replace(/(\*|\-)\s/g, '');
-
-                // Wrap the processed paragraph in a <p> tag with no vertical margin
-                // Only wrap if it's not already a list (to avoid <p> around <ul>)
-                if (!p.startsWith('<ul')) {
-                    return `<p class="my-0 leading-tight">${p}</p>`; // Apply my-0 and leading-tight directly
-                }
-                return p; // Return as is if it's a list
-            });
-
-            return processedParagraphs.join(''); // Join processed paragraphs back
+{{ super() }}
+<script>
+    const lessonId = "{{ article.title }}";
+    
+    // Check quick check answers
+    function checkQuickAnswer(correctAnswer, explanation, index) {
+        const selected = document.querySelector(`input[name="quick_check_${index}"]:checked`);
+        const feedback = document.getElementById(`quiz-feedback-${index}`);
+        
+        if (!selected) {
+            feedback.className = 'quiz-feedback mt-6 p-6 rounded-xl bg-yellow-100 border-l-4 border-yellow-500 shadow-lg animate-shake';
+            feedback.innerHTML = `
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 text-yellow-600 mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <p class="text-yellow-800 font-bold">Please select an answer first!</p>
+                </div>
+            `;
+            feedback.classList.remove('hidden');
+            return;
         }
+        
+        const isCorrect = selected.value === correctAnswer;
+        
+        if (isCorrect) {
+            feedback.className = 'quiz-feedback mt-6 p-6 rounded-xl bg-gradient-to-r from-green-400 to-emerald-500 border-l-4 border-green-600 shadow-xl animate-bounce-in';
+            feedback.innerHTML = `
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 mr-3">
+                        <div class="bg-white rounded-full p-1.5 shadow-lg">
+                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-white font-black text-lg mb-2">🎉 Correct! Well done!</p>
+                        <p class="text-white text-base leading-relaxed">${explanation}</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            feedback.className = 'quiz-feedback mt-6 p-6 rounded-xl bg-gradient-to-r from-red-400 to-pink-500 border-l-4 border-red-600 shadow-xl animate-shake';
+            feedback.innerHTML = `
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 mr-3">
+                        <div class="bg-white rounded-full p-1.5 shadow-lg">
+                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-white font-black text-lg mb-2">Not quite - let's learn from this!</p>
+                        <p class="text-white text-base mb-2">The correct answer is <span class="font-black bg-white bg-opacity-20 px-2 py-1 rounded">${correctAnswer}</span></p>
+                        <p class="text-white text-base leading-relaxed">${explanation}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        feedback.classList.remove('hidden');
+        feedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Apply markdown rendering to the introduction
-            const introElement = document.querySelector('[data-markdown-target="introduction"]');
-            if (introElement) {
-                introElement.innerHTML = renderMarkdown(introElement.textContent);
+    // Activity functions
+    async function analyzeWithAI(endpoint, data) {
+        const loadingOverlay = document.getElementById('loading-overlay');
+        loadingOverlay.classList.remove('hidden');
+        
+        const useOwnApiKey = localStorage.getItem('useOwnApiKey') === 'true';
+        let headers = { 'Content-Type': 'application/json' };
+        
+        if (useOwnApiKey) {
+            const userGeminiApiKey = sessionStorage.getItem('userGeminiApiKey');
+            if (userGeminiApiKey) {
+                headers['X-User-Gemini-API-Key'] = userGeminiApiKey;
             }
-
-            // Apply markdown rendering to each section's content
-            const sectionContentElements = document.querySelectorAll('[data-markdown-target="section-content"]');
-            sectionContentElements.forEach(element => {
-                element.innerHTML = renderMarkdown(element.textContent);
+        }
+        
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(data)
             });
-
-            // Apply markdown rendering to the conclusion
-            const conclusionElement = document.querySelector('[data-markdown-target="conclusion"]');
-            if (conclusionElement) {
-                conclusionElement.innerHTML = renderMarkdown(conclusionElement.textContent);
+            
+            const result = await response.json();
+            loadingOverlay.classList.add('hidden');
+            
+            if (result.success) {
+                return formatAnalysisResult(result.analysis);
+            } else if (result.response) {
+                return formatAnalysisResult(result.response);
+            } else {
+                return `<p class="text-red-600"><i class="fas fa-exclamation-circle mr-2"></i>Error: ${result.error || 'Unknown error'}</p>`;
             }
-        });
-    </script>
+        } catch (error) {
+            loadingOverlay.classList.add('hidden');
+            return `<p class="text-red-600"><i class="fas fa-exclamation-circle mr-2"></i>Error: ${error.message}</p>`;
+        }
+    }
+
+    function formatAnalysisResult(text) {
+        let html = text;
+        
+        // Headers
+        html = html.replace(/###\s+(.+)/g, '<h3 class="text-xl font-bold mt-4 mb-2 text-gray-800">$1</h3>');
+        html = html.replace(/##\s+(.+)/g, '<h2 class="text-2xl font-bold mt-6 mb-3 text-gray-900">$1</h2>');
+        
+        // Bold
+        html = html.replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>');
+        
+        // Numbered lists
+        html = html.replace(/^\d+\.\s+(.+)$/gm, '<li class="ml-4 mb-2">$1</li>');
+        
+        // Bullet lists
+        html = html.replace(/^[-*]\s+(.+)$/gm, '<li class="ml-4 mb-2">$1</li>');
+        
+        // Wrap consecutive list items in ul
+        html = html.replace(/(<li.*?<\/li>\s*)+/g, '<ul class="list-disc pl-5 my-3 bg-gray-50 p-4 rounded-lg">$&</ul>');
+        
+        // Paragraphs
+        html = html.split('\n\n').map(para => {
+            para = para.trim();
+            if (!para) return '';
+            if (para.startsWith('<')) return para;
+            return `<p class="mb-3 text-gray-700">${para}</p>`;
+        }).join('');
+        
+        return html;
+    }
+
+    // Lesson-specific activities (all 28 lessons)
+    const activityTemplates = {
+        '1.1': {
+            title: 'Media Form Identifier',
+            description: 'Test your ability to identify different forms of media and their purposes.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe a piece of media you encountered today:</p>
+                <textarea id="media-description" rows="4" class="activity-input mb-4" placeholder="Example: I saw an Instagram post from a fitness influencer showing workout routines..."></textarea>
+                <button onclick="analyzeMediaForm()" class="activity-button">
+                    <i class="fas fa-search mr-2"></i>Analyze Media Form
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const description = document.getElementById('media-description').value;
+                if (!description.trim()) {
+                    alert('Please describe a piece of media.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze this media example and identify: 1) What form of media is this (print, broadcast, digital, social media)? 2) What is its primary function (inform, entertain, persuade, educate, connect)? 3) How has this form of media evolved over time? Provide a detailed educational response.\n\nMedia description: ${description}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '1.2': {
+            title: 'Information Overload Simulator',
+            description: 'Learn to prioritize information in a flood of media.',
+            html: `
+                <p class="mb-4 text-gray-700">List 3-5 news headlines or topics you've seen today:</p>
+                <textarea id="headlines-list" rows="5" class="activity-input mb-4" placeholder="Example:\n1. Celebrity spotted at airport\n2. New climate change report released"></textarea>
+                <button onclick="prioritizeInfo()" class="activity-button">
+                    <i class="fas fa-sort-amount-down mr-2"></i>Help Me Prioritize
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const headlines = document.getElementById('headlines-list').value;
+                if (!headlines.trim()) {
+                    alert('Please enter some headlines.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Help a student prioritize these headlines: 1) Which are most important and why? 2) Which might be clickbait? 3) How to evaluate importance? 4) Strategies to avoid information overload.\n\nHeadlines:\n${headlines}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '1.3': {
+            title: 'Media Influence Tracker',
+            description: 'Reflect on how media has influenced your thoughts or behaviors.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe a time when media influenced you:</p>
+                <textarea id="influence-example" rows="5" class="activity-input mb-4" placeholder="Example: After watching cooking videos on TikTok, I tried making a viral recipe..."></textarea>
+                <button onclick="analyzeInfluence()" class="activity-button">
+                    <i class="fas fa-brain mr-2"></i>Analyze This Influence
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const example = document.getElementById('influence-example').value;
+                if (!example.trim()) {
+                    alert('Please describe an example.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze this media influence example: 1) How did media shape this person's actions? 2) Was this positive, negative, or neutral? 3) What techniques did the media use? 4) How can we be more aware of media's influence?\n\nExample: ${example}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '1.4': {
+            title: 'Critical Thinking Challenge',
+            description: 'Apply the 5 Key Questions to real media.',
+            html: `
+                <p class="mb-4 text-gray-700">Enter a media message to analyze critically:</p>
+                <textarea id="media-message" rows="4" class="activity-input mb-4" placeholder="Example: 'Doctors Hate This One Simple Trick!'"></textarea>
+                <button onclick="applyCriticalThinking()" class="activity-button">
+                    <i class="fas fa-lightbulb mr-2"></i>Apply 5 Key Questions
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const message = document.getElementById('media-message').value;
+                if (!message.trim()) {
+                    alert('Please enter a media message.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Apply the 5 Key Questions:\n1. Who created this?\n2. What techniques attract attention?\n3. How might different people understand this?\n4. What viewpoints are represented or omitted?\n5. Why was this sent?\n\nMessage: ${message}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '2.1': {
+            title: 'Purpose & Audience Detective',
+            description: 'Identify the purpose and target audience of media messages.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe a media message:</p>
+                <textarea id="message-text" rows="5" class="activity-input mb-4" placeholder="Example: A YouTube video titled 'Top 10 Budget Smartphones' with affiliate links..."></textarea>
+                <button onclick="analyzePurposeAudience()" class="activity-button">
+                    <i class="fas fa-users mr-2"></i>Identify Purpose & Audience
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const text = document.getElementById('message-text').value;
+                if (!text.trim()) {
+                    alert('Please enter a message.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze: 1) Primary purpose 2) Target audience 3) How can you tell? 4) Hidden purposes? 5) Is it appropriate for its audience?\n\nMessage: ${text}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '2.2': {
+            title: 'Framing Lab',
+            description: 'Analyze how framing changes meaning.',
+            html: `
+                <p class="mb-4 text-gray-700">Enter a headline to analyze:</p>
+                <input type="text" id="headline-input" class="activity-input mb-4" placeholder="Example: 'Protesters Clash with Police at Rally'">
+                <button onclick="analyzeFraming()" class="activity-button">
+                    <i class="fas fa-microscope mr-2"></i>Analyze Framing
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const headline = document.getElementById('headline-input').value;
+                if (!headline.trim()) {
+                    alert('Please enter a headline.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/check_framing', { headline: headline });
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '2.3': {
+            title: 'Visual Analysis Studio',
+            description: 'Analyze how images convey messages.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe an image, video, or infographic:</p>
+                <textarea id="visual-description" rows="5" class="activity-input mb-4" placeholder="Example: A bar chart where the Y-axis starts at $90M making growth look dramatic..."></textarea>
+                <button onclick="analyzeVisual()" class="activity-button">
+                    <i class="fas fa-image mr-2"></i>Analyze Visual
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const description = document.getElementById('visual-description').value;
+                if (!description.trim()) {
+                    alert('Please describe a visual.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze this visual: 1) What message? 2) Techniques used? 3) What's included/excluded? 4) Misleading elements? 5) Different interpretations?\n\nVisual: ${description}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '2.4': {
+            title: 'Persuasion Technique Detector',
+            description: 'Identify logical and emotional arguments.',
+            html: `
+                <p class="mb-4 text-gray-700">Paste persuasive text:</p>
+                <textarea id="persuasive-text" rows="6" class="activity-input mb-4" placeholder="Example: 'Join millions who have transformed their lives...'"></textarea>
+                <button onclick="detectPersuasion()" class="activity-button">
+                    <i class="fas fa-bullhorn mr-2"></i>Detect Techniques
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const text = document.getElementById('persuasive-text').value;
+                if (!text.trim()) {
+                    alert('Please enter text.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Identify: 1) Logical arguments 2) Emotional appeals 3) Specific techniques 4) Strength of argument 5) What's missing?\n\nText: ${text}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '3.1': {
+            title: 'Misinformation Type Classifier',
+            description: 'Distinguish between misinformation, disinformation, and malinformation.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe a false or misleading claim:</p>
+                <textarea id="claim-text" rows="5" class="activity-input mb-4" placeholder="Example: A story claiming hot water cures diseases..."></textarea>
+                <button onclick="classifyMisinfo()" class="activity-button">
+                    <i class="fas fa-clipboard-check mr-2"></i>Classify Claim
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const claim = document.getElementById('claim-text').value;
+                if (!claim.trim()) {
+                    alert('Please describe a claim.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze: 1) Misinformation, disinformation, or malinformation? 2) Potential harm? 3) Why might people share it? 4) How to fact-check? 5) How to respond?\n\nClaim: ${claim}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '3.2': {
+            title: 'Bias Detector',
+            description: 'Identify different types of bias.',
+            html: `
+                <p class="mb-4 text-gray-700">Paste content to analyze for bias:</p>
+                <textarea id="bias-text" rows="6" class="activity-input mb-4" placeholder="Paste article excerpt or post..."></textarea>
+                <button onclick="analyzeBias()" class="activity-button">
+                    <i class="fas fa-balance-scale mr-2"></i>Analyze Bias
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const text = document.getElementById('bias-text').value;
+                if (!text.trim()) {
+                    alert('Please enter text.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/analyze_bias', { text: text });
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '3.3': {
+            title: 'Propaganda Technique Spotter',
+            description: 'Identify propaganda and tricky tactics.',
+            html: `
+                <p class="mb-4 text-gray-700">Enter a persuasive or manipulative message:</p>
+                <textarea id="propaganda-text" rows="5" class="activity-input mb-4" placeholder="Example: 'My opponent is just a puppet of special interests...'"></textarea>
+                <button onclick="spotPropaganda()" class="activity-button">
+                    <i class="fas fa-eye mr-2"></i>Spot Propaganda
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const text = document.getElementById('propaganda-text').value;
+                if (!text.trim()) {
+                    alert('Please enter text.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Identify propaganda techniques: 1) Name-calling 2) Glittering generalities 3) Bandwagon 4) Fear appeals 5) Red herrings 6) False dichotomies 7) How effective? 8) How to counter?\n\nMessage: ${text}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '3.4': {
+            title: 'Filter Bubble Checker',
+            description: 'Assess your information diet.',
+            html: `
+                <p class="mb-4 text-gray-700">List your main information sources:</p>
+                <textarea id="sources-list" rows="6" class="activity-input mb-4" placeholder="Example:\n- Instagram explore\n- TikTok For You\n- School website"></textarea>
+                <button onclick="checkFilterBubble()" class="activity-button">
+                    <i class="fas fa-project-diagram mr-2"></i>Check My Bubble
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const sources = document.getElementById('sources-list').value;
+                if (!sources.trim()) {
+                    alert('Please list sources.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze for filter bubbles: 1) How diverse? 2) Multiple perspectives? 3) Missing viewpoints? 4) Algorithm effects? 5) How to break out? 6) Sources to add?\n\nSources:\n${sources}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '4.1': {
+            title: 'Author Credibility Checker',
+            description: 'Evaluate the expertise and credibility of content creators.',
+            html: `
+                <p class="mb-4 text-gray-700">Provide information about an author or content creator:</p>
+                <textarea id="author-info" rows="5" class="activity-input mb-4" placeholder="Example: Dr. Sarah Johnson, PhD in Climate Science, works at MIT, published 20 papers, consults for oil company..."></textarea>
+                <button onclick="checkCredibility()" class="activity-button">
+                    <i class="fas fa-user-check mr-2"></i>Check Credibility
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const info = document.getElementById('author-info').value;
+                if (!info.trim()) {
+                    alert('Please provide author information.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Evaluate credibility: 1) Credentials? 2) Expert in field? 3) Conflicts of interest? 4) What to verify? 5) How trustworthy? 6) Red/green flags?\n\nAuthor: ${info}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '4.2': {
+            title: 'Source Verification Tool',
+            description: 'Learn to verify website credibility.',
+            html: `
+                <p class="mb-4 text-gray-700">Enter a website URL to evaluate:</p>
+                <input type="url" id="source-url" class="activity-input mb-4" placeholder="https://example.com">
+                <button onclick="verifySource()" class="activity-button">
+                    <i class="fas fa-shield-alt mr-2"></i>Verify Source
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const url = document.getElementById('source-url').value;
+                if (!url.trim()) {
+                    alert('Please enter a URL.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/verify_source', { url: url });
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '4.3': {
+            title: 'Follow the Money',
+            description: 'Investigate funding and conflicts of interest.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe a media outlet and its funding:</p>
+                <textarea id="funding-info" rows="5" class="activity-input mb-4" placeholder="Example: A health blog that reviews supplements and has banner ads from supplement companies..."></textarea>
+                <button onclick="analyzeFunding()" class="activity-button">
+                    <i class="fas fa-dollar-sign mr-2"></i>Analyze Funding
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const info = document.getElementById('funding-info').value;
+                if (!info.trim()) {
+                    alert('Please describe the funding.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze funding bias: 1) Who pays? 2) Conflicts of interest? 3) How might money influence content? 4) Red flags? 5) Questions to ask?\n\nFunding: ${info}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '4.4': {
+            title: 'Peer Review Detective',
+            description: 'Evaluate research quality.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe a scientific or research claim:</p>
+                <textarea id="research-claim" rows="5" class="activity-input mb-4" placeholder="Example: 'A new study shows chocolate helps you lose weight. Published in Journal of Nutrition Research...'"></textarea>
+                <button onclick="evaluateResearch()" class="activity-button">
+                    <i class="fas fa-microscope mr-2"></i>Evaluate Research
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const claim = document.getElementById('research-claim').value;
+                if (!claim.trim()) {
+                    alert('Please describe a claim.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Evaluate research: 1) Peer-reviewed? 2) Questions about study? 3) Sample size/methodology? 4) Who funded? 5) Replicated? 6) Evidence strength? 7) What would make it credible?\n\nClaim: ${claim}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '4.5': {
+            title: 'News vs. Opinion Classifier',
+            description: 'Distinguish factual reporting from opinion.',
+            html: `
+                <p class="mb-4 text-gray-700">Paste an article excerpt:</p>
+                <textarea id="article-text" rows="6" class="activity-input mb-4" placeholder="Paste article text..."></textarea>
+                <button onclick="classifyContent()" class="activity-button">
+                    <i class="fas fa-newspaper mr-2"></i>News or Opinion?
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const text = document.getElementById('article-text').value;
+                if (!text.trim()) {
+                    alert('Please paste text.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze: 1) News or opinion? 2) Language suggesting which? 3) Facts attributed? 4) Subjective language? 5) How objective? 6) News-opinion spectrum?\n\nText: ${text}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '5.1': {
+            title: 'Search Strategy Builder',
+            description: 'Learn advanced search techniques.',
+            html: `
+                <p class="mb-4 text-gray-700">What topic are you researching?</p>
+                <input type="text" id="research-topic" class="activity-input mb-4" placeholder="Example: effects of social media on teen mental health">
+                <button onclick="buildSearchStrategy()" class="activity-button">
+                    <i class="fas fa-search-plus mr-2"></i>Build Strategy
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const topic = document.getElementById('research-topic').value;
+                if (!topic.trim()) {
+                    alert('Please enter a topic.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Create search strategy: 1) Best keywords 2) Advanced operators 3) 5 different queries 4) Best source types 5) Red flags 6) How to evaluate results?\n\nTopic: ${topic}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '5.2': {
+            title: 'Lateral Reading Practice',
+            description: 'Practice fact-checking by investigating sources.',
+            html: `
+                <p class="mb-4 text-gray-700">Enter a website to verify:</p>
+                <input type="url" id="lateral-url" class="activity-input mb-4" placeholder="https://example-news-site.com">
+                <button onclick="practiceLateralReading()" class="activity-button">
+                    <i class="fas fa-search-location mr-2"></i>Guide Lateral Reading
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const url = document.getElementById('lateral-url').value;
+                if (!url.trim()) {
+                    alert('Please enter a URL.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Guide lateral reading: 1) What to search about this site? 2) Where to look? 3) Questions to ask? 4) What makes it credible? 5) Step-by-step process 6) Reverse image search?\n\nSource: ${url}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '5.3': {
+            title: 'Data Verification Lab',
+            description: 'Learn to question statistics.',
+            html: `
+                <p class="mb-4 text-gray-700">Enter a statistic or data claim:</p>
+                <textarea id="data-claim" rows="4" class="activity-input mb-4" placeholder="Example: '95% of dentists recommend our toothpaste' or 'Crime increased 300%'"></textarea>
+                <button onclick="verifyData()" class="activity-button">
+                    <i class="fas fa-chart-line mr-2"></i>Verify Data
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const claim = document.getElementById('data-claim').value;
+                if (!claim.trim()) {
+                    alert('Please enter a claim.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze data: 1) Source? 2) Sample size/methodology? 3) Missing context? 4) Correlation vs causation? 5) How misleading? 6) What to verify? 7) Red flags?\n\nClaim: ${claim}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '5.4': {
+            title: 'Deepfake & AI Content Detector',
+            description: 'Learn to spot AI-generated media.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe suspicious media:</p>
+                <textarea id="deepfake-desc" rows="5" class="activity-input mb-4" placeholder="Example: A video of a politician, but mouth movements look off and there's weird lighting..."></textarea>
+                <button onclick="detectDeepfake()" class="activity-button">
+                    <i class="fas fa-robot mr-2"></i>Analyze for AI/Deepfake
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const description = document.getElementById('deepfake-desc').value;
+                if (!description.trim()) {
+                    alert('Please describe the media.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/detect_deepfake', { description: description });
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '6.1': {
+            title: 'Digital Citizenship Scenario',
+            description: 'Navigate ethical dilemmas.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe a digital citizenship dilemma:</p>
+                <textarea id="scenario-text" rows="5" class="activity-input mb-4" placeholder="Example: My friend posted something mean about another student. Should I report it?"></textarea>
+                <button onclick="solveScenario()" class="activity-button">
+                    <i class="fas fa-balance-scale-right mr-2"></i>Get Guidance
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const scenario = document.getElementById('scenario-text').value;
+                if (!scenario.trim()) {
+                    alert('Please describe a scenario.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Navigate this dilemma: 1) Your rights? 2) Your responsibilities? 3) Different perspectives? 4) Possible actions? 5) What would a good digital citizen do? 6) Balance rights and responsibilities?\n\nScenario: ${scenario}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '6.2': {
+            title: 'Privacy Risk Assessment',
+            description: 'Evaluate privacy risks.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe an app and what permissions it requests:</p>
+                <textarea id="privacy-info" rows="5" class="activity-input mb-4" placeholder="Example: A free photo editor asking for camera, contacts, location, and microphone access..."></textarea>
+                <button onclick="assessPrivacy()" class="activity-button">
+                    <i class="fas fa-user-shield mr-2"></i>Assess Privacy
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const info = document.getElementById('privacy-info').value;
+                if (!info.trim()) {
+                    alert('Please describe the app.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Assess privacy risks: 1) What data collected? 2) Necessary vs suspicious permissions? 3) Red flags? 4) How might data be used? 5) Better alternatives? 6) How to protect privacy? 7) Should you use it?\n\nApp: ${info}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '6.3': {
+            title: 'Algorithm Awareness Challenge',
+            description: 'Understand algorithm effects.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe your social media feed:</p>
+                <textarea id="feed-description" rows="5" class="activity-input mb-4" placeholder="Example: My TikTok shows cooking videos, gaming content, and tired memes..."></textarea>
+                <button onclick="analyzeAlgorithm()" class="activity-button">
+                    <i class="fas fa-code-branch mr-2"></i>Analyze Algorithm
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const description = document.getElementById('feed-description').value;
+                if (!description.trim()) {
+                    alert('Please describe your feed.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze algorithms: 1) Patterns in content? 2) How did algorithm learn? 3) What might you be missing? 4) Effects on worldview? 5) Manipulation concerns? 6) How to diversify? 7) Take control?\n\nFeed: ${description}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '6.4': {
+            title: 'Scam Spotter',
+            description: 'Identify red flags in scams.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe a suspicious message or offer:</p>
+                <textarea id="scam-text" rows="5" class="activity-input mb-4" placeholder="Example: Email saying I won a prize but need to provide credit card info..."></textarea>
+                <button onclick="spotScam()" class="activity-button">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>Spot the Scam
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const text = document.getElementById('scam-text').value;
+                if (!text.trim()) {
+                    alert('Please describe the content.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Identify scam red flags: 1) What type? 2) Red flags? 3) Why suspicious? 4) What do scammers want? 5) How to verify? 6) What to do? 7) How to protect yourself?\n\nContent: ${text}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '6.5': {
+            title: 'Cyberbullying Response Planner',
+            description: 'Learn to respond to cyberbullying.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe a cyberbullying situation:</p>
+                <textarea id="bullying-scenario" rows="5" class="activity-input mb-4" placeholder="Example: Someone is posting mean comments about my friend on Instagram..."></textarea>
+                <button onclick="planResponse()" class="activity-button">
+                    <i class="fas fa-hands-helping mr-2"></i>Plan Response
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const scenario = document.getElementById('bullying-scenario').value;
+                if (!scenario.trim()) {
+                    alert('Please describe the situation.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Provide guidance: 1) How serious? 2) Immediate steps? 3) Document evidence? 4) Who to tell? 5) Support the target? 6) Upstander vs bystander? 7) Resources?\n\nSituation: ${scenario}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '6.6': {
+            title: 'Digital Footprint Audit',
+            description: 'Review your digital presence.',
+            html: `
+                <p class="mb-4 text-gray-700">List your main online accounts and what you post:</p>
+                <textarea id="footprint-info" rows="6" class="activity-input mb-4" placeholder="Example:\n- Instagram: photos of friends, hobbies\n- Twitter: opinions about games"></textarea>
+                <button onclick="auditFootprint()" class="activity-button">
+                    <i class="fas fa-footprint mr-2"></i>Audit Footprint
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const info = document.getElementById('footprint-info').value;
+                if (!info.trim()) {
+                    alert('Please describe your presence.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Audit digital footprint: 1) What impression? 2) Risks? 3) What might colleges/employers see? 4) Active vs passive? 5) Privacy settings? 6) Content to review? 7) Build positive presence? 8) Action plan?\n\nPresence: ${info}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '7.1': {
+            title: 'Media Ethics Evaluator',
+            description: 'Analyze media creation ethics.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe a media creation ethical dilemma:</p>
+                <textarea id="ethics-scenario" rows="5" class="activity-input mb-4" placeholder="Example: I want to make a video about my school but some people in background didn't know I was filming..."></textarea>
+                <button onclick="evaluateEthics()" class="activity-button">
+                    <i class="fas fa-gavel mr-2"></i>Evaluate Ethics
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const scenario = document.getElementById('ethics-scenario').value;
+                if (!scenario.trim()) {
+                    alert('Please describe the scenario.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze ethics: 1) What principles apply? 2) Who's affected? 3) Privacy and consent? 4) Accuracy/fairness? 5) Harm vs benefit? 6) Responsible action? 7) Best practices?\n\nScenario: ${scenario}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '7.2': {
+            title: 'Copyright & Fair Use Checker',
+            description: 'Determine if your use might be fair use.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe how you want to use someone's content:</p>
+                <textarea id="use-case" rows="5" class="activity-input mb-4" placeholder="Example: I want to use 30 seconds of a song in my school project video on YouTube..."></textarea>
+                <button onclick="checkFairUse()" class="activity-button">
+                    <i class="fas fa-copyright mr-2"></i>Check Fair Use
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const useCase = document.getElementById('use-case').value;
+                if (!useCase.trim()) {
+                    alert('Please describe your use case.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze for copyright and fair use: 1) The 4 factors of fair use 2) Likely fair use? 3) Risks? 4) How to credit? 5) Alternatives? 6) Best practices? 7) Disclaimer: Educational, not legal advice\n\nUse case: ${useCase}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '7.3': {
+            title: 'AI Impact Analyzer',
+            description: 'Explore how AI affects media.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe an AI tool or AI-generated content:</p>
+                <textarea id="ai-example" rows="5" class="activity-input mb-4" placeholder="Example: I used an AI art generator to create images for my presentation..."></textarea>
+                <button onclick="analyzeAI()" class="activity-button">
+                    <i class="fas fa-brain mr-2"></i>Analyze AI Impact
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const example = document.getElementById('ai-example').value;
+                if (!example.trim()) {
+                    alert('Please describe AI usage.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze AI's role: 1) Benefits? 2) Risks? 3) Ethical concerns (bias, authenticity, attribution)? 4) Impact on human creators? 5) Responsible use? 6) Disclosure needs? 7) Future implications?\n\nAI example: ${example}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        },
+        '7.4': {
+            title: 'Future Media Explorer',
+            description: 'Imagine and analyze emerging technologies.',
+            html: `
+                <p class="mb-4 text-gray-700">Describe a VR/AR experience or futuristic media scenario:</p>
+                <textarea id="future-scenario" rows="5" class="activity-input mb-4" placeholder="Example: A VR game that lets you experience historical events as if you were there..."></textarea>
+                <button onclick="exploreFuture()" class="activity-button">
+                    <i class="fas fa-rocket mr-2"></i>Explore Future Media
+                </button>
+                <div id="result-container"></div>
+            `,
+            handler: async function() {
+                const scenario = document.getElementById('future-scenario').value;
+                if (!scenario.trim()) {
+                    alert('Please describe the scenario.');
+                    return;
+                }
+                
+                const result = await analyzeWithAI('/api/chatbot_message', {
+                    message: `Analyze future media: 1) Benefits and opportunities? 2) Risks? 3) Media literacy challenges? 4) Authenticity questions? 5) Privacy implications? 6) How to navigate responsibly? 7) Skills needed?\n\nScenario: ${scenario}`,
+                    history: []
+                });
+                
+                document.getElementById('result-container').innerHTML = `<div class="analysis-result mt-6">${result}</div>`;
+            }
+        }
+    };
+
+    // Activity handler functions for each lesson
+    function analyzeMediaForm() { activityTemplates['1.1'].handler(); }
+    function prioritizeInfo() { activityTemplates['1.2'].handler(); }
+    function analyzeInfluence() { activityTemplates['1.3'].handler(); }
+    function applyCriticalThinking() { activityTemplates['1.4'].handler(); }
+    function analyzePurposeAudience() { activityTemplates['2.1'].handler(); }
+    function analyzeFraming() { activityTemplates['2.2'].handler(); }
+    function analyzeVisual() { activityTemplates['2.3'].handler(); }
+    function detectPersuasion() { activityTemplates['2.4'].handler(); }
+    function classifyMisinfo() { activityTemplates['3.1'].handler(); }
+    function analyzeBias() { activityTemplates['3.2'].handler(); }
+    function spotPropaganda() { activityTemplates['3.3'].handler(); }
+    function checkFilterBubble() { activityTemplates['3.4'].handler(); }
+    function checkCredibility() { activityTemplates['4.1'].handler(); }
+    function verifySource() { activityTemplates['4.2'].handler(); }
+    function analyzeFunding() { activityTemplates['4.3'].handler(); }
+    function evaluateResearch() { activityTemplates['4.4'].handler(); }
+    function classifyContent() { activityTemplates['4.5'].handler(); }
+    function buildSearchStrategy() { activityTemplates['5.1'].handler(); }
+    function practiceLateralReading() { activityTemplates['5.2'].handler(); }
+    function verifyData() { activityTemplates['5.3'].handler(); }
+    function detectDeepfake() { activityTemplates['5.4'].handler(); }
+    function solveScenario() { activityTemplates['6.1'].handler(); }
+    function assessPrivacy() { activityTemplates['6.2'].handler(); }
+    function analyzeAlgorithm() { activityTemplates['6.3'].handler(); }
+    function spotScam() { activityTemplates['6.4'].handler(); }
+    function planResponse() { activityTemplates['6.5'].handler(); }
+    function auditFootprint() { activityTemplates['6.6'].handler(); }
+    function evaluateEthics() { activityTemplates['7.1'].handler(); }
+    function checkFairUse() { activityTemplates['7.2'].handler(); }
+    function analyzeAI() { activityTemplates['7.3'].handler(); }
+    function exploreFuture() { activityTemplates['7.4'].handler(); }
+
+    // Load appropriate activity based on lesson
+    function loadInteractiveActivity() {
+        const activityContent = document.getElementById('activity-content');
+        
+        // Extract lesson number from title
+        const lessonMatch = lessonId.match(/(\d+\.\d+)/);
+        const lessonNumber = lessonMatch ? lessonMatch[1] : null;
+        
+        // Load activity template if it exists
+        if (lessonNumber && activityTemplates[lessonNumber]) {
+            const template = activityTemplates[lessonNumber];
+            activityContent.innerHTML = `
+                <h3 class="text-2xl font-bold mb-2 text-gray-800">${template.title}</h3>
+                <p class="mb-6 text-gray-600">${template.description}</p>
+                ${template.html}
+            `;
+        } else {
+            // Default activity
+            activityContent.innerHTML = `
+                <h3 class="text-2xl font-bold mb-4 text-gray-800">Reflection & Practice</h3>
+                <p class="mb-4 text-gray-700">Apply what you've learned!</p>
+                <div class="space-y-4">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border-2 border-orange-200">
+                        <h4 class="font-bold mb-3 text-lg text-gray-800"><i class="fas fa-pencil-alt mr-2 text-orange-500"></i>Journal Prompt</h4>
+                        <p class="text-gray-700 mb-4">Reflect on how this lesson applies to your daily media consumption.</p>
+                        <textarea rows="6" class="activity-input" placeholder="Write your reflection here..."></textarea>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border-2 border-orange-200">
+                        <h4 class="font-bold mb-3 text-lg text-gray-800"><i class="fas fa-tasks mr-2 text-orange-500"></i>Practice Suggestions</h4>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>Find a real-world example related to this lesson</li>
+                            <li>Discuss what you learned with family or friends</li>
+                            <li>Look for these concepts in your social media feed today</li>
+                            <li>Create content that demonstrates these principles</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        loadInteractiveActivity();
+    });
+</script>
 {% endblock %}
